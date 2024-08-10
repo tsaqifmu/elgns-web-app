@@ -1,7 +1,7 @@
 import React from "react";
 
-const Dashboard = () => {
+const DashboardPage = () => {
   return <div>Ini dashboard</div>;
 };
 
-export default Dashboard;
+export default DashboardPage;

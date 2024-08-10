@@ -2,9 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+.navLink {
+  @apply cursor-pointer text-[16px] font-medium;
+}
+
+.activeMenu {
+  @apply translate-y-[1.5px] border-b-4 font-bold;
+}
+
+.flexCenter {
+  @apply flex items-center justify-center;
+}
+.mobileMenu {
+  @apply absolute right-0 top-20 z-50 mx-4 my-2 min-w-[140px] flex-col rounded-xl bg-white p-6 shadow-2xl;
+}
+
+.paddingY {
+  @apply py-12 xl:py-20;
+}
+.paragraph {
+  @apply text-sm md:text-base lg:text-lg;
+}
+.heading1 {
+  @apply text-3xl font-bold md:text-4xl lg:text-6xl;
+}
+
+.heading2 {
+  @apply text-xl font-semibold lg:text-2xl;
+}
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 220 14% 96%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;

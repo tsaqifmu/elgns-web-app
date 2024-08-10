@@ -1,28 +1,20 @@
 "use client";
 
 import { z } from "zod";
-import React, { useState } from "react";
+import { FC, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import LoginLayout from "@/app/login/layout";
-import { Input } from "@/components/ui/input";
+import { loginSchema } from "@/schemas/loginSchema";
+
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { loginSchema } from "@/schemas/loginSchema";
 import EmailField from "@/components/login/form-email-input";
 import PasswordField from "@/components/login/form-password-input";
 
-const Login = () => {
+const Login: FC = () => {
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -47,24 +39,22 @@ const Login = () => {
   }
 
   return (
-    <LoginLayout>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-6">
-          <EmailField form={form} />
-          <PasswordField form={form} />
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Tunggu sebentar...
-              </>
-            ) : (
-              "LOGIN"
-            )}
-          </Button>
-        </form>
-      </Form>
-    </LoginLayout>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-6">
+        <EmailField form={form} />
+        <PasswordField form={form} />
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Tunggu sebentar...
+            </>
+          ) : (
+            "LOGIN"
+          )}
+        </Button>
+      </form>
+    </Form>
   );
 };
 
