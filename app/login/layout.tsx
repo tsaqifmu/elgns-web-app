@@ -8,7 +8,7 @@ const LoginLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
         <div className="py-2">
           <Icons.Logo />
         </div>
-        <div className="flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full items-center justify-center font-sans">
           {children}
         </div>
       </div>

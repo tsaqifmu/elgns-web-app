@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import { Inter as FontSans, Oswald } from "next/font/google";
 
-import { cn } from "@/lib/utils";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
+});
+
+const fontOswald = Oswald({
+  subsets: ["latin"],
+  variable: "--font-oswald",
 });
 
 export const metadata: Metadata = {
@@ -26,6 +31,7 @@ export default function RootLayout({
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
+          fontOswald.variable,
         )}
       >
         {children}

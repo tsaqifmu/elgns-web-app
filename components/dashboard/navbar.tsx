@@ -30,7 +30,7 @@ const NavItem: FC<NavItem> = ({ href, label, icons }) => {
       <Link href={`/${href}`}>
         <div
           className={cn(
-            "flex h-14 items-center gap-x-1 border-gray-900 hover:translate-y-[1.5px] hover:border-b-4",
+            "flex h-14 items-center gap-x-1 border-gray-900 transition-all hover:translate-y-[1.5px] hover:border-b-4 hover:font-bold",
             isActivePage() && "activeMenu",
           )}
           onMouseEnter={() => setIsHovered(true)}
@@ -77,7 +77,7 @@ const DesktopMenu: FC = () => (
 
 const NavBar: FC = () => {
   return (
-    <header className="flexCenter h-14 w-full bg-white text-gray-900">
+    <header className="flexCenter font-oswald h-14 w-full bg-white text-gray-900">
       <Container className="flex w-full items-center justify-between">
         <Logo />
 
