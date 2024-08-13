@@ -2,8 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CircleCheck } from "lucide-react";
+import IconDelete from "@/public/icons/table/delete.svg";
+import IconEdit from "@/public/icons/table/edit.svg";
+import { Button } from "@/components/ui/button";
+import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
-export type Payment = {
+export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
@@ -29,7 +33,7 @@ const ColumnHeader = ({ title }: { title: string }) => {
   );
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<DataCustomer>[] = [
   {
     accessorKey: "dateOfEntry",
     header: () => <ColumnHeader title={HEADER_TITLES.dateOfEntry} />,
@@ -56,6 +60,35 @@ export const columns: ColumnDef<Payment>[] = [
           <CircleCheck className="w-4 lg:w-6" />
           <p>{amount}</p>
         </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const customerName = row.getValue("name");
+      return (
+        <>
+          <CustomeDialogTable
+            variant="edit"
+            title="EDIT DATA CUSTOMER"
+            triger={
+              <Button className="group" variant={"ghost"} size={"icon"}>
+                <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
+              </Button>
+            }
+          />
+          <CustomeDialogTable
+            variant="hapus"
+            title="HAPUS DATA CUSTOMER"
+            content={customerName}
+            triger={
+              <Button className="group" variant={"ghost"} size={"icon"}>
+                <IconDelete className="text-gray-300 transition-all group-hover:text-red-500" />
+              </Button>
+            }
+          />
+        </>
       );
     },
   },
