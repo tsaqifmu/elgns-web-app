@@ -7,15 +7,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "@/schemas/loginSchema";
+import axios, { isCancel, AxiosError } from "axios";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import EmailField from "@/components/login/form-email-input";
 import PasswordField from "@/components/login/form-password-input";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { ApiRequest, HttpMethod } from "@/config/ApiRequest";
 
 const Login: FC = () => {
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const router = useRouter();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -27,24 +31,34 @@ const Login: FC = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const { mutate: sendLoginData, isPending } = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await ApiRequest({
+        path: "/auth/signin",
+        method: HttpMethod.POST,
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      console.log(response);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    sendLoginData(data);
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-6">
         <EmailField form={form} />
         <PasswordField form={form} />
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? (
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Tunggu sebentar...

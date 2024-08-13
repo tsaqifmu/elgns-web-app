@@ -2,9 +2,9 @@ import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { DataTable } from "./data-table";
-import { columns, Payment } from "./columns";
+import { columns, DataCustomer } from "./columns";
 
-const dataSource: Payment[] = [
+const dataSource: DataCustomer[] = [
   ...Array(5)
     .fill(null)
     .map((_, index) => ({
