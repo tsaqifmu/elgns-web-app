@@ -59,7 +59,9 @@ const Login: FC = () => {
 
     console.log(payload);
     try {
-      const { data } = await axiosInstance.post("/auth/signin", payload);
+      const { data } = await axiosInstance.post("/auth/signin", payload, {
+        withCredentials: true,
+      });
       // localStorage.setItem("accessToken", data.data.accessToken);
       console.log(data);
       // router.push("/beranda");
