@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import DialogTableDelete from "./dialogTableComponent/dialog-table-delete";
 import DialogTableEdit from "./dialogTableComponent/dialog-table-edit";
+import DialogTableCreate from "./dialogTableComponent/dialog-table-create";
 
 type DialogVariant = "tambah" | "edit" | "hapus" | "default";
 
@@ -67,15 +68,15 @@ const CustomeDialogTable: FC<CustomDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>{triger}</DialogTrigger>
-      <DialogContent className="font-oswald sm:max-w-[425px]">
+      <DialogContent className="font-oswald max-w-[737px]">
         <DialogHeader className={cn(modal)}>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         {variant === "hapus" ? (
           <DialogTableDelete content="content" />
-        ) : (
+        ) : (variant === "edit") ? (
           <DialogTableEdit />
-        )}
+        ) : (<DialogTableCreate/>)}
       </DialogContent>
     </Dialog>
   );
