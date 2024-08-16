@@ -1,46 +1,50 @@
 import { AxiosError } from "axios";
-// import { useToast } from "@/components/ui/use-toast";
 
-interface CustomErrorResponse {
-  error: string;
-  message: string;
+interface ErrorResponse {
+  error: boolean;
+  message: {
+    type: string;
+    value: string;
+    msg: string;
+    path: string;
+    location: string;
+  }[];
 }
 
-export function handleError(
+export function handleArrayError(
   error: unknown,
   toast: (params: {
-    variant: "default" | "destructive" | null;
+    variant: string;
     title: string;
     description: string;
   }) => void,
 ) {
-  const variant: "default" | "destructive" | null = "destructive"; // Menggunakan tipe variant yang sesuai
-
   if (error instanceof AxiosError) {
-    const { response, message } = error as AxiosError<CustomErrorResponse>;
+    const { response, message } = error as AxiosError<ErrorResponse>;
     if (response) {
       const { data, status, statusText } = response;
       const errorMessage =
-        data?.message || `Kesalahan tidak diketahui: ${status} ${statusText}`;
+        data?.message[0]?.msg ||
+        `Kesalahan tidak diketahui: ${status} ${statusText}`;
 
       toast({
-        variant,
+        variant: "destructive",
         title: "Kesalahan",
         description: errorMessage,
       });
     } else {
       toast({
-        variant,
+        variant: "destructive",
         title: "Kesalahan Permintaan",
         description: message,
       });
     }
   } else {
     toast({
-      variant,
+      variant: "destructive",
       title: "Kesalahan Lainnya",
       description: String(
-        (error as CustomErrorResponse).message || "Terjadi kesalahan",
+        (error as { message: string }).message || "Terjadi kesalahan",
       ),
     });
   }

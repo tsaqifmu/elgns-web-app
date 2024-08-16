@@ -1,10 +1,12 @@
 import NavBar from "@/components/dashboard/navbar";
-import { Icons } from "@/public/icons";
-import { Children } from "react";
+import { cookies } from "next/headers";
 
 const DashboardLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
+  const cookieStore = cookies();
+  const theme = cookieStore.get("token");
+  console.log(theme);
   return (
     <>
       <NavBar />

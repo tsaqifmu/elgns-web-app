@@ -16,7 +16,8 @@ export const handleLoginError = (
   values: LoginValues,
   toast: Toast,
 ): void => {
-  const responseData: ErrorResponse = (error as any)?.response?.data || {};
+  const responseData =
+    (error as { response?: { data?: ErrorResponse } })?.response?.data || {};
 
   const showToastAndReset = (
     title: string,
@@ -31,7 +32,9 @@ export const handleLoginError = (
     reset(resetValues);
   };
 
-  switch (responseData.message) {
+  const { message } = responseData;
+
+  switch (message) {
     case "User not found":
       showToastAndReset(
         "Akun tidak ditemukan",
@@ -49,7 +52,7 @@ export const handleLoginError = (
       break;
 
     default:
-      handleError(error as any, toast);
+      handleError(error, toast);
       break;
   }
 };

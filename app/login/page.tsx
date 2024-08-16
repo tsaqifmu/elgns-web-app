@@ -20,7 +20,7 @@ import { ApiRequest, HttpMethod } from "@/config/ApiRequest";
 import { handleLoginError } from "@/lib/handleErrors/handleLoginError";
 
 const Login: FC = () => {
-  // const router = useRouter();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -39,8 +39,8 @@ const Login: FC = () => {
       });
       return response;
     },
-    onSuccess: (response) => {
-      console.log(response);
+    onSuccess: () => {
+      router.push("/dashboard");
     },
     onError: (error) => {
       handleLoginError(
@@ -59,18 +59,6 @@ const Login: FC = () => {
       password: data.password,
     };
     sendLoginData(payload);
-
-    // try {
-    //   const { data } = await axiosInstance.post("/auth/signin", payload, {
-    //     withCredentials: true,
-    //   });
-    //   console.log(data);
-    // } catch (error) {
-    //   console.log(error);
-    //   handleSubmitError(error as AxiosError, form.reset, data, toast);
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
   };
 
   return (
