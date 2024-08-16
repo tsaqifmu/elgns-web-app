@@ -2,6 +2,7 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { addCustomer } from "@/lib/customerService";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -20,25 +21,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { updateCustomer } from "@/lib/customerService";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  phoneNumber: z.number().min(2, {
-
-    message: "phone must be at least 2 characters.",
+  phoneNumber: z.string().min(2, {
+    message: "Phone must be at least 2 characters.",
   }),
   adress: z.string().min(2, {
     message: "Adress must be at least 2 characters.",
@@ -54,42 +47,48 @@ const formSchema = z.object({
   }),
 });
 
-const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
+const DialogTableCreate = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: customer?.name,
-      adress: customer?.address,
-      phoneNumber: customer?.phoneNumber,
-      regency: customer?.address,
-      status: customer?.status,
-      statusDescription: customer?.statusDescription,
+      username: "",
+      phoneNumber: "",
+      adress: "",
+      regency: "",
+      status: "",
+      statusDescription: "",
     },
   });
-
   const queryClient = useQueryClient();
-  const editCustomerMutation = useMutation({
-    mutationFn: updateCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["customers"],
-        exact: true,
-        refetchType: "active",
-      });
+
+  const addCustomerMutation = useMutation({
+    mutationFn: addCustomer,
+    onSuccess: (data: DataCustomer) => {
+      queryClient.setQueryData(["customers"], (oldData: DataCustomer[]) => [
+        { ...data },
+        ...oldData,
+      ]);
+
+      // queryClient.invalidateQueries({
+      //   queryKey: ["customers"],
+      //   exact: true,
+      //   refetchType: "active",
+      // });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const myData: DataCustomer = {
-      id: customer!.id,
-      name: values.username,
+      id: Date.now().toString(),
       address: values.adress,
-      dateOfEntry: "",
-      phoneNumber: values.phoneNumber,
-      status: values.status as "DEAL" | "NEGO",
+      dateOfEntry: "dfdf",
+      name: values.username,
+      phoneNumber: parseInt(values.phoneNumber),
+      status: values.status as "NEGO" | "DEAL",
       statusDescription: values.statusDescription,
     };
-    editCustomerMutation.mutate(myData);
+
+    addCustomerMutation.mutate(myData);
   }
 
   return (
@@ -157,6 +156,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
               )}
             />
           </div>
+
           <div className="flex basis-1/2 flex-col gap-5">
             <FormField
               control={form.control}
@@ -178,6 +178,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                       <SelectItem value="NEGO">NEGO</SelectItem>
                     </SelectContent>
                   </Select>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -217,16 +218,15 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
             size={"modalTable"}
             variant={"default"}
             type="submit"
-            className="bg-yellow-500 uppercase"
-            disabled={editCustomerMutation.isPending}
+            className="bg-[#5BADC5] uppercase"
+            disabled={addCustomerMutation.isPending}
           >
             Simpan
           </Button>
         </DialogFooter>
-
       </form>
     </Form>
   );
 };
 
-export default DialogTableEdit;
+export default DialogTableCreate;
