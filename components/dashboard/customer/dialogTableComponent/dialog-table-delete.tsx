@@ -1,4 +1,5 @@
 import React from "react";
+
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
@@ -15,14 +16,18 @@ const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
     },
   });
 
+
   return (
     <>
       <div className="h-80 p-5">
         <p className="text-base font-normal">
+
           Data Customer <span className="font-bold">{customer?.name}</span> akan
+
           dihapus, Anda Yakin?
         </p>
       </div>
+
 
       <DialogFooter>
         <DialogClose>
@@ -45,6 +50,7 @@ const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
             deleteCustomerMutation.mutate(customer!.id);
           }}
         >
+
           Hapus
         </Button>
       </DialogFooter>
