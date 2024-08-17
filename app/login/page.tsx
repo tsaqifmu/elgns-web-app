@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "@/schemas/loginSchema";
-import axios, { isCancel, AxiosError } from "axios";
 
 import { Form } from "@/components/ui/form";
 import EmailField from "@/components/login/form-email-input";
