@@ -1,9 +1,16 @@
-import React from "react";
 import { z } from "zod";
+import React from "react";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { updateCustomer } from "@/lib/customerService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -19,25 +26,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { updateCustomer } from "@/lib/customerService";
-
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   phoneNumber: z.number().min(2, {
-
     message: "phone must be at least 2 characters.",
   }),
   adress: z.string().min(2, {
@@ -104,9 +98,12 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                 <FormItem>
                   <FormLabel>NAMA CUSTOMER</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan nama customer" {...field} />
+                    <Input
+                      className="focus-visible:ring-yellow-500"
+                      placeholder="Masukkan nama customer"
+                      {...field}
+                    />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -118,9 +115,13 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                 <FormItem>
                   <FormLabel>NOMOR HP</FormLabel>
                   <FormControl>
-                    <Input placeholder="62851XXXX" type="tel" {...field} />
+                    <Input
+                      className="focus-visible:ring-yellow-500"
+                      placeholder="62851XXXX"
+                      type="tel"
+                      {...field}
+                    />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -132,9 +133,12 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                 <FormItem>
                   <FormLabel>ALAMAT LENGKAP</FormLabel>
                   <FormControl>
-                    <Input placeholder="Masukkan alamat lengkap" {...field} />
+                    <Input
+                      className="focus-visible:ring-yellow-500"
+                      placeholder="Masukkan alamat lengkap"
+                      {...field}
+                    />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -147,11 +151,11 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                   <FormLabel>ASAL KABUPATEN</FormLabel>
                   <FormControl>
                     <Input
+                      className="focus-visible:ring-yellow-500"
                       placeholder="Masukkan Alamat (Kabupaten)"
                       {...field}
                     />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -169,7 +173,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="focus:ring-yellow-500">
                         <SelectValue placeholder="Pilih Status" />
                       </SelectTrigger>
                     </FormControl>
@@ -190,11 +194,11 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
                   <FormLabel>KETERANGAN STATUS</FormLabel>
                   <FormControl>
                     <Textarea
+                      className="focus-visible:ring-yellow-500"
                       placeholder="Tell us a little bit about yourself"
                       {...field}
                     />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
@@ -223,7 +227,6 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
             Simpan
           </Button>
         </DialogFooter>
-
       </form>
     </Form>
   );

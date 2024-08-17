@@ -90,7 +90,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border font-oswald;
   }
   body {
     @apply bg-background text-foreground text-gray-900;

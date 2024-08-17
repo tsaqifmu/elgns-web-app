@@ -77,7 +77,7 @@ const DesktopMenu: FC = () => (
 
 const NavBar: FC = () => {
   return (
-    <header className="flexCenter font-oswald h-14 w-full bg-white text-gray-900">
+    <header className="flexCenter h-14 w-full bg-white text-gray-900">
       <Container className="flex w-full items-center justify-between">
         <Logo />
 
