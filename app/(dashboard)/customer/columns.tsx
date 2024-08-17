@@ -2,11 +2,14 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { CircleCheck, CircleX } from "lucide-react";
+
 import IconDelete from "@/public/icons/table/delete.svg";
 import IconEdit from "@/public/icons/table/edit.svg";
 import { Button } from "@/components/ui/button";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
+
 import { cn } from "@/lib/utils";
+
 
 export type DataCustomer = {
   id: string;
@@ -79,13 +82,14 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customer = row.original;
-
       return (
         <>
           <CustomeDialogTable
             variant="edit"
             title="EDIT DATA CUSTOMER"
+
             customer={customer}
+
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
@@ -95,7 +99,9 @@ export const columns: ColumnDef<DataCustomer>[] = [
           <CustomeDialogTable
             variant="hapus"
             title="HAPUS DATA CUSTOMER"
+
             customer={customer}
+
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconDelete className="text-gray-300 transition-all group-hover:text-red-500" />

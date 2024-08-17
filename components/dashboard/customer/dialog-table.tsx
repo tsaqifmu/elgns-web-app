@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
+
 import {
   Dialog,
   DialogContent,
@@ -11,8 +12,10 @@ import {
 } from "@/components/ui/dialog";
 import DialogTableDelete from "./dialogTableComponent/dialog-table-delete";
 import DialogTableEdit from "./dialogTableComponent/dialog-table-edit";
+
 import DialogTableCreate from "./dialogTableComponent/dialog-table-create";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+
 
 type DialogVariant = "tambah" | "edit" | "hapus" | "default";
 
@@ -21,22 +24,28 @@ interface CustomDialogProps {
   title: string;
   description?: string;
   triger?: any;
+
   customer?: DataCustomer;
+
 }
 
 const CustomeDialogTable: FC<CustomDialogProps> = ({
   variant,
   title,
   triger,
+
   customer,
+
 }) => {
   const getVariantStyles = () => {
     switch (variant) {
       case "tambah":
         return {
+
           modal: "bg-[#5BADC5] ",
           input: "border-[#5BADC5]",
           button: "bg-[#5BADC5] hover:bg-[#2b7e97]",
+
         };
       case "edit":
         return {
@@ -64,16 +73,20 @@ const CustomeDialogTable: FC<CustomDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>{triger}</DialogTrigger>
+
       <DialogContent className="max-w-[737px] font-oswald">
+
         <DialogHeader className={cn(modal)}>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         {variant === "hapus" ? (
+
           <DialogTableDelete customer={customer} />
         ) : variant === "edit" ? (
           <DialogTableEdit customer={customer} />
         ) : (
           <DialogTableCreate />
+
         )}
       </DialogContent>
     </Dialog>

@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
@@ -30,11 +31,13 @@ import {
 } from "@tanstack/react-query";
 import { updateCustomer } from "@/lib/customerService";
 
+
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
   phoneNumber: z.number().min(2, {
+
     message: "phone must be at least 2 characters.",
   }),
   adress: z.string().min(2, {
@@ -220,6 +223,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
             Simpan
           </Button>
         </DialogFooter>
+
       </form>
     </Form>
   );

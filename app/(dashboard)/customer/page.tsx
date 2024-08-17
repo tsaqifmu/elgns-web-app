@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { DataTable } from "./data-table";
 import { columns, DataCustomer } from "./columns";
+
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 import { useQuery } from "@tanstack/react-query";
 import { customers, getCustomers } from "@/lib/customerService";
@@ -31,6 +32,7 @@ import { customers, getCustomers } from "@/lib/customerService";
 //     statusDescription: "tesss",
 //   },
 // ];
+
 
 const CustomerPage: FC = () => {
   const { data, isError, isLoading } = useQuery({
