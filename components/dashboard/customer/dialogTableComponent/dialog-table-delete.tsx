@@ -12,22 +12,18 @@ const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
   const deleteCustomerMutation = useMutation({
     mutationFn: deleteCustomer,
     onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
   });
-
 
   return (
     <>
       <div className="h-80 p-5">
         <p className="text-base font-normal">
-
           Data Customer <span className="font-bold">{customer?.name}</span> akan
-
           dihapus, Anda Yakin?
         </p>
       </div>
-
 
       <DialogFooter>
         <DialogClose>
@@ -50,7 +46,6 @@ const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
             deleteCustomerMutation.mutate(customer!.id);
           }}
         >
-
           Hapus
         </Button>
       </DialogFooter>

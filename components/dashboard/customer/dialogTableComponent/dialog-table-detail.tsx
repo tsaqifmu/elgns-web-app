@@ -1,10 +1,16 @@
-import React from "react";
 import { z } from "zod";
+import React from "react";
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addCustomer } from "@/lib/customerService";
+import { updateCustomer } from "@/lib/customerService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -20,18 +26,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  phoneNumber: z.string().min(2, {
-    message: "Phone must be at least 2 characters.",
+  phoneNumber: z.number().min(2, {
+    message: "phone must be at least 2 characters.",
   }),
   adress: z.string().min(2, {
     message: "Adress must be at least 2 characters.",
@@ -47,42 +48,48 @@ const formSchema = z.object({
   }),
 });
 
-const DialogTableCreate = () => {
+const DialogTableDetail = ({
+  customer,
+  setIsDialogEditOpen,
+}: {
+  customer?: DataCustomer;
+  setIsDialogEditOpen: any;
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      phoneNumber: "",
-      adress: "",
-      regency: "",
-      status: "",
-      statusDescription: "",
+      username: customer?.name,
+      adress: customer?.address,
+      phoneNumber: customer?.phoneNumber,
+      regency: customer?.address,
+      status: customer?.status,
+      statusDescription: customer?.statusDescription,
     },
   });
-  const queryClient = useQueryClient();
 
-  const addCustomerMutation = useMutation({
-    mutationFn: addCustomer,
-    onSuccess: (data: DataCustomer) => {
-      queryClient.setQueryData(["customers"], (oldData: DataCustomer[]) => [
-        { ...data },
-        ...oldData,
-      ]);
+  const queryClient = useQueryClient();
+  const editCustomerMutation = useMutation({
+    mutationFn: updateCustomer,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["customers"],
+        exact: true,
+        refetchType: "active",
+      });
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const myData: DataCustomer = {
-      id: Date.now().toString(),
-      address: values.adress,
-      dateOfEntry: "dfdf",
+      id: customer!.id,
       name: values.username,
-      phoneNumber: parseInt(values.phoneNumber),
-      status: values.status as "NEGO" | "DEAL",
+      address: values.adress,
+      dateOfEntry: "",
+      phoneNumber: values.phoneNumber,
+      status: values.status as "DEAL" | "NEGO",
       statusDescription: values.statusDescription,
     };
-
-    addCustomerMutation.mutate(myData);
+    editCustomerMutation.mutate(myData);
   }
 
   return (
@@ -98,7 +105,7 @@ const DialogTableCreate = () => {
                   <FormLabel>NAMA CUSTOMER</FormLabel>
                   <FormControl>
                     <Input
-                      className="focus-visible:ring-teal"
+                      readOnly
                       placeholder="Masukkan nama customer"
                       {...field}
                     />
@@ -115,7 +122,7 @@ const DialogTableCreate = () => {
                   <FormLabel>NOMOR HP</FormLabel>
                   <FormControl>
                     <Input
-                      className="focus-visible:ring-teal"
+                      readOnly
                       placeholder="62851XXXX"
                       type="tel"
                       {...field}
@@ -133,7 +140,7 @@ const DialogTableCreate = () => {
                   <FormLabel>ALAMAT LENGKAP</FormLabel>
                   <FormControl>
                     <Input
-                      className="focus-visible:ring-teal"
+                      readOnly
                       placeholder="Masukkan alamat lengkap"
                       {...field}
                     />
@@ -150,7 +157,7 @@ const DialogTableCreate = () => {
                   <FormLabel>ASAL KABUPATEN</FormLabel>
                   <FormControl>
                     <Input
-                      className="focus-visible:ring-teal"
+                      readOnly
                       placeholder="Masukkan Alamat (Kabupaten)"
                       {...field}
                     />
@@ -160,7 +167,6 @@ const DialogTableCreate = () => {
               )}
             />
           </div>
-
           <div className="flex basis-1/2 flex-col gap-5">
             <FormField
               control={form.control}
@@ -169,11 +175,12 @@ const DialogTableCreate = () => {
                 <FormItem>
                   <FormLabel>STATUS</FormLabel>
                   <Select
+                    disabled
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="focus:ring-teal">
+                      <SelectTrigger>
                         <SelectValue placeholder="Pilih Status" />
                       </SelectTrigger>
                     </FormControl>
@@ -194,7 +201,7 @@ const DialogTableCreate = () => {
                   <FormLabel>KETERANGAN STATUS</FormLabel>
                   <FormControl>
                     <Textarea
-                      className="focus-visible:ring-teal"
+                      readOnly
                       placeholder="Tell us a little bit about yourself"
                       {...field}
                     />
@@ -207,24 +214,14 @@ const DialogTableCreate = () => {
         </div>
 
         <DialogFooter>
-          <DialogClose>
-            <Button
-              size={"modalTable"}
-              variant={"outline"}
-              type="submit"
-              className="uppercase"
-            >
-              Batal
-            </Button>
-          </DialogClose>
           <Button
+            onClick={() => setIsDialogEditOpen(true)}
             size={"modalTable"}
-            variant={"teal"}
+            variant={"default"}
             type="submit"
-            className="bg-teal uppercase"
-            disabled={addCustomerMutation.isPending}
+            className="bg-gray-900"
           >
-            Simpan
+            EDIT
           </Button>
         </DialogFooter>
       </form>
@@ -232,4 +229,4 @@ const DialogTableCreate = () => {
   );
 };
 
-export default DialogTableCreate;
+export default DialogTableDetail;
