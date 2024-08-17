@@ -57,6 +57,7 @@ const SidebarMenu = () => {
         <div className="space-y-3">
           {navLinks.map((navlink) => (
             <ListMenu
+              key={navlink.id}
               href={navlink.id}
               icons={navlink.icons}
               label={navlink.title}
