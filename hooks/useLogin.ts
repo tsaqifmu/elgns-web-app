@@ -1,11 +1,13 @@
-import { toast } from "@/components/ui/use-toast";
-import { ApiRequest, HttpMethod } from "@/config/ApiRequest";
-import { handleLoginError } from "@/lib/handleErrors/handleLoginError";
-import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { handleLoginError } from "@/lib/handleErrors/handleLoginError";
+
+import { toast } from "@/components/ui/use-toast";
 
 export const useLogin = (
   form: UseFormReturn<
@@ -20,7 +22,7 @@ export const useLogin = (
   const router = useRouter();
   return useMutation({
     mutationFn: async (data: any) => {
-      const response = await ApiRequest({
+      const response = await apiRequest({
         path: "/auth/signin",
         method: HttpMethod.POST,
         data,

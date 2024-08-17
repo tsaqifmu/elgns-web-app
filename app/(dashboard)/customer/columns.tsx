@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export type DataCustomer = {
-export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;

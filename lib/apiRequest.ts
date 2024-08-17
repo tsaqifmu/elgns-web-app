@@ -21,7 +21,7 @@ interface ApiRequestParams {
   responseType?: ResponseType;
 }
 
-export const ApiRequest = async ({
+export const apiRequest = async ({
   path = "",
   method,
   url = SERVICE_URL,

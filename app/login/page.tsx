@@ -6,14 +6,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { loginSchema } from "@/schemas/loginSchema";
-import axios, { isCancel, AxiosError } from "axios";
 
 import { Form } from "@/components/ui/form";
 import EmailField from "@/components/login/form-email-input";
 import PasswordField from "@/components/login/form-password-input";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { ApiRequest, HttpMethod } from "@/config/ApiRequest";
 
 import { useLogin } from "@/hooks/useLogin";
 import ButtonPending from "@/components/button-pending";
