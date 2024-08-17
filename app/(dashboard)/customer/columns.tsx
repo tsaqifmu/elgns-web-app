@@ -5,7 +5,8 @@ import { CircleCheck } from "lucide-react";
 import IconDelete from "@/public/icons/table/delete.svg";
 import IconEdit from "@/public/icons/table/edit.svg";
 import { Button } from "@/components/ui/button";
-// import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
+import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
+
 
 export type DataCustomer = {
   id: string;
@@ -67,7 +68,30 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customerName = row.getValue("name");
-      return <></>;
+      return (
+        <>
+          <CustomeDialogTable
+            variant="edit"
+            title="EDIT DATA CUSTOMER"
+            triger={
+              <Button className="group" variant={"ghost"} size={"icon"}>
+                <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
+              </Button>
+            }
+          />
+          <CustomeDialogTable
+            variant="hapus"
+            title="HAPUS DATA CUSTOMER"
+            content={customerName}
+            triger={
+              <Button className="group" variant={"ghost"} size={"icon"}>
+                <IconDelete className="text-gray-300 transition-all group-hover:text-red-500" />
+              </Button>
+            }
+          />
+        </>
+      );
+
     },
   },
 ];

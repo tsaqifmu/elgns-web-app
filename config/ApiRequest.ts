@@ -1,6 +1,7 @@
-import Cookies from "js-cookie";
 
+import Cookies from "js-cookie";
 import axios, { AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
+
 
 const SERVICE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -12,6 +13,7 @@ export enum HttpMethod {
   POST = "POST",
 }
 
+
 interface ApiRequestParams {
   path?: string;
   method: HttpMethod;
@@ -22,15 +24,18 @@ interface ApiRequestParams {
   responseType?: ResponseType;
 }
 
+
 export const ApiRequest = async ({
   path = "",
   method,
   url = SERVICE_URL,
   params = {},
   data = {},
+
 }: ApiRequestParams): Promise<AxiosResponse<any>> => {
   const fullPath = `${url}${path}`;
   const activeToken = Cookies.get("accessToken");
+
 
   if (!(method in HttpMethod)) {
     throw new Error(`Invalid HTTP method: ${method}`);
@@ -46,7 +51,10 @@ export const ApiRequest = async ({
     },
     params: params,
     data: data,
+
     withCredentials: true,
+
+
   };
   return axios(config);
 };
