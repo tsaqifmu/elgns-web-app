@@ -7,6 +7,7 @@ import IconEdit from "@/public/icons/table/edit.svg";
 import { Button } from "@/components/ui/button";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
+
 export type DataCustomer = {
   id: string;
   dateOfEntry: string;
@@ -90,6 +91,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
           />
         </>
       );
+
     },
   },
 ];

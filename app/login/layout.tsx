@@ -1,5 +1,6 @@
 import React from "react";
 import { Icons } from "@/public/icons";
+import Cookies from "js-cookie";
 
 const LoginLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
