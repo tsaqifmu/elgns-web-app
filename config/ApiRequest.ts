@@ -30,7 +30,7 @@ export const ApiRequest = async ({
   data = {},
 }: ApiRequestParams): Promise<AxiosResponse<any>> => {
   const fullPath = `${url}${path}`;
-  const activeToken = Cookies.get("token");
+  const activeToken = Cookies.get("accessToken");
 
   if (!(method in HttpMethod)) {
     throw new Error(`Invalid HTTP method: ${method}`);

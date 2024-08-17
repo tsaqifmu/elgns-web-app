@@ -1,5 +1,6 @@
 "use client";
 
+import Cookies from "js-cookie";
 import { z } from "zod";
 import { FC, useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -39,7 +40,11 @@ const Login: FC = () => {
       });
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      Cookies.set("accessToken", response.data.data.accessToken, {
+        expires: 7,
+        secure: false,
+      });
       router.push("/dashboard");
     },
     onError: (error) => {
