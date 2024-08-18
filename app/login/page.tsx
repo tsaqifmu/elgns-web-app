@@ -35,11 +35,14 @@ const Login: FC = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="bggren w-80 space-y-6"
+      >
         <EmailField form={form} />
         <PasswordField form={form} />
 
-        <ButtonPending isPending={isPending} title="LOGIN" />
+        <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
       </form>
     </Form>
   );

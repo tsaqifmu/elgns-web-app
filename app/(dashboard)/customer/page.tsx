@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { CirclePlus, MessageSquareWarning } from "lucide-react";
 
 import { DataTable } from "./data-table";
@@ -15,11 +15,16 @@ import ErrorLoadData from "@/components/dashboard/error-load-data";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
 const CustomerPage: FC = () => {
-  const { data: dataSource, isError, isLoading } = useFetchCustomerData();
+  const {
+    data: dataSource,
+    isError,
+    isLoading,
+    error,
+  } = useFetchCustomerData();
 
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
-    if (isError) return <ErrorLoadData />;
+    if (isError) return <ErrorLoadData error={error} />;
     if (dataSource)
       return (
         <>

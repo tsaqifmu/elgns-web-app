@@ -15,7 +15,7 @@ export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
-  phoneNumber: number;
+  phoneNumber: string;
   regency: string;
   status: "NEGO" | "DEAL";
   statusDescription: string;
@@ -46,7 +46,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
       const customerName: string = row.getValue("name");
       const status: string = row.getValue("status");
 
-      const firstCharName = customerName.split("")[0];
+      const firstCharName = customerName?.split("")[0];
       return (
         <div
           className={cn(
@@ -101,7 +101,6 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customer = row.original;
-      console.log("customer", customer);
       const [isDialogEditOpen, setIsDialogEditOpen] = useState<boolean>(false);
       return (
         <>

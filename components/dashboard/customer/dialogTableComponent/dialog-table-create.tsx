@@ -2,9 +2,17 @@ import React from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addCustomer } from "@/lib/customerService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { addCustomerSchema } from "@/schemas/customerSchema";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import ButtonPending from "@/components/button-pending";
+import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -20,40 +28,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  phoneNumber: z.string().min(2, {
-    message: "Phone must be at least 2 characters.",
-  }),
-  adress: z.string().min(2, {
-    message: "Adress must be at least 2 characters.",
-  }),
-  regency: z.string().min(2, {
-    message: "Regency must be at least 2 characters.",
-  }),
-  status: z.string().min(2, {
-    message: "Status must be at least 2 characters.",
-  }),
-  statusDescription: z.string().min(2, {
-    message: "StatusDescription must be at least 2 characters.",
-  }),
-});
 
 const DialogTableCreate = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof addCustomerSchema>>({
+    resolver: zodResolver(addCustomerSchema),
     defaultValues: {
       username: "",
-      phoneNumber: "",
-      adress: "",
+      phoneNumber: "62",
+      address: "",
       regency: "",
       status: "",
       statusDescription: "",
@@ -61,28 +43,38 @@ const DialogTableCreate = () => {
   });
   const queryClient = useQueryClient();
 
-  const addCustomerMutation = useMutation({
-    mutationFn: addCustomer,
-    onSuccess: (data: DataCustomer) => {
-      queryClient.setQueryData(["customers"], (oldData: DataCustomer[]) => [
-        { ...data },
-        ...oldData,
-      ]);
+  const { mutate: sendCustomerData, isPending } = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/customer/add",
+        method: HttpMethod.POST,
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menyimpan data",
+        description: response.data.message,
+      });
+      console.log(response);
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const myData: DataCustomer = {
-      id: Date.now().toString(),
-      address: values.adress,
-      dateOfEntry: "dfdf",
+  function onSubmit(values: z.infer<typeof addCustomerSchema>) {
+    const payload = {
       name: values.username,
-      phoneNumber: parseInt(values.phoneNumber),
+      noHp: values.phoneNumber,
       status: values.status as "NEGO" | "DEAL",
-      statusDescription: values.statusDescription,
+      alamat: values.address,
+      alamatKabupaten: values.regency,
     };
 
-    addCustomerMutation.mutate(myData);
+    sendCustomerData(payload);
   }
 
   return (
@@ -127,7 +119,7 @@ const DialogTableCreate = () => {
             />
             <FormField
               control={form.control}
-              name="adress"
+              name="address"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>ALAMAT LENGKAP</FormLabel>
@@ -195,7 +187,7 @@ const DialogTableCreate = () => {
                   <FormControl>
                     <Textarea
                       className="focus-visible:ring-teal"
-                      placeholder="Tell us a little bit about yourself"
+                      placeholder="Tulis deskripsi status disini"
                       {...field}
                     />
                   </FormControl>
@@ -217,15 +209,12 @@ const DialogTableCreate = () => {
               Batal
             </Button>
           </DialogClose>
-          <Button
-            size={"modalTable"}
+          <ButtonPending
+            isPending={isPending}
             variant={"teal"}
-            type="submit"
-            className="bg-teal uppercase"
-            disabled={addCustomerMutation.isPending}
-          >
-            Simpan
-          </Button>
+            size={"modalTable"}
+            title="Simpan"
+          />
         </DialogFooter>
       </form>
     </Form>

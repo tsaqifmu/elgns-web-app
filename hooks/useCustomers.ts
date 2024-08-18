@@ -52,22 +52,34 @@ const mapCustomerData = (data: CustomerData[]) =>
   data.map((data) => ({
     id: data._id,
     dateOfEntry: dateIdFormat(data.date),
-    name: data.name.toUpperCase(),
+    name: data?.name?.toUpperCase(),
     phoneNumber: data.noHp,
     address: data.alamat,
-    regency: data.alamatKabupaten.toUpperCase(),
-    status: data.status.toUpperCase(),
+    regency: data?.alamatKabupaten?.toUpperCase(),
+    status: data?.status?.toUpperCase(),
     statusDescription: data.info,
   }));
 
 export const useFetchCustomerData = () => {
   return useQuery<ApiResponse<CustomerData>>({
-    queryKey: ["customers"],
+    queryKey: ["coks"],
+
     queryFn: async () => {
       const response = await apiRequest({
-        path: "/customer/list?alphabet=ascending&year=2024&month=&week=&name=ahmadfh&status=&page=",
+        path: "/customer/list",
         method: HttpMethod.GET,
+        params: {
+          alphabet: "ascending",
+          year: "2024",
+          month: "",
+          week: "",
+          name: "",
+          status: "",
+          page: "",
+        },
       });
+
+      console.log(response);
       return response;
     },
     select: (response) => mapCustomerData(response.data.message.docs) as any,
