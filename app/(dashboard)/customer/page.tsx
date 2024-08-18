@@ -1,26 +1,34 @@
 "use client";
 
 import { FC } from "react";
-import { CirclePlus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { CirclePlus, MessageSquareWarning } from "lucide-react";
 
 import { DataTable } from "./data-table";
 import { columns, DataCustomer } from "./columns";
 import { DataTablePagination } from "./data-table-pagination";
 
-import { getCustomers } from "@/lib/customerService";
+import { useFetchCustomerData } from "@/hooks/useCustomers";
+
 import { Button } from "@/components/ui/button";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
 const CustomerPage: FC = () => {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["customers"],
-    queryFn: getCustomers,
-  });
+  const { data: dataSource, isError, isLoading } = useFetchCustomerData();
 
-  const dataSource = data as DataCustomer[];
-  if (isLoading) return <h1>Loading...</h1>;
-  if (isError) return <h1>Error</h1>;
+  const renderContent = () => {
+    if (isLoading) return <SkeletonTable />;
+    if (isError) return <ErrorLoadData />;
+    if (dataSource)
+      return (
+        <>
+          <DataTable columns={columns} data={dataSource as any} />
+          <DataTablePagination />
+        </>
+      );
+    return null;
+  };
 
   return (
     <>
@@ -41,10 +49,7 @@ const CustomerPage: FC = () => {
         />
       </header>
 
-      <main className="mt-9">
-        <DataTable columns={columns} data={dataSource} />
-        <DataTablePagination />
-      </main>
+      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };

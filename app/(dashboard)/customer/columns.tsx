@@ -16,9 +16,10 @@ export type DataCustomer = {
   dateOfEntry: string;
   name: string;
   phoneNumber: number;
-  address: string;
+  regency: string;
   status: "NEGO" | "DEAL";
   statusDescription: string;
+  address?: string;
 };
 
 // Konstanta untuk teks header
@@ -26,7 +27,7 @@ const HEADER_TITLES = {
   dateOfEntry: "TANGGAL MASUK",
   name: "NAMA CUSTOMER",
   phoneNumber: "NOMOR HP",
-  address: "ALAMAT",
+  regency: "ALAMAT",
   status: "STATUS",
 };
 
@@ -49,11 +50,11 @@ export const columns: ColumnDef<DataCustomer>[] = [
       return (
         <div
           className={cn(
-            "bg-teal h-6 w-6 rounded-full text-center text-white",
+            "flexCenter h-6 w-6 rounded-full bg-teal text-white",
             status === "NEGO" ? "bg-destructive" : "bg-teal",
           )}
         >
-          {firstCharName}
+          <p>{firstCharName}</p>
         </div>
       );
     },
@@ -71,8 +72,8 @@ export const columns: ColumnDef<DataCustomer>[] = [
     header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
   },
   {
-    accessorKey: "address",
-    header: () => <ColumnHeader title={HEADER_TITLES.address} />,
+    accessorKey: "regency",
+    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
   },
   {
     accessorKey: "status",
@@ -100,6 +101,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customer = row.original;
+      console.log("customer", customer);
       const [isDialogEditOpen, setIsDialogEditOpen] = useState<boolean>(false);
       return (
         <>

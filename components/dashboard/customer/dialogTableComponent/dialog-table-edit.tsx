@@ -34,7 +34,7 @@ const formSchema = z.object({
   phoneNumber: z.number().min(2, {
     message: "phone must be at least 2 characters.",
   }),
-  adress: z.string().min(2, {
+  address: z.string().min(2, {
     message: "Adress must be at least 2 characters.",
   }),
   regency: z.string().min(2, {
@@ -53,9 +53,9 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: customer?.name,
-      adress: customer?.address,
+      address: customer?.address,
       phoneNumber: customer?.phoneNumber,
-      regency: customer?.address,
+      regency: customer?.regency,
       status: customer?.status,
       statusDescription: customer?.statusDescription,
     },
@@ -77,7 +77,8 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
     const myData: DataCustomer = {
       id: customer!.id,
       name: values.username,
-      address: values.adress,
+      address: values.address,
+      regency: values.regency,
       dateOfEntry: "",
       phoneNumber: values.phoneNumber,
       status: values.status as "DEAL" | "NEGO",
@@ -128,7 +129,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
             />
             <FormField
               control={form.control}
-              name="adress"
+              name="address"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>ALAMAT LENGKAP</FormLabel>
