@@ -95,7 +95,7 @@ export const Invoice = () => {
             </h1>
           </div>
         </div>
-        <div className="max-h-52 overflow-x-hidden rounded-md border">
+        <div className="max-h-52 overflow-x-hidden rounded-md border border-gray-900">
           <Table>
             <TableHeader className="bg-gray-900">
               <TableRow>
@@ -120,7 +120,7 @@ export const Invoice = () => {
           </Table>
         </div>
         <div className="flex justify-end">
-          <div className="overflow-hidden rounded-md border">
+          <div className="overflow-hidden rounded-md border border-gray-900">
             <Table>
               <TableHeader className="bg-gray-900">
                 <TableRow>

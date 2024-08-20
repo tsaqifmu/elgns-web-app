@@ -33,14 +33,15 @@ export const Overview = () => {
   const form = useForm<z.infer<typeof produksiOverviewSchema>>({
     resolver: zodResolver(produksiOverviewSchema),
     defaultValues: {
-      username: "",
       jenis: "BASEBALL FULLPRINT, KAOS, LANYARD",
     },
   });
 
   function onSubmit(values: z.infer<typeof produksiOverviewSchema>) {
+    console.log("halo");
     console.log(values);
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -58,7 +59,6 @@ export const Overview = () => {
 
               <FormMessage />
             </FormItem>
-
             <FormItem>
               <FormLabel>NOMOR HP</FormLabel>
               <FormControl>
@@ -70,7 +70,6 @@ export const Overview = () => {
                 />
               </FormControl>
             </FormItem>
-
             <FormItem>
               <FormLabel>ALAMAT LENGKAP</FormLabel>
               <FormControl>
@@ -84,7 +83,6 @@ export const Overview = () => {
 
               <FormMessage />
             </FormItem>
-
             <FormItem>
               <FormLabel>CATATAN</FormLabel>
               <FormControl>
@@ -155,9 +153,6 @@ export const Overview = () => {
                         mode="single"
                         // selected={field.value}
                         onSelect={field.onChange}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
                         initialFocus
                       />
                     </PopoverContent>
@@ -315,27 +310,23 @@ export const Overview = () => {
         </div>
 
         <DialogFooter>
-          {!isEditing ? (
-            <Button
-              size={"modalTable"}
-              variant={"default"}
-              type="submit"
-              className="bg-gray-900 uppercase"
-              onClick={() => setIsEditing(!isEditing)}
-            >
-              Edit
-            </Button>
-          ) : (
+          {isEditing ? (
             <Button
               size={"modalTable"}
               variant={"default"}
               type="submit"
               className="bg-yellow-500 uppercase hover:bg-yellow-600"
-              onClick={() => {
-                setIsEditing(!isEditing);
-              }}
             >
               Simpan
+            </Button>
+          ) : (
+            <Button
+              size={"modalTable"}
+              variant={"default"}
+              className="bg-gray-900 uppercase"
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              Edit
             </Button>
           )}
         </DialogFooter>

@@ -45,7 +45,7 @@ const DialogTableEdit: FC<DialogTableEdit> = ({ triger }) => {
     <Dialog>
       <DialogTrigger asChild>{triger}</DialogTrigger>
       <DialogContent
-        className={cn("m-2 overflow-x-hidden font-oswald", getContentWidth())}
+        className={cn("overflow-x-hidden font-oswald", getContentWidth())}
       >
         <DialogHeader className="border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
           <DialogTitle className="flex h-full w-full gap-4">
