@@ -10,6 +10,9 @@ import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
+import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
+import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
 
 export type DataCustomer = {
   id: string;
@@ -100,36 +103,37 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customer = row.original;
-      const [isDialogEditOpen, setIsDialogEditOpen] = useState<boolean>(false);
+      const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false);
+      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+      const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
       return (
         <>
-          <CustomeDialogTable
-            variant="detail"
-            title="DETAIL INFORMASI CUSTOMER"
-            setIsDialogEditOpen={setIsDialogEditOpen}
+          <DialogTableDetail
             customer={customer}
+            isOpen={isDetailOpen}
+            setIsOpen={setIsDetailOpen}
+            setIsEditOpen={setIsEditOpen}
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
               </Button>
             }
           />
-          <CustomeDialogTable
-            variant="edit"
-            title="EDIT DATA CUSTOMER"
+          <DialogTableEdit
             customer={customer}
-            isOpen={isDialogEditOpen}
-            onClose={() => setIsDialogEditOpen((prev) => !prev)}
+            isOpen={isEditOpen}
+            setIsOpen={setIsEditOpen}
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
               </Button>
             }
           />
-          <CustomeDialogTable
-            variant="hapus"
-            title="HAPUS DATA CUSTOMER"
+          <DialogTableDelete
             customer={customer}
+            isOpen={isDeleteOpen}
+            setIsOpen={setIsDeleteOpen}
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />

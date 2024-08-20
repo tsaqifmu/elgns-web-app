@@ -1,16 +1,22 @@
 import { z } from "zod";
-import React from "react";
+import React, { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateCustomer } from "@/lib/customerService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -50,10 +56,16 @@ const formSchema = z.object({
 
 const DialogTableDetail = ({
   customer,
-  setIsDialogEditOpen,
+  isOpen,
+  setIsOpen,
+  setIsEditOpen,
+  triger,
 }: {
   customer?: DataCustomer;
-  setIsDialogEditOpen: any;
+  isOpen: boolean;
+  setIsOpen: any;
+  setIsEditOpen: any;
+  triger: ReactNode;
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,165 +79,153 @@ const DialogTableDetail = ({
     },
   });
 
-  const queryClient = useQueryClient();
-  const editCustomerMutation = useMutation({
-    mutationFn: updateCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["customers"],
-        exact: true,
-        refetchType: "active",
-      });
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const myData: DataCustomer = {
-      id: customer!.id,
-      name: values.username,
-      address: values.adress,
-      dateOfEntry: "",
-      phoneNumber: values.phoneNumber,
-      status: values.status as "DEAL" | "NEGO",
-      statusDescription: values.statusDescription,
-    };
-    editCustomerMutation.mutate(myData);
-  }
+  const handleEdit = (e: any) => {
+    e.preventDefault();
+    setIsOpen(false);
+    setIsEditOpen(true);
+  };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex w-full gap-5 p-5">
-          <div className="flex basis-1/2 flex-col gap-5">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>NAMA CUSTOMER</FormLabel>
-                  <FormControl>
-                    <Input
-                      readOnly
-                      placeholder="Masukkan nama customer"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>NOMOR HP</FormLabel>
-                  <FormControl>
-                    <Input
-                      readOnly
-                      placeholder="62851XXXX"
-                      type="tel"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="adress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ALAMAT LENGKAP</FormLabel>
-                  <FormControl>
-                    <Input
-                      readOnly
-                      placeholder="Masukkan alamat lengkap"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="regency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ASAL KABUPATEN</FormLabel>
-                  <FormControl>
-                    <Input
-                      readOnly
-                      placeholder="Masukkan Alamat (Kabupaten)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex basis-1/2 flex-col gap-5">
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>STATUS</FormLabel>
-                  <Select
-                    disabled
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Pilih Status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="DEAL">DEAL</SelectItem>
-                      <SelectItem value="NEGO">NEGO</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="statusDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>KETERANGAN STATUS</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      readOnly
-                      placeholder="Tell us a little bit about yourself"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{triger}</DialogTrigger>
+      <DialogContent className="max-w-[737px]">
+        <DialogHeader className="bg-gray-900">
+          <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form>
+            <div className="flex w-full gap-5 px-5 pb-5">
+              <div className="flex basis-1/2 flex-col gap-5">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NAMA CUSTOMER</FormLabel>
+                      <FormControl>
+                        <Input
+                          readOnly
+                          placeholder="Masukkan nama customer"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NOMOR HP</FormLabel>
+                      <FormControl>
+                        <Input
+                          readOnly
+                          placeholder="62851XXXX"
+                          type="tel"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="adress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ALAMAT LENGKAP</FormLabel>
+                      <FormControl>
+                        <Input
+                          readOnly
+                          placeholder="Masukkan alamat lengkap"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="regency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ASAL KABUPATEN</FormLabel>
+                      <FormControl>
+                        <Input
+                          readOnly
+                          placeholder="Masukkan Alamat (Kabupaten)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex basis-1/2 flex-col gap-5">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>STATUS</FormLabel>
+                      <Select
+                        disabled
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Pilih Status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="DEAL">DEAL</SelectItem>
+                          <SelectItem value="NEGO">NEGO</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="statusDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>KETERANGAN STATUS</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          readOnly
+                          placeholder="Tell us a little bit about yourself"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-        <DialogFooter>
-          <Button
-            onClick={() => setIsDialogEditOpen(true)}
-            size={"modalTable"}
-            variant={"default"}
-            type="submit"
-            className="bg-gray-900"
-          >
-            EDIT
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+            <DialogFooter>
+              <Button
+                size={"modalTable"}
+                variant={"default"}
+                className="bg-gray-900"
+                onClick={handleEdit}
+              >
+                EDIT
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

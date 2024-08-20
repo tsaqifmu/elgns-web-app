@@ -1,5 +1,5 @@
 import { z } from "zod";
-import React from "react";
+import React, { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,15 @@ import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -26,31 +34,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { customerSchema } from "@/schemas/customerSchema";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  phoneNumber: z.number().min(2, {
-    message: "phone must be at least 2 characters.",
-  }),
-  adress: z.string().min(2, {
-    message: "Adress must be at least 2 characters.",
-  }),
-  regency: z.string().min(2, {
-    message: "Regency must be at least 2 characters.",
-  }),
-  status: z.string().min(2, {
-    message: "Status must be at least 2 characters.",
-  }),
-  statusDescription: z.string().min(2, {
-    message: "StatusDescription must be at least 2 characters.",
-  }),
-});
-
-const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+const DialogTableEdit = ({
+  customer,
+  isOpen,
+  setIsOpen,
+  triger,
+}: {
+  customer?: DataCustomer;
+  isOpen: boolean;
+  setIsOpen: any;
+  triger: ReactNode;
+}) => {
+  const form = useForm<z.infer<typeof customerSchema>>({
+    resolver: zodResolver(customerSchema),
     defaultValues: {
       username: customer?.name,
       adress: customer?.address,
@@ -73,7 +72,7 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof customerSchema>) {
     const myData: DataCustomer = {
       id: customer!.id,
       name: values.username,
@@ -84,151 +83,160 @@ const DialogTableEdit = ({ customer }: { customer?: DataCustomer }) => {
       statusDescription: values.statusDescription,
     };
     editCustomerMutation.mutate(myData);
+    setIsOpen(false);
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex w-full gap-5 p-5">
-          <div className="flex basis-1/2 flex-col gap-5">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>NAMA CUSTOMER</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="focus-visible:ring-yellow-500"
-                      placeholder="Masukkan nama customer"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="phoneNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>NOMOR HP</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="focus-visible:ring-yellow-500"
-                      placeholder="62851XXXX"
-                      type="tel"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="adress"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ALAMAT LENGKAP</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="focus-visible:ring-yellow-500"
-                      placeholder="Masukkan alamat lengkap"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="regency"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ASAL KABUPATEN</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="focus-visible:ring-yellow-500"
-                      placeholder="Masukkan Alamat (Kabupaten)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex basis-1/2 flex-col gap-5">
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>STATUS</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="focus:ring-yellow-500">
-                        <SelectValue placeholder="Pilih Status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="DEAL">DEAL</SelectItem>
-                      <SelectItem value="NEGO">NEGO</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="statusDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>KETERANGAN STATUS</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="focus-visible:ring-yellow-500"
-                      placeholder="Tell us a little bit about yourself"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{triger}</DialogTrigger>
+      <DialogContent className="max-w-[737px]">
+        <DialogHeader className={cn("bg-yellow-500")}>
+          <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex w-full gap-5 px-5 pb-5">
+              <div className="flex basis-1/2 flex-col gap-5">
+                <FormField
+                  control={form.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NAMA CUSTOMER</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-yellow-500"
+                          placeholder="Masukkan nama customer"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NOMOR HP</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-yellow-500"
+                          placeholder="62851XXXX"
+                          type="tel"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="adress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ALAMAT LENGKAP</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-yellow-500"
+                          placeholder="Masukkan alamat lengkap"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="regency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>ASAL KABUPATEN</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-yellow-500"
+                          placeholder="Masukkan Alamat (Kabupaten)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="flex basis-1/2 flex-col gap-5">
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>STATUS</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="focus:ring-yellow-500">
+                            <SelectValue placeholder="Pilih Status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="DEAL">DEAL</SelectItem>
+                          <SelectItem value="NEGO">NEGO</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="statusDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>KETERANGAN STATUS</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          className="focus-visible:ring-yellow-500"
+                          placeholder="Tell us a little bit about yourself"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-        <DialogFooter>
-          <DialogClose>
-            <Button
-              size={"modalTable"}
-              variant={"outline"}
-              type="submit"
-              className="uppercase"
-            >
-              Batal
-            </Button>
-          </DialogClose>
-          <Button
-            size={"modalTable"}
-            variant={"default"}
-            type="submit"
-            className="bg-yellow-500 uppercase"
-            disabled={editCustomerMutation.isPending}
-          >
-            Simpan
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+            <DialogFooter>
+              <DialogClose>
+                <Button
+                  size={"modalTable"}
+                  variant={"outline"}
+                  type="submit"
+                  className="uppercase"
+                >
+                  Batal
+                </Button>
+              </DialogClose>
+              <Button
+                size={"modalTable"}
+                variant={"default"}
+                type="submit"
+                className="bg-yellow-500 uppercase"
+                disabled={editCustomerMutation.isPending}
+              >
+                Simpan
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
