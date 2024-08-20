@@ -18,10 +18,11 @@ export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
-  phoneNumber: number;
-  address: string;
+  phoneNumber: string;
+  regency: string;
   status: "NEGO" | "DEAL";
   statusDescription: string;
+  address?: string;
 };
 
 // Konstanta untuk teks header
@@ -29,7 +30,7 @@ const HEADER_TITLES = {
   dateOfEntry: "TANGGAL MASUK",
   name: "NAMA CUSTOMER",
   phoneNumber: "NOMOR HP",
-  address: "ALAMAT",
+  regency: "ALAMAT",
   status: "STATUS",
 };
 
@@ -48,7 +49,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
       const customerName: string = row.getValue("name");
       const status: string = row.getValue("status");
 
-      const firstCharName = customerName.split("")[0];
+      const firstCharName = customerName?.split("")[0];
       return (
         <div
           className={cn(
@@ -56,7 +57,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
             status === "NEGO" ? "bg-destructive" : "bg-teal",
           )}
         >
-          {firstCharName}
+          <p>{firstCharName}</p>
         </div>
       );
     },
@@ -74,8 +75,8 @@ export const columns: ColumnDef<DataCustomer>[] = [
     header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
   },
   {
-    accessorKey: "address",
-    header: () => <ColumnHeader title={HEADER_TITLES.address} />,
+    accessorKey: "regency",
+    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
   },
   {
     accessorKey: "status",

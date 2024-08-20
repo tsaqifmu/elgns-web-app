@@ -2,9 +2,17 @@ import React, { ReactNode } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addCustomer } from "@/lib/customerService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { addCustomerSchema } from "@/schemas/customerSchema";
 
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { Textarea } from "@/components/ui/textarea";
+import ButtonPending from "@/components/button-pending";
+import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -58,13 +66,25 @@ const DialogTableCreate = ({
   });
   const queryClient = useQueryClient();
 
-  const addCustomerMutation = useMutation({
-    mutationFn: addCustomer,
-    onSuccess: (data: DataCustomer) => {
-      queryClient.setQueryData(["customers"], (oldData: DataCustomer[]) => [
-        { ...data },
-        ...oldData,
-      ]);
+  const { mutate: sendCustomerData, isPending } = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/customer/add",
+        method: HttpMethod.POST,
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menyimpan data",
+        description: response.data.message,
+      });
+      console.log(response);
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 
@@ -74,12 +94,13 @@ const DialogTableCreate = ({
       address: values.adress,
       dateOfEntry: "dfdf",
       name: values.username,
-      phoneNumber: parseInt(values.phoneNumber),
+      noHp: values.phoneNumber,
       status: values.status as "NEGO" | "DEAL",
-      statusDescription: values.statusDescription,
+      alamat: values.address,
+      alamatKabupaten: values.regency,
     };
 
-    addCustomerMutation.mutate(myData);
+    sendCustomerData(payload);
   }
 
   return (

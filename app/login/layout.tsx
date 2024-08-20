@@ -1,4 +1,3 @@
-import React from "react";
 import { Icons } from "@/public/icons";
 
 const LoginLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {

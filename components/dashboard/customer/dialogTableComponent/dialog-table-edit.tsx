@@ -52,9 +52,9 @@ const DialogTableEdit = ({
     resolver: zodResolver(customerSchema),
     defaultValues: {
       username: customer?.name,
-      adress: customer?.address,
+      address: customer?.address,
       phoneNumber: customer?.phoneNumber,
-      regency: customer?.address,
+      regency: customer?.regency,
       status: customer?.status,
       statusDescription: customer?.statusDescription,
     },
@@ -76,7 +76,8 @@ const DialogTableEdit = ({
     const myData: DataCustomer = {
       id: customer!.id,
       name: values.username,
-      address: values.adress,
+      address: values.address,
+      regency: values.regency,
       dateOfEntry: "",
       phoneNumber: values.phoneNumber,
       status: values.status as "DEAL" | "NEGO",

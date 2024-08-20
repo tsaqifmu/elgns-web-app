@@ -8,8 +8,11 @@ import { DataTable } from "./data-table";
 import { columns, DataCustomer } from "./columns";
 import { DataTablePagination } from "./data-table-pagination";
 
-import { getCustomers } from "@/lib/customerService";
+import { useFetchCustomerData } from "@/hooks/useCustomers";
+
 import { Button } from "@/components/ui/button";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 
@@ -42,10 +45,7 @@ const CustomerPage: FC = () => {
         />
       </header>
 
-      <main className="mt-9">
-        <DataTable columns={columns} data={dataSource} />
-        <DataTablePagination />
-      </main>
+      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };
