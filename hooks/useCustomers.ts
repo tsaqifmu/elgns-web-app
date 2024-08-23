@@ -60,7 +60,7 @@ const mapCustomerData = (data: CustomerData[]) =>
 
 export const useFetchCustomerData = () => {
   return useQuery<ApiResponse<CustomerData>>({
-    queryKey: ["coks"],
+    queryKey: ["customers"],
 
     queryFn: async () => {
       const response = await apiRequest({
@@ -77,7 +77,6 @@ export const useFetchCustomerData = () => {
         },
       });
 
-      console.log(response);
       return response;
     },
     select: (response) => mapCustomerData(response.data.message.docs) as any,

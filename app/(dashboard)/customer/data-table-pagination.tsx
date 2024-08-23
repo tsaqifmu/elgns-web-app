@@ -14,26 +14,39 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
 }
 
 export function DataTablePagination<TData>() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const params = new URLSearchParams(searchParams);
+  params.set("page", "3");
+  params.set("pageSize", "10");
+  router.push(`${pathname}?${params.toString()}`);
+
+  console.log("ini params", params.getAll("page"));
+
+  // const handleChangePage = (newPage: number) => {
+  //   router.push();
+  // };
+
   return (
     <div className="flex items-center justify-between px-2">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {/* {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected. */}
-      </div>
+      <div className="flex-1 text-sm text-muted-foreground"></div>
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-          // value={`${table.getState().pagination.pageSize}`}
-          // onValueChange={(value) => {
-          //   table.setPageSize(Number(value));
-          // }}
+            value={"10"}
+            onValueChange={(value) => {
+              console.log(value);
+            }}
           >
             <SelectTrigger className="h-8 w-[70px]">
               <SelectValue />
