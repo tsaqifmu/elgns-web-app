@@ -62,7 +62,7 @@ const mapCustomerData = (data: CustomerData[]) =>
 
 export const useFetchCustomerData = () => {
   return useQuery<ApiResponse<CustomerData>>({
-    queryKey: ["coks"],
+    queryKey: ["customers"],
 
     queryFn: async () => {
       const response = await apiRequest({
@@ -79,7 +79,6 @@ export const useFetchCustomerData = () => {
         },
       });
 
-      console.log(response);
       return response;
     },
     select: (response) => mapCustomerData(response.data.message.docs) as any,
@@ -87,23 +86,3 @@ export const useFetchCustomerData = () => {
 };
 
 //! BATAS SUCI BROKK
-
-export const useCustomers = () => {
-  return useQuery({
-    queryKey: ["customers"],
-    queryFn: customerService.getCustomers,
-  });
-};
-
-export const useAddCustomer = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (customer: DataCustomer) => {
-      return customerService.addCustomer(customer);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-    },
-  });
-};
