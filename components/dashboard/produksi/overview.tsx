@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import Image from "next/image";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import {
   Form,
   FormControl,
@@ -22,24 +21,41 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import imgBaju from "@/public/images/dialog-image.png";
 import IconCdr from "@/public/icons/table/cdr.svg";
-import { produksiOverviewSchema } from "@/schemas/produksiOverviewSchema";
+import { productionOverviewSchema } from "@/schemas/produksiOverviewSchema";
 import { Input } from "@/components/ui/input";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Production } from "@/hooks/useFetchProductions";
+import { add7DaysToDate, formatToIndonesianDate } from "@/lib/dateUtils";
 
-export const Overview = () => {
+interface OverviewProps {
+  production: Production;
+  setIsOpen: any;
+}
+
+export const Overview: FC<OverviewProps> = ({ production, setIsOpen }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const form = useForm<z.infer<typeof produksiOverviewSchema>>({
-    resolver: zodResolver(produksiOverviewSchema),
+  const [isDatePopOverOpen, setIsDatePopOverOpen] = useState(false);
+  const form = useForm<z.infer<typeof productionOverviewSchema>>({
+    resolver: zodResolver(productionOverviewSchema),
     defaultValues: {
-      jenis: "BASEBALL FULLPRINT, KAOS, LANYARD",
+      name: production.name,
+      invoice: production.invoice,
+      phoneNumber: production.phoneNumber,
+      address: production.address,
+      dateOfEntry: new Date(production.dateOfEntry),
+      dateOfExit: new Date(production.dateOfExit),
+      notes: production.notes,
+      imageFile: undefined,
+      type: "birds, of, a , feather",
     },
   });
+  const dateOfEntryWatch = form.watch("dateOfEntry");
 
-  function onSubmit(values: z.infer<typeof produksiOverviewSchema>) {
-    console.log("halo");
-    console.log(values);
+  function onSubmit(values: z.infer<typeof productionOverviewSchema>) {
+    console.log("submitted val: ", values);
+    setIsOpen(false);
   }
 
   return (
@@ -47,57 +63,83 @@ export const Overview = () => {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex gap-8 px-5 pb-5">
           <div className="flex basis-1/2 flex-col gap-4">
-            <FormItem>
-              <FormLabel>NAMA CUSTOMER</FormLabel>
-              <FormControl>
-                <Input
-                  disabled={true}
-                  className="border border-gray-300"
-                  placeholder="Masukkan nama customer"
-                />
-              </FormControl>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>NAMA CUSTOMER</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={true}
+                      className="border border-gray-300 uppercase"
+                      placeholder="Masukkan nama customer"
+                      value={field.value}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-            <FormItem>
-              <FormLabel>NOMOR HP</FormLabel>
-              <FormControl>
-                <Input
-                  disabled={true}
-                  className="border border-gray-300"
-                  placeholder="62851XXXX"
-                  type="tel"
-                />
-              </FormControl>
-            </FormItem>
-            <FormItem>
-              <FormLabel>ALAMAT LENGKAP</FormLabel>
-              <FormControl>
-                <Textarea
-                  disabled={true}
-                  className="border border-gray-300"
-                  placeholder="Jl. Raya"
-                  rows={4}
-                />
-              </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phoneNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>NOMOR HP</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={true}
+                      className="border border-gray-300"
+                      placeholder="62851XXXX"
+                      type="tel"
+                      value={field.value}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ALAMAT LENGKAP</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      disabled={true}
+                      className="border border-gray-300"
+                      placeholder="Masukkan alamat anda"
+                      value={field.value}
+                      rows={4}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-            <FormItem>
-              <FormLabel>CATATAN</FormLabel>
-              <FormControl>
-                <Textarea
-                  disabled={true}
-                  className="border border-gray-300"
-                  placeholder="Masukkan catatan"
-                  rows={4}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CATATAN</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      disabled={true}
+                      className="border border-gray-300"
+                      placeholder="Masukkan catatan"
+                      value={field.value}
+                      rows={4}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-
           <div className="flex basis-1/2 flex-col gap-4">
             <FormField
               control={form.control}
@@ -108,8 +150,8 @@ export const Overview = () => {
                   <FormControl>
                     <Input
                       disabled={!isEditing}
-                      className="border border-gray-300"
-                      placeholder="Masukkan nama customer"
+                      className="border border-gray-300 uppercase"
+                      placeholder="Masukkan invoice"
                       {...field}
                     />
                   </FormControl>
@@ -124,23 +166,22 @@ export const Overview = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="mb-[2px] mt-2">TANGGAL MASUK</FormLabel>
-                  <Popover>
+                  <Popover
+                    open={isDatePopOverOpen}
+                    onOpenChange={setIsDatePopOverOpen}
+                  >
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant={"outline"}
                           disabled={!isEditing}
-                          // className={cn(
-                          //   "border border-gray-300 pl-3",
-                          //   !field.value && "text-muted-foreground",
-                          // )}
                           className={cn(
-                            "border border-gray-300 font-normal text-gray-900",
+                            "border border-gray-300 font-normal uppercase text-gray-900",
                             !field.value && "text-gray-400",
                           )}
                         >
                           {field.value ? (
-                            format(field.value, "PPP")
+                            formatToIndonesianDate(field.value.toISOString())
                           ) : (
                             <span>Pilih Tanggal</span>
                           )}
@@ -151,8 +192,11 @@ export const Overview = () => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        // selected={field.value}
-                        onSelect={field.onChange}
+                        selected={field.value}
+                        onSelect={(e) => {
+                          field.onChange(e);
+                          setIsDatePopOverOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -175,21 +219,12 @@ export const Overview = () => {
                       <FormControl>
                         <Button
                           variant={"outline"}
-                          disabled={!isEditing}
-                          // className={cn(
-                          //   "border border-gray-300 pl-3",
-                          //   !field.value && "text-muted-foreground",
-                          // )}
+                          disabled
                           className={cn(
-                            "border border-gray-300 font-normal text-gray-900",
-                            !field.value && "text-gray-400",
+                            "border border-gray-300 font-normal uppercase text-gray-900",
                           )}
                         >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pilih Tanggal</span>
-                          )}
+                          {add7DaysToDate(dateOfEntryWatch.toISOString())}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
@@ -215,30 +250,31 @@ export const Overview = () => {
               <div>
                 <label className="text-sm font-medium">JENIS</label>
                 <div className="mt-1 flex flex-wrap gap-2 rounded-md border border-gray-300 bg-gray-100 p-2">
-                  <span className="rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white">
-                    BASEBALL FULLPRINT
-                  </span>
-                  <span className="rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white">
-                    KAOS
-                  </span>
-                  <span className="rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white">
-                    LANYARD
-                  </span>
+                  {form
+                    .getValues("type")
+                    .split(",")
+                    .map((item, index) => (
+                      <span
+                        key={index}
+                        className="min-h-6 rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white"
+                      >
+                        {item}
+                      </span>
+                    ))}
                 </div>
               </div>
             )}
-
             {isEditing === true && (
               <FormField
                 control={form.control}
-                name="jenis"
+                name="type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>JENIS</FormLabel>
                     <FormControl>
                       <Input
                         disabled={!isEditing}
-                        className="border border-gray-300"
+                        className="border border-gray-300 uppercase"
                         placeholder="Masukkan jenis"
                         {...field}
                       />
@@ -250,6 +286,7 @@ export const Overview = () => {
               />
             )}
 
+            {/* INPUT FILES */}
             <div className="mt-[2px] flex h-24 gap-1">
               <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm border border-gray-900">
                 <Image
@@ -263,22 +300,49 @@ export const Overview = () => {
                     isEditing && "group-hover:flex",
                   )}
                 >
-                  <a
-                    href="#"
-                    onClick={() => alert("download image")}
-                    className="px-2 py-1 text-[.5rem] font-semibold uppercase text-white"
-                  >
-                    DOWNLOAD
-                  </a>
-                  <a
-                    href="#"
-                    onClick={() => alert("upload ulang image")}
-                    className="px-2 py-1 text-[.5rem] font-semibold uppercase text-white"
-                  >
-                    UPLOAD ULANG
-                  </a>
+                  <div className="flex flex-1 items-end px-2 py-1">
+                    <a
+                      href="#"
+                      onClick={() => alert("download image")}
+                      className="text-[.5rem] font-semibold text-white"
+                    >
+                      DOWNLOAD
+                    </a>
+                  </div>
+                  <div className="flex flex-1 items-end justify-end px-2 py-1">
+                    <FormField
+                      control={form.control}
+                      name="imageFile"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <div className="relative flex">
+                              <Input
+                                type="file"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    field.onChange(file);
+                                  }
+                                }}
+                                className="absolute inset-0 cursor-pointer opacity-0"
+                              />
+                              <button
+                                type="button"
+                                className="p-0 text-[.5rem] font-semibold uppercase text-white hover:bg-transparent hover:text-white"
+                              >
+                                UPLOAD ULANG
+                              </button>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
+              {/* INPUT CDR FILE */}
               <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
                   <IconCdr />
@@ -321,10 +385,14 @@ export const Overview = () => {
             </Button>
           ) : (
             <Button
+              type="button"
               size={"modalTable"}
               variant={"default"}
               className="bg-gray-900 uppercase"
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsEditing(true);
+              }}
             >
               Edit
             </Button>

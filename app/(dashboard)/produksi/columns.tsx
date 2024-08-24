@@ -7,17 +7,11 @@ import IconImage from "@/public/icons/table/image.svg";
 import IconCdr from "@/public/icons/table/cdr.svg";
 import IconDownload from "@/public/icons/table/download.svg";
 import { Button } from "@/components/ui/button";
-import CustomeDialogTable from "@/components/dashboard/produksi/dialog-table";
-import DialogTableEditTes from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-edit";
-
-export type DataProduksi = {
-  id: string;
-  invoice: string;
-  dateOfEntry: string;
-  dateOfExit: string;
-  name: string;
-  address: string;
-};
+import DialogTableEdit from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-edit";
+import { Production } from "@/hooks/useFetchProductions";
+import DialogTableDelete from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-delete";
+import { useState } from "react";
+import { formatToIndonesianDate } from "@/lib/dateUtils";
 
 // Konstanta untuk teks header
 const HEADER_TITLES = {
@@ -25,7 +19,7 @@ const HEADER_TITLES = {
   dateOfEntry: "TANGGAL MASUK",
   dateOfExit: "TANGGAL KELUAR",
   name: "NAMA CUSTOMER",
-  address: "ALAMAT",
+  regency: "ALAMAT",
   quickActions: "AKSI CEPAT",
 };
 
@@ -37,7 +31,7 @@ const ColumnHeader = ({ title }: { title: string }) => {
   );
 };
 
-export const columns: ColumnDef<DataProduksi>[] = [
+export const columns: ColumnDef<Production>[] = [
   {
     accessorKey: "invoice",
     header: () => <ColumnHeader title={HEADER_TITLES.invoice} />,
@@ -45,18 +39,26 @@ export const columns: ColumnDef<DataProduksi>[] = [
   {
     accessorKey: "dateOfEntry",
     header: () => <ColumnHeader title={HEADER_TITLES.dateOfEntry} />,
+    cell: ({ row }) => {
+      const formattedDate = formatToIndonesianDate(row.getValue("dateOfEntry"));
+      return formattedDate;
+    },
   },
   {
     accessorKey: "dateOfExit",
     header: () => <ColumnHeader title={HEADER_TITLES.dateOfExit} />,
+    cell: ({ row }) => {
+      const formattedDate = formatToIndonesianDate(row.getValue("dateOfExit"));
+      return formattedDate;
+    },
   },
   {
     accessorKey: "name",
     header: () => <ColumnHeader title={HEADER_TITLES.name} />,
   },
   {
-    accessorKey: "address",
-    header: () => <ColumnHeader title={HEADER_TITLES.address} />,
+    accessorKey: "regency",
+    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
   },
   {
     accessorKey: "quickActions",
@@ -81,19 +83,28 @@ export const columns: ColumnDef<DataProduksi>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const production = row.original;
+      const [isDialogEditOpen, setIsDialogEditOpen] = useState<boolean>(false);
+      const [IsDialogDeleteOpen, setIsDialogDeleteOpen] =
+        useState<boolean>(false);
+
       return (
         <>
-          <DialogTableEditTes
-            triger={
+          <DialogTableEdit
+            production={production}
+            isOpen={isDialogEditOpen}
+            setIsOpen={setIsDialogEditOpen}
+            trigger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
               </Button>
             }
           />
-          <CustomeDialogTable
-            variant="hapus"
-            title="HAPUS DATA PRODUKSI"
-            triger={
+          <DialogTableDelete
+            isOpen={IsDialogDeleteOpen}
+            setIsOpen={setIsDialogDeleteOpen}
+            production={production}
+            trigger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconDelete className="text-gray-300 transition-all group-hover:text-red-500" />
               </Button>

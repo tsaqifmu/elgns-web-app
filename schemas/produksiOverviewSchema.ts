@@ -1,12 +1,18 @@
 import { z } from "zod";
 
-export const produksiOverviewSchema = z.object({
-  invoice: z.string().min(2, {
-    message: "Status must be at least 2 characters.",
+export const productionOverviewSchema = z.object({
+  name: z.string(),
+  phoneNumber: z.string(),
+  address: z.string(),
+  notes: z.string(),
+  invoice: z.string().min(1, {
+    message: "Invoice harus diisi",
   }),
   dateOfEntry: z.date(),
   dateOfExit: z.date(),
-  jenis: z.string().min(2, {
-    message: "Jenis must be at least 2 characters.",
+  imageFile: z.instanceof(File).optional(),
+  cdrFile: z.instanceof(File).optional(),
+  type: z.string().min(1, {
+    message: "Jenis harus diisi.",
   }),
 });

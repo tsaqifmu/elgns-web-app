@@ -12,19 +12,28 @@ import { cn } from "@/lib/utils";
 import { Overview } from "../overview";
 import { Detail } from "../detail";
 import { Invoice } from "../invoice";
+import { Production } from "@/hooks/useFetchProductions";
 
-interface DialogTableEdit {
-  triger?: any;
+interface DialogTableEditProps {
+  production: Production;
+  trigger: any;
+  isOpen: boolean;
+  setIsOpen: any;
 }
 
-const DialogTableEdit: FC<DialogTableEdit> = ({ triger }) => {
+const DialogTableEdit: FC<DialogTableEditProps> = ({
+  production,
+  trigger,
+  isOpen,
+  setIsOpen,
+}) => {
   const menus = ["OVERVIEW", "DETAIL", "INVOICE"];
   const [activeMenu, setActiveMenu] = useState("OVERVIEW");
 
   const getContentComponent = () => {
     switch (activeMenu) {
       case "OVERVIEW":
-        return <Overview />;
+        return <Overview production={production} setIsOpen={setIsOpen} />;
       case "DETAIL":
         return <Detail />;
       default:
@@ -42,8 +51,8 @@ const DialogTableEdit: FC<DialogTableEdit> = ({ triger }) => {
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{triger}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent
         className={cn("overflow-x-hidden font-oswald", getContentWidth())}
       >
