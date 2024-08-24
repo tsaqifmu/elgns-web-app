@@ -1,6 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import * as customerService from "../lib/customerService";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 
 interface ApiResponse<ItemType> {
@@ -83,27 +81,5 @@ export const useFetchCustomerData = () => {
       return response;
     },
     select: (response) => mapCustomerData(response.data.message.docs) as any,
-  });
-};
-
-//! BATAS SUCI BROKK
-
-export const useCustomers = () => {
-  return useQuery({
-    queryKey: ["customers"],
-    queryFn: customerService.getCustomers,
-  });
-};
-
-export const useAddCustomer = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (customer: DataCustomer) => {
-      return customerService.addCustomer(customer);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-    },
   });
 };

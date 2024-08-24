@@ -1,11 +1,10 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { CirclePlus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
 import { DataTable } from "./data-table";
-import { columns, DataCustomer } from "./columns";
+import { columns } from "./columns";
 import { DataTablePagination } from "./data-table-pagination";
 
 import { useFetchCustomerData } from "@/hooks/useCustomers";
@@ -13,19 +12,30 @@ import { useFetchCustomerData } from "@/hooks/useCustomers";
 import { Button } from "@/components/ui/button";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
-import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 
 const CustomerPage: FC = () => {
+  const {
+    data: dataSource,
+    isError,
+    isLoading,
+    error,
+  } = useFetchCustomerData();
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["customers"],
-    queryFn: getCustomers,
-  });
 
-  const dataSource = data as DataCustomer[];
-  if (isLoading) return <h1>Loading...</h1>;
-  if (isError) return <h1>Error</h1>;
+  const renderContent = () => {
+    if (isLoading) return <SkeletonTable />;
+    if (isError) return <ErrorLoadData error={error} />;
+    if (dataSource)
+      return (
+        <>
+          <DataTable columns={columns} data={dataSource as any} />
+          <DataTablePagination />
+        </>
+      );
+    return null;
+  };
+
   return (
     <>
       <header className="flex items-center justify-between">

@@ -6,7 +6,6 @@ import { CircleCheck, CircleX, Info } from "lucide-react";
 import IconDelete from "@/public/icons/table/delete.svg";
 import IconEdit from "@/public/icons/table/edit.svg";
 import { Button } from "@/components/ui/button";
-import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -53,7 +52,7 @@ export const columns: ColumnDef<DataCustomer>[] = [
       return (
         <div
           className={cn(
-            "h-6 w-6 rounded-full bg-teal text-center text-white",
+            "flexCenter h-6 w-6 rounded-full bg-teal text-center text-white",
             status === "NEGO" ? "bg-destructive" : "bg-teal",
           )}
         >

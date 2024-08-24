@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateCustomer } from "@/lib/customerService";
+// import { updateCustomer } from "@/lib/customerService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 

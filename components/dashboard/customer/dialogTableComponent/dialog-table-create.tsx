@@ -2,17 +2,7 @@ import React, { ReactNode } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { apiRequest, HttpMethod } from "@/lib/apiRequest";
-import { addCustomerSchema } from "@/schemas/customerSchema";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Textarea } from "@/components/ui/textarea";
 import ButtonPending from "@/components/button-pending";
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -43,6 +33,9 @@ import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { customerSchema } from "@/schemas/customerSchema";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { toast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 const DialogTableCreate = ({
   isOpen,
@@ -57,8 +50,8 @@ const DialogTableCreate = ({
     resolver: zodResolver(customerSchema),
     defaultValues: {
       username: "",
-      phoneNumber: 0,
-      adress: "",
+      phoneNumber: "62",
+      address: "",
       regency: "",
       status: "",
       statusDescription: "",
@@ -89,10 +82,7 @@ const DialogTableCreate = ({
   });
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
-    const myData: DataCustomer = {
-      id: Date.now().toString(),
-      address: values.adress,
-      dateOfEntry: "dfdf",
+    const payload = {
       name: values.username,
       noHp: values.phoneNumber,
       status: values.status as "NEGO" | "DEAL",
@@ -153,7 +143,7 @@ const DialogTableCreate = ({
                 />
                 <FormField
                   control={form.control}
-                  name="adress"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ALAMAT LENGKAP</FormLabel>
@@ -221,7 +211,7 @@ const DialogTableCreate = ({
                       <FormControl>
                         <Textarea
                           className="focus-visible:ring-teal"
-                          placeholder="Tell us a little bit about yourself"
+                          placeholder="Tulis deskripsi status disini"
                           {...field}
                         />
                       </FormControl>
@@ -243,15 +233,12 @@ const DialogTableCreate = ({
                   Batal
                 </Button>
               </DialogClose>
-              <Button
-                size={"modalTable"}
+              <ButtonPending
+                isPending={isPending}
                 variant={"teal"}
-                type="submit"
-                className="bg-teal uppercase"
-                disabled={addCustomerMutation.isPending}
-              >
-                Simpan
-              </Button>
+                size={"modalTable"}
+                title="Simpan"
+              />
             </DialogFooter>
           </form>
         </Form>
