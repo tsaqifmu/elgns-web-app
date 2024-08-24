@@ -12,21 +12,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { deleteCustomer } from "@/lib/customerService";
-import { cn } from "@/lib/utils";
+import { deleteCustomer } from "@/lib/customerService";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { toast } from "@/components/ui/use-toast";
 
-const DialogTableDelete = ({
-  customer,
-  triger,
-  isOpen,
-  setIsOpen,
-}: {
-  customer?: DataCustomer;
-  triger: any;
-  isOpen: boolean;
-  setIsOpen: any;
-}) => {
-  const queryClient = useQueryClient();
+const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
+  // const queryClient = useQueryClient();
+
+  console.log("customer", customer?.id);
+
+  const { mutate: deleteCustomer, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/customer/delete",
+        method: HttpMethod.DELETE,
+        params: { customerid: customer?.id },
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menghapus data",
+        description: response.data.message,
+      });
+    },
+  });
 
   // const deleteCustomerMutation = useMutation({
   //   mutationFn: deleteCustomer,
@@ -34,11 +45,6 @@ const DialogTableDelete = ({
   //     queryClient.invalidateQueries({ queryKey: ["customers"] });
   //   },
   // });
-
-  const handleDelete = () => {
-    // deleteCustomerMutation.mutate(customer!.id);
-    setIsOpen(false);
-  };
 
   return (
     <>
@@ -56,30 +62,31 @@ const DialogTableDelete = ({
             </p>
           </div>
 
-          <DialogFooter>
-            <DialogClose>
-              <Button
-                size={"modalTable"}
-                variant={"outline"}
-                type="submit"
-                className="uppercase"
-              >
-                Batal
-              </Button>
-            </DialogClose>
-            <Button
-              size={"modalTable"}
-              variant={"destructive"}
-              type="submit"
-              className="uppercase"
-              // disabled={deleteCustomerMutation.isPending}
-              onClick={handleDelete}
-            >
-              Hapus
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DialogFooter>
+        <DialogClose>
+          <Button
+            size={"modalTable"}
+            variant={"outline"}
+            type="submit"
+            className="uppercase"
+          >
+            Batal
+          </Button>
+        </DialogClose>
+        <Button
+          size={"modalTable"}
+          variant={"destructive"}
+          type="submit"
+          className="uppercase"
+          disabled={isPending}
+          onClick={() => {
+            deleteCustomer();
+            // deleteCustomerMutation.mutate(customer!.id);
+          }}
+        >
+          Hapus
+        </Button>
+      </DialogFooter>
     </>
   );
 };

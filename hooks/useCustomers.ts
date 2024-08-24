@@ -1,10 +1,18 @@
+import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 
 interface ApiResponse<ItemType> {
   data: {
     message: {
       docs: ItemType[];
+      totalDocs: number;
+      limit: number;
+      totalPages: number;
+      page: number;
+      hasPrevPage: boolean;
+      hasNextPage: boolean;
     };
   };
 }
@@ -59,9 +67,12 @@ const mapCustomerData = (data: CustomerData[]) =>
   }));
 
 export const useFetchCustomerData = () => {
-  return useQuery<ApiResponse<CustomerData>>({
-    queryKey: ["customers"],
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page")?.toString();
+  const limit = searchParams.get("pageSize")?.toString();
 
+  return useQuery<ApiResponse<CustomerData>>({
+    queryKey: ["customers", page, limit],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/customer/list",
@@ -73,12 +84,27 @@ export const useFetchCustomerData = () => {
           week: "",
           name: "",
           status: "",
-          page: "",
+          page: page,
+          limit: limit,
         },
       });
 
       return response;
     },
-    select: (response) => mapCustomerData(response.data.message.docs) as any,
+    select: (response) => {
+      const processedDocs = mapCustomerData(response.data.message.docs);
+
+      return {
+        docs: processedDocs,
+        dataInfo: {
+          totalDocs: response.data.message.totalDocs,
+          limit: response.data.message.limit,
+          totalPages: response.data.message.totalPages,
+          page: response.data.message.page,
+          hasPrevPage: response.data.message.hasPrevPage,
+          hasNextPage: response.data.message.hasNextPage,
+        },
+      };
+    },
   });
 };
