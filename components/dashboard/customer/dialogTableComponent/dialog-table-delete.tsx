@@ -5,16 +5,38 @@ import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteCustomer } from "@/lib/customerService";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { toast } from "@/components/ui/use-toast";
 
 const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const deleteCustomerMutation = useMutation({
-    mutationFn: deleteCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
+  console.log("customer", customer?.id);
+
+  const { mutate: deleteCustomer, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/customer/delete",
+        method: HttpMethod.DELETE,
+        params: { customerid: customer?.id },
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menghapus data",
+        description: response.data.message,
+      });
     },
   });
+
+  // const deleteCustomerMutation = useMutation({
+  //   mutationFn: deleteCustomer,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["customers"] });
+  //   },
+  // });
 
   return (
     <>
@@ -41,9 +63,10 @@ const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
           variant={"destructive"}
           type="submit"
           className="uppercase"
-          disabled={deleteCustomerMutation.isPending}
+          disabled={isPending}
           onClick={() => {
-            deleteCustomerMutation.mutate(customer!.id);
+            deleteCustomer();
+            // deleteCustomerMutation.mutate(customer!.id);
           }}
         >
           Hapus

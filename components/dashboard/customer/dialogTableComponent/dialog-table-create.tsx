@@ -58,7 +58,6 @@ const DialogTableCreate = () => {
         title: "Berhasil menyimpan data",
         description: response.data.message,
       });
-      console.log(response);
     },
     onError: (error) => {
       console.error(error);

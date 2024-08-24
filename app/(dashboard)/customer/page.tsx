@@ -15,12 +15,10 @@ import ErrorLoadData from "@/components/dashboard/error-load-data";
 import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
 const CustomerPage: FC = () => {
-  const {
-    data: dataSource,
-    isError,
-    isLoading,
-    error,
-  } = useFetchCustomerData();
+  const { data, isError, isLoading, error } = useFetchCustomerData();
+
+  const dataSource = data?.docs;
+  const dataInfo = data?.dataInfo;
 
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
@@ -29,7 +27,7 @@ const CustomerPage: FC = () => {
       return (
         <>
           <DataTable columns={columns} data={dataSource as any} />
-          <DataTablePagination />
+          <DataTablePagination dataInfo={dataInfo} />
         </>
       );
     return null;
