@@ -3,8 +3,7 @@ import React, { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { updateCustomer } from "@/lib/customerService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -34,68 +32,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { customerSchema } from "@/schemas/customerSchema";
 
-const DialogTableEdit = ({
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  phoneNumber: z.number().min(2, {
+    message: "phone must be at least 2 characters.",
+  }),
+  adress: z.string().min(2, {
+    message: "Adress must be at least 2 characters.",
+  }),
+  regency: z.string().min(2, {
+    message: "Regency must be at least 2 characters.",
+  }),
+  status: z.string().min(2, {
+    message: "Status must be at least 2 characters.",
+  }),
+  statusDescription: z.string().min(2, {
+    message: "StatusDescription must be at least 2 characters.",
+  }),
+});
+
+const DialogTableDetail = ({
   customer,
   isOpen,
   setIsOpen,
+  setIsEditOpen,
   triger,
 }: {
   customer?: DataCustomer;
   isOpen: boolean;
   setIsOpen: any;
+  setIsEditOpen: any;
   triger: ReactNode;
 }) => {
-  const form = useForm<z.infer<typeof customerSchema>>({
-    resolver: zodResolver(customerSchema),
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       username: customer?.name,
-      address: customer?.address,
+      adress: customer?.address,
       phoneNumber: customer?.phoneNumber,
-      regency: customer?.regency,
+      regency: customer?.address,
       status: customer?.status,
       statusDescription: customer?.statusDescription,
     },
   });
 
-  const queryClient = useQueryClient();
-  const editCustomerMutation = useMutation({
-    mutationFn: updateCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["customers"],
-        exact: true,
-        refetchType: "active",
-      });
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof customerSchema>) {
-    const myData: DataCustomer = {
-      id: customer!.id,
-      name: values.username,
-      address: values.address,
-      regency: values.regency,
-      dateOfEntry: "",
-      phoneNumber: values.phoneNumber,
-      status: values.status as "DEAL" | "NEGO",
-      statusDescription: values.statusDescription,
-    };
-    editCustomerMutation.mutate(myData);
+  const handleEdit = (e: any) => {
+    e.preventDefault();
     setIsOpen(false);
-  }
+    setIsEditOpen(true);
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{triger}</DialogTrigger>
       <DialogContent className="max-w-[737px]">
-        <DialogHeader className={cn("bg-yellow-500")}>
-          <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
+        <DialogHeader className="bg-gray-900">
+          <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form>
             <div className="flex w-full gap-5 px-5 pb-5">
               <div className="flex basis-1/2 flex-col gap-5">
                 <FormField
@@ -106,7 +104,7 @@ const DialogTableEdit = ({
                       <FormLabel>NAMA CUSTOMER</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          readOnly
                           placeholder="Masukkan nama customer"
                           {...field}
                         />
@@ -123,7 +121,7 @@ const DialogTableEdit = ({
                       <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          readOnly
                           placeholder="62851XXXX"
                           type="tel"
                           {...field}
@@ -141,7 +139,7 @@ const DialogTableEdit = ({
                       <FormLabel>ALAMAT LENGKAP</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          readOnly
                           placeholder="Masukkan alamat lengkap"
                           {...field}
                         />
@@ -158,7 +156,7 @@ const DialogTableEdit = ({
                       <FormLabel>ASAL KABUPATEN</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          readOnly
                           placeholder="Masukkan Alamat (Kabupaten)"
                           {...field}
                         />
@@ -176,11 +174,12 @@ const DialogTableEdit = ({
                     <FormItem>
                       <FormLabel>STATUS</FormLabel>
                       <Select
+                        disabled
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="focus:ring-yellow-500">
+                          <SelectTrigger>
                             <SelectValue placeholder="Pilih Status" />
                           </SelectTrigger>
                         </FormControl>
@@ -201,7 +200,7 @@ const DialogTableEdit = ({
                       <FormLabel>KETERANGAN STATUS</FormLabel>
                       <FormControl>
                         <Textarea
-                          className="focus-visible:ring-yellow-500"
+                          readOnly
                           placeholder="Tell us a little bit about yourself"
                           {...field}
                         />
@@ -214,24 +213,13 @@ const DialogTableEdit = ({
             </div>
 
             <DialogFooter>
-              <DialogClose>
-                <Button
-                  size={"modalTable"}
-                  variant={"outline"}
-                  type="submit"
-                  className="uppercase"
-                >
-                  Batal
-                </Button>
-              </DialogClose>
               <Button
                 size={"modalTable"}
                 variant={"default"}
-                type="submit"
-                className="bg-yellow-500 uppercase"
-                disabled={editCustomerMutation.isPending}
+                className="bg-gray-900"
+                onClick={handleEdit}
               >
-                Simpan
+                EDIT
               </Button>
             </DialogFooter>
           </form>
@@ -241,4 +229,4 @@ const DialogTableEdit = ({
   );
 };
 
-export default DialogTableEdit;
+export default DialogTableDetail;

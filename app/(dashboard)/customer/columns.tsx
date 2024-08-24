@@ -1,20 +1,27 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck } from "lucide-react";
+import { CircleCheck, CircleX, Info } from "lucide-react";
+
 import IconDelete from "@/public/icons/table/delete.svg";
 import IconEdit from "@/public/icons/table/edit.svg";
 import { Button } from "@/components/ui/button";
-import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
 
+import { cn } from "@/lib/utils";
+import { useState } from "react";
+import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
+import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
+import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
 
 export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
-  phoneNumber: number;
-  address: string;
+  phoneNumber: string;
+  regency: string;
   status: "NEGO" | "DEAL";
+  statusDescription: string;
+  address?: string;
 };
 
 // Konstanta untuk teks header
@@ -22,7 +29,7 @@ const HEADER_TITLES = {
   dateOfEntry: "TANGGAL MASUK",
   name: "NAMA CUSTOMER",
   phoneNumber: "NOMOR HP",
-  address: "ALAMAT",
+  regency: "ALAMAT",
   status: "STATUS",
 };
 
@@ -36,6 +43,25 @@ const ColumnHeader = ({ title }: { title: string }) => {
 
 export const columns: ColumnDef<DataCustomer>[] = [
   {
+    id: "initial",
+    cell: ({ row }) => {
+      const customerName: string = row.getValue("name");
+      const status: string = row.getValue("status");
+
+      const firstCharName = customerName?.split("")[0];
+      return (
+        <div
+          className={cn(
+            "flexCenter h-6 w-6 rounded-full bg-teal text-center text-white",
+            status === "NEGO" ? "bg-destructive" : "bg-teal",
+          )}
+        >
+          <p>{firstCharName}</p>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "dateOfEntry",
     header: () => <ColumnHeader title={HEADER_TITLES.dateOfEntry} />,
   },
@@ -48,18 +74,27 @@ export const columns: ColumnDef<DataCustomer>[] = [
     header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
   },
   {
-    accessorKey: "address",
-    header: () => <ColumnHeader title={HEADER_TITLES.address} />,
+    accessorKey: "regency",
+    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
   },
   {
     accessorKey: "status",
     header: () => <ColumnHeader title={HEADER_TITLES.status} />,
     cell: ({ row }) => {
-      const amount: string = row.getValue("status");
+      const statusValue: string = row.getValue("status");
       return (
-        <div className="flex w-fit items-center space-x-1 rounded-full bg-[#5BADC5] px-[0.625rem] py-1 text-[0.625rem] text-white lg:w-20 lg:py-[0.3125rem] lg:text-sm">
-          <CircleCheck className="w-4 lg:w-6" />
-          <p>{amount}</p>
+        <div
+          className={cn(
+            "flex w-fit items-center space-x-1 rounded-full px-[0.625rem] py-1 text-[0.625rem] text-white lg:w-20 lg:py-[0.3125rem] lg:text-sm",
+            statusValue === "NEGO" ? "bg-destructive" : "bg-teal",
+          )}
+        >
+          {statusValue === "NEGO" ? (
+            <CircleX className="w-4 lg:w-6" />
+          ) : (
+            <CircleCheck className="w-4 lg:w-6" />
+          )}
+          <p>{statusValue}</p>
         </div>
       );
     },
@@ -67,31 +102,46 @@ export const columns: ColumnDef<DataCustomer>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const customerName = row.getValue("name");
+      const customer = row.original;
+      const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false);
+      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+      const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
       return (
         <>
-          <CustomeDialogTable
-            variant="edit"
-            title="EDIT DATA CUSTOMER"
+          <DialogTableDetail
+            customer={customer}
+            isOpen={isDetailOpen}
+            setIsOpen={setIsDetailOpen}
+            setIsEditOpen={setIsEditOpen}
+            triger={
+              <Button className="group" variant={"ghost"} size={"icon"}>
+                <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
+              </Button>
+            }
+          />
+          <DialogTableEdit
+            customer={customer}
+            isOpen={isEditOpen}
+            setIsOpen={setIsEditOpen}
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
                 <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
               </Button>
             }
           />
-          <CustomeDialogTable
-            variant="hapus"
-            title="HAPUS DATA CUSTOMER"
-            content={customerName}
+          <DialogTableDelete
+            customer={customer}
+            isOpen={isDeleteOpen}
+            setIsOpen={setIsDeleteOpen}
             triger={
               <Button className="group" variant={"ghost"} size={"icon"}>
-                <IconDelete className="text-gray-300 transition-all group-hover:text-red-500" />
+                <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
               </Button>
             }
           />
         </>
       );
-
     },
   },
 ];

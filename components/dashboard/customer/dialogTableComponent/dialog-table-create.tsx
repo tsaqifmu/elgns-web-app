@@ -1,24 +1,8 @@
-import { z } from "zod";
 import React, { ReactNode } from "react";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { updateCustomer } from "@/lib/customerService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import ButtonPending from "@/components/button-pending";
 import {
   Form,
   FormControl,
@@ -34,16 +18,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { customerSchema } from "@/schemas/customerSchema";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { toast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
-const DialogTableEdit = ({
-  customer,
+const DialogTableCreate = ({
   isOpen,
   setIsOpen,
   triger,
 }: {
-  customer?: DataCustomer;
   isOpen: boolean;
   setIsOpen: any;
   triger: ReactNode;
@@ -51,49 +49,59 @@ const DialogTableEdit = ({
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
-      username: customer?.name,
-      address: customer?.address,
-      phoneNumber: customer?.phoneNumber,
-      regency: customer?.regency,
-      status: customer?.status,
-      statusDescription: customer?.statusDescription,
+      username: "",
+      phoneNumber: "62",
+      address: "",
+      regency: "",
+      status: "",
+      statusDescription: "",
     },
   });
-
   const queryClient = useQueryClient();
-  const editCustomerMutation = useMutation({
-    mutationFn: updateCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["customers"],
-        exact: true,
-        refetchType: "active",
+
+  const { mutate: sendCustomerData, isPending } = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/customer/add",
+        method: HttpMethod.POST,
+        data,
       });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menyimpan data",
+        description: response.data.message,
+      });
+      console.log(response);
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
-    const myData: DataCustomer = {
-      id: customer!.id,
+    const payload = {
       name: values.username,
-      address: values.address,
-      regency: values.regency,
-      dateOfEntry: "",
-      phoneNumber: values.phoneNumber,
-      status: values.status as "DEAL" | "NEGO",
-      statusDescription: values.statusDescription,
+      noHp: values.phoneNumber,
+      status: values.status as "NEGO" | "DEAL",
+      alamat: values.address,
+      alamatKabupaten: values.regency,
     };
-    editCustomerMutation.mutate(myData);
-    setIsOpen(false);
+
+    sendCustomerData(payload);
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{triger}</DialogTrigger>
+
       <DialogContent className="max-w-[737px]">
-        <DialogHeader className={cn("bg-yellow-500")}>
-          <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
+        <DialogHeader className={cn("bg-[#49A4BF]")}>
+          <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
         </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex w-full gap-5 px-5 pb-5">
@@ -106,7 +114,7 @@ const DialogTableEdit = ({
                       <FormLabel>NAMA CUSTOMER</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          className="focus-visible:ring-teal"
                           placeholder="Masukkan nama customer"
                           {...field}
                         />
@@ -123,7 +131,7 @@ const DialogTableEdit = ({
                       <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          className="focus-visible:ring-teal"
                           placeholder="62851XXXX"
                           type="tel"
                           {...field}
@@ -135,13 +143,13 @@ const DialogTableEdit = ({
                 />
                 <FormField
                   control={form.control}
-                  name="adress"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ALAMAT LENGKAP</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          className="focus-visible:ring-teal"
                           placeholder="Masukkan alamat lengkap"
                           {...field}
                         />
@@ -158,7 +166,7 @@ const DialogTableEdit = ({
                       <FormLabel>ASAL KABUPATEN</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
+                          className="focus-visible:ring-teal"
                           placeholder="Masukkan Alamat (Kabupaten)"
                           {...field}
                         />
@@ -168,6 +176,7 @@ const DialogTableEdit = ({
                   )}
                 />
               </div>
+
               <div className="flex basis-1/2 flex-col gap-5">
                 <FormField
                   control={form.control}
@@ -180,7 +189,7 @@ const DialogTableEdit = ({
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="focus:ring-yellow-500">
+                          <SelectTrigger className="focus:ring-teal">
                             <SelectValue placeholder="Pilih Status" />
                           </SelectTrigger>
                         </FormControl>
@@ -201,8 +210,8 @@ const DialogTableEdit = ({
                       <FormLabel>KETERANGAN STATUS</FormLabel>
                       <FormControl>
                         <Textarea
-                          className="focus-visible:ring-yellow-500"
-                          placeholder="Tell us a little bit about yourself"
+                          className="focus-visible:ring-teal"
+                          placeholder="Tulis deskripsi status disini"
                           {...field}
                         />
                       </FormControl>
@@ -224,15 +233,12 @@ const DialogTableEdit = ({
                   Batal
                 </Button>
               </DialogClose>
-              <Button
+              <ButtonPending
+                isPending={isPending}
+                variant={"teal"}
                 size={"modalTable"}
-                variant={"default"}
-                type="submit"
-                className="bg-yellow-500 uppercase"
-                disabled={editCustomerMutation.isPending}
-              >
-                Simpan
-              </Button>
+                title="Simpan"
+              />
             </DialogFooter>
           </form>
         </Form>
@@ -241,4 +247,4 @@ const DialogTableEdit = ({
   );
 };
 
-export default DialogTableEdit;
+export default DialogTableCreate;
