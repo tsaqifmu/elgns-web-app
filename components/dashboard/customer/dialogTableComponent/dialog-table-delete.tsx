@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 
 import IconDelete from "@/public/icons/table/delete.svg";
 import { useDeleteCustomerData } from "@/hooks/useCustomers";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
 
 import { Button } from "@/components/ui/button";
 import {

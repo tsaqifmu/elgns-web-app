@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
 import { customerSchema } from "@/schemas/customerSchema";
 
 import { Input } from "@/components/ui/input";

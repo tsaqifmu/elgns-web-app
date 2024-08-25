@@ -4,11 +4,14 @@ import { useForm } from "react-hook-form";
 
 import IconEdit from "@/public/icons/table/edit.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
+import { customerSchema } from "@/schemas/customerSchema";
+import { useUpdateCustomerData } from "@/hooks/useCustomers";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import ButtonPending from "@/components/button-pending";
 import {
   Dialog,
   DialogClose,
@@ -33,9 +36,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { customerSchema } from "@/schemas/customerSchema";
-import { useUpdateCustomerData } from "@/hooks/useCustomers";
-import ButtonPending from "@/components/button-pending";
 
 const DialogTableEdit = ({
   customer,

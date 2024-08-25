@@ -2,14 +2,13 @@
 
 import { FC } from "react";
 
-import { DataTable } from "./data-table";
-import { Columns } from "./columns";
-import { DataTablePagination } from "./data-table-pagination";
-
 import { useFetchCustomerData } from "@/hooks/useCustomers";
 
+import { Columns } from "@/components/dashboard/customer/columns";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
+import { DataTable } from "@/components/dashboard/customer/data-table";
+import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 
 const CustomerPage: FC = () => {
