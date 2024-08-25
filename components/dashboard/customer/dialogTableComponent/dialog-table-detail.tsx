@@ -37,10 +37,10 @@ const formSchema = z.object({
   username: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
-  phoneNumber: z.number().min(2, {
+  phoneNumber: z.string().min(2, {
     message: "phone must be at least 2 characters.",
   }),
-  adress: z.string().min(2, {
+  address: z.string().min(2, {
     message: "Adress must be at least 2 characters.",
   }),
   regency: z.string().min(2, {
@@ -71,7 +71,7 @@ const DialogTableDetail = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: customer?.name,
-      adress: customer?.address,
+      address: customer?.address,
       phoneNumber: customer?.phoneNumber,
       regency: customer?.address,
       status: customer?.status,
@@ -133,7 +133,7 @@ const DialogTableDetail = ({
                 />
                 <FormField
                   control={form.control}
-                  name="adress"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ALAMAT LENGKAP</FormLabel>

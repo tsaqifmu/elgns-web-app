@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteCustomer } from "@/lib/customerService";
+// import { deleteCustomer } from "@/lib/customerService";
 import { cn } from "@/lib/utils";
 
 const DialogTableDelete = ({
@@ -28,15 +28,15 @@ const DialogTableDelete = ({
 }) => {
   const queryClient = useQueryClient();
 
-  const deleteCustomerMutation = useMutation({
-    mutationFn: deleteCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-    },
-  });
+  // const deleteCustomerMutation = useMutation({
+  //   mutationFn: deleteCustomer,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["customers"] });
+  //   },
+  // });
 
   const handleDelete = () => {
-    deleteCustomerMutation.mutate(customer!.id);
+    // deleteCustomerMutation.mutate(customer!.id);
     setIsOpen(false);
   };
 
@@ -72,7 +72,7 @@ const DialogTableDelete = ({
               variant={"destructive"}
               type="submit"
               className="uppercase"
-              disabled={deleteCustomerMutation.isPending}
+              // disabled={deleteCustomerMutation.isPending}
               onClick={handleDelete}
             >
               Hapus

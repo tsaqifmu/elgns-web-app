@@ -61,16 +61,16 @@ const DialogTableEdit = ({
   });
 
   const queryClient = useQueryClient();
-  const editCustomerMutation = useMutation({
-    mutationFn: updateCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["customers"],
-        exact: true,
-        refetchType: "active",
-      });
-    },
-  });
+  // const editCustomerMutation = useMutation({
+  //   mutationFn: updateCustomer,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ["customers"],
+  //       exact: true,
+  //       refetchType: "active",
+  //     });
+  //   },
+  // });
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     const myData: DataCustomer = {
@@ -83,7 +83,7 @@ const DialogTableEdit = ({
       status: values.status as "DEAL" | "NEGO",
       statusDescription: values.statusDescription,
     };
-    editCustomerMutation.mutate(myData);
+    // editCustomerMutation.mutate(myData);
     setIsOpen(false);
   }
 
@@ -135,7 +135,7 @@ const DialogTableEdit = ({
                 />
                 <FormField
                   control={form.control}
-                  name="adress"
+                  name="address"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>ALAMAT LENGKAP</FormLabel>
@@ -229,7 +229,7 @@ const DialogTableEdit = ({
                 variant={"default"}
                 type="submit"
                 className="bg-yellow-500 uppercase"
-                disabled={editCustomerMutation.isPending}
+                // disabled={editCustomerMutation.isPending}
               >
                 Simpan
               </Button>
