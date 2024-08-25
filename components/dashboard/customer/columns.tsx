@@ -1,32 +1,31 @@
 "use client";
 
+import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck, CircleX, Info } from "lucide-react";
-
-import IconDelete from "@/public/icons/table/delete.svg";
-import IconEdit from "@/public/icons/table/edit.svg";
-import { Button } from "@/components/ui/button";
-import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
+import { CircleCheck, CircleX } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+
+import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
+import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
+import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
 
 export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
-  phoneNumber: number;
-  address: string;
-  status: "NEGO" | "DEAL";
+  phoneNumber: string;
+  regency: string;
+  status: string;
   statusDescription: string;
+  address: string;
 };
 
-// Konstanta untuk teks header
 const HEADER_TITLES = {
   dateOfEntry: "TANGGAL MASUK",
-  name: "NAMA CUSTOMER",
   phoneNumber: "NOMOR HP",
-  address: "ALAMAT",
+  name: "NAMA CUSTOMER",
+  regency: "ALAMAT",
   status: "STATUS",
 };
 
@@ -38,22 +37,22 @@ const ColumnHeader = ({ title }: { title: string }) => {
   );
 };
 
-export const columns: ColumnDef<DataCustomer>[] = [
+export const Columns: ColumnDef<DataCustomer>[] = [
   {
     id: "initial",
     cell: ({ row }) => {
       const customerName: string = row.getValue("name");
       const status: string = row.getValue("status");
+      const firstCharName = customerName?.split("")[0];
 
-      const firstCharName = customerName.split("")[0];
       return (
         <div
           className={cn(
-            "bg-teal h-6 w-6 rounded-full text-center text-white",
+            "flexCenter h-6 w-6 rounded-full bg-teal text-center text-white",
             status === "NEGO" ? "bg-destructive" : "bg-teal",
           )}
         >
-          {firstCharName}
+          <p>{firstCharName}</p>
         </div>
       );
     },
@@ -71,8 +70,8 @@ export const columns: ColumnDef<DataCustomer>[] = [
     header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
   },
   {
-    accessorKey: "address",
-    header: () => <ColumnHeader title={HEADER_TITLES.address} />,
+    accessorKey: "regency",
+    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
   },
   {
     accessorKey: "status",
@@ -100,42 +99,20 @@ export const columns: ColumnDef<DataCustomer>[] = [
     id: "actions",
     cell: ({ row }) => {
       const customer = row.original;
-      const [isDialogEditOpen, setIsDialogEditOpen] = useState<boolean>(false);
+      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+
       return (
         <>
-          <CustomeDialogTable
-            variant="detail"
-            title="DETAIL INFORMASI CUSTOMER"
-            setIsDialogEditOpen={setIsDialogEditOpen}
+          <DialogTableDetail
             customer={customer}
-            triger={
-              <Button className="group" variant={"ghost"} size={"icon"}>
-                <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
-              </Button>
-            }
+            setIsEditOpen={setIsEditOpen}
           />
-          <CustomeDialogTable
-            variant="edit"
-            title="EDIT DATA CUSTOMER"
+          <DialogTableEdit
             customer={customer}
-            isOpen={isDialogEditOpen}
-            onClose={() => setIsDialogEditOpen((prev) => !prev)}
-            triger={
-              <Button className="group" variant={"ghost"} size={"icon"}>
-                <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
-              </Button>
-            }
+            isOpen={isEditOpen}
+            setIsOpen={setIsEditOpen}
           />
-          <CustomeDialogTable
-            variant="hapus"
-            title="HAPUS DATA CUSTOMER"
-            customer={customer}
-            triger={
-              <Button className="group" variant={"ghost"} size={"icon"}>
-                <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
-              </Button>
-            }
-          />
+          <DialogTableDelete customer={customer} />
         </>
       );
     },

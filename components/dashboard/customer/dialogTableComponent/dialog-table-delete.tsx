@@ -1,54 +1,74 @@
-import React from "react";
+import { ReactNode, useState } from "react";
 
-import { DialogClose, DialogFooter } from "@/components/ui/dialog";
+import IconDelete from "@/public/icons/table/delete.svg";
+import { useDeleteCustomerData } from "@/hooks/useCustomers";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
+
 import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteCustomer } from "@/lib/customerService";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const DialogTableDelete = ({ customer }: { customer?: DataCustomer }) => {
-  const queryClient = useQueryClient();
+const DialogTableDelete = ({ customer }: { customer: DataCustomer }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const deleteCustomerMutation = useMutation({
-    mutationFn: deleteCustomer,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] });
-    },
-  });
+  const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
+    customer?.id,
+    setIsDialogOpen,
+  );
 
   return (
     <>
-      <div className="h-80 p-5">
-        <p className="text-base font-normal">
-          Data Customer <span className="font-bold">{customer?.name}</span> akan
-          dihapus, Anda Yakin?
-        </p>
-      </div>
-
-      <DialogFooter>
-        <DialogClose>
-          <Button
-            size={"modalTable"}
-            variant={"outline"}
-            type="submit"
-            className="uppercase"
-          >
-            Batal
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button className="group" variant={"ghost"} size={"icon"}>
+            <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
           </Button>
-        </DialogClose>
-        <Button
-          size={"modalTable"}
-          variant={"destructive"}
-          type="submit"
-          className="uppercase"
-          disabled={deleteCustomerMutation.isPending}
-          onClick={() => {
-            deleteCustomerMutation.mutate(customer!.id);
-          }}
-        >
-          Hapus
-        </Button>
-      </DialogFooter>
+        </DialogTrigger>
+        <DialogContent className="max-w-[737px]">
+          <DialogHeader className="bg-destructive">
+            <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>
+          </DialogHeader>
+
+          <div className="h-80 px-5 pb-5">
+            <p className="text-base font-normal">
+              Data Customer <span className="font-bold">{customer?.name}</span>{" "}
+              akan dihapus, Anda Yakin?
+            </p>
+          </div>
+
+          <DialogFooter>
+            <DialogClose>
+              <Button
+                size={"modalTable"}
+                variant={"outline"}
+                type="submit"
+                className="uppercase"
+              >
+                Batal
+              </Button>
+            </DialogClose>
+            <Button
+              size={"modalTable"}
+              variant={"destructive"}
+              type="submit"
+              className="uppercase"
+              disabled={isPending}
+              onClick={() => {
+                deleteCustomer();
+              }}
+            >
+              Hapus
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

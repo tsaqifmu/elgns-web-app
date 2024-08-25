@@ -1,50 +1,43 @@
 "use client";
 
 import { FC } from "react";
-import { CirclePlus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
-import { DataTable } from "./data-table";
-import { columns, DataCustomer } from "./columns";
-import { DataTablePagination } from "./data-table-pagination";
+import { useFetchCustomerData } from "@/hooks/useCustomers";
 
-import { getCustomers } from "@/lib/customerService";
-import { Button } from "@/components/ui/button";
-import CustomeDialogTable from "@/components/dashboard/customer/dialog-table";
+import { Columns } from "@/components/dashboard/customer/columns";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
+import { DataTable } from "@/components/dashboard/customer/data-table";
+import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
+import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 
 const CustomerPage: FC = () => {
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["customers"],
-    queryFn: getCustomers,
-  });
+  const { data, isError, isLoading, error } = useFetchCustomerData();
 
-  const dataSource = data as DataCustomer[];
-  if (isLoading) return <h1>Loading...</h1>;
-  if (isError) return <h1>Error</h1>;
+  const dataSource = data?.docs;
+  const dataInfo = data?.dataInfo;
+
+  const renderContent = () => {
+    if (isLoading) return <SkeletonTable />;
+    if (isError) return <ErrorLoadData error={error} />;
+    if (dataSource)
+      return (
+        <>
+          <DataTable columns={Columns} data={dataSource as any} />
+          <DataTablePagination dataInfo={dataInfo} />
+        </>
+      );
+    return null;
+  };
 
   return (
     <>
       <header className="flex items-center justify-between">
         <h1 className="w-10 text-3xl font-semibold lg:w-full">DATA CUSTOMER</h1>
-        <CustomeDialogTable
-          variant="tambah"
-          title="TAMBAH DATA CUSTOMER"
-          triger={
-            <Button
-              variant={"teal"}
-              className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-            >
-              <p>TAMBAH CUSTOMER</p>
-              <CirclePlus className="w-4 lg:w-6" />
-            </Button>
-          }
-        />
+        <DialogTableCreate />
       </header>
 
-      <main className="mt-9">
-        <DataTable columns={columns} data={dataSource} />
-        <DataTablePagination />
-      </main>
+      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };
