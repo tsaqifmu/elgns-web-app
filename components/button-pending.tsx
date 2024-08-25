@@ -11,6 +11,7 @@ interface ButtonPendingProps {
     | "link"
     | "default"
     | "teal"
+    | "yellow"
     | "destructive"
     | "outline"
     | "secondary"

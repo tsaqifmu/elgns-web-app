@@ -1,7 +1,14 @@
-import React, { ReactNode } from "react";
 import { z } from "zod";
+import { useState } from "react";
+import { CirclePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import { customerSchema } from "@/schemas/customerSchema";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import ButtonPending from "@/components/button-pending";
 import {
   Form,
@@ -18,7 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogClose,
@@ -28,24 +34,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { customerSchema } from "@/schemas/customerSchema";
-import { apiRequest, HttpMethod } from "@/lib/apiRequest";
-import { toast } from "@/components/ui/use-toast";
-import { Input } from "@/components/ui/input";
+import { useAddCustomerData } from "@/hooks/useCustomers";
 
-const DialogTableCreate = ({
-  isOpen,
-  setIsOpen,
-  triger,
-}: {
-  isOpen: boolean;
-  setIsOpen: any;
-  triger: ReactNode;
-}) => {
+const DialogTableCreate = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
@@ -57,47 +50,37 @@ const DialogTableCreate = ({
       statusDescription: "",
     },
   });
-  const queryClient = useQueryClient();
 
-  const { mutate: sendCustomerData, isPending } = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await apiRequest({
-        path: "/customer/add",
-        method: HttpMethod.POST,
-        data,
-      });
-      return response;
-    },
-    onSuccess: (response) => {
-      toast({
-        variant: "default",
-        title: "Berhasil menyimpan data",
-        description: response.data.message,
-      });
-    },
-    onError: (error) => {
-      console.error(error);
-    },
-  });
+  const { mutate: sendCustomerData, isPending } =
+    useAddCustomerData(setIsDialogOpen);
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     const payload = {
       name: values.username,
       noHp: values.phoneNumber,
-      status: values.status as "NEGO" | "DEAL",
+      status: values.status,
       alamat: values.address,
       alamatKabupaten: values.regency,
+      info: values.statusDescription,
     };
 
     sendCustomerData(payload);
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{triger}</DialogTrigger>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant={"teal"}
+          className="space-x-1 text-xs lg:space-x-3 lg:text-base"
+        >
+          <p>TAMBAH CUSTOMER</p>
+          <CirclePlus className="w-4 lg:w-6" />
+        </Button>
+      </DialogTrigger>
 
       <DialogContent className="max-w-[737px]">
-        <DialogHeader className={cn("bg-[#49A4BF]")}>
+        <DialogHeader className="bg-teal">
           <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
         </DialogHeader>
 

@@ -2,6 +2,9 @@ import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+import { toast } from "@/components/ui/use-toast";
+import React, { Dispatch, SetStateAction } from "react";
+import { DataCustomer } from "@/app/(dashboard)/customer/columns";
 
 interface ApiResponse<ItemType> {
   data: {
@@ -17,15 +20,28 @@ interface ApiResponse<ItemType> {
   };
 }
 
+// Define the customer data structure
 interface CustomerData {
   _id: string;
   date: string;
   name: string;
-  noHp: number;
+  noHp: string;
   alamat: string;
   alamatKabupaten: string;
   status: string;
   info: string;
+}
+
+interface CustomerQueryData {
+  docs: DataCustomer[];
+  dataInfo: {
+    totalDocs: number;
+    limit: number;
+    totalPages: number;
+    page: number;
+    hasPrevPage: boolean;
+    hasNextPage: boolean;
+  };
 }
 
 const dateIdFormat = (dateString: string) => {
@@ -54,31 +70,31 @@ const dateIdFormat = (dateString: string) => {
   return formattedDate;
 };
 
-const mapCustomerData = (data: CustomerData[]) =>
+const mapCustomerData = (data: CustomerData[]): DataCustomer[] =>
   data.map((data) => ({
     id: data._id,
-    dateOfEntry: dateIdFormat(data.date),
+    dateOfEntry: dateIdFormat(data?.date),
     name: data?.name?.toUpperCase(),
     phoneNumber: data.noHp,
     address: data.alamat,
     regency: data?.alamatKabupaten?.toUpperCase(),
     status: data?.status?.toUpperCase(),
-    statusDescription: data.info,
+    statusDescription: data?.info,
   }));
 
 export const useFetchCustomerData = () => {
   const searchParams = useSearchParams();
-  const page = searchParams.get("page")?.toString();
-  const limit = searchParams.get("pageSize")?.toString();
+  const page = searchParams.get("page")?.toString() || "1";
+  const limit = searchParams.get("pageSize")?.toString() || "5";
 
-  return useQuery<ApiResponse<CustomerData>>({
+  return useQuery({
     queryKey: ["customers", page, limit],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/customer/list",
         method: HttpMethod.GET,
         params: {
-          alphabet: "ascending",
+          alphabet: "",
           year: "2024",
           month: "",
           week: "",
@@ -88,12 +104,10 @@ export const useFetchCustomerData = () => {
           limit: limit,
         },
       });
-
       return response;
     },
     select: (response) => {
       const processedDocs = mapCustomerData(response.data.message.docs);
-
       return {
         docs: processedDocs,
         dataInfo: {
@@ -105,6 +119,96 @@ export const useFetchCustomerData = () => {
           hasNextPage: response.data.message.hasNextPage,
         },
       };
+    },
+  });
+};
+
+export const useAddCustomerData = (
+  setIsDialogOpen: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/customer/add",
+        method: HttpMethod.POST,
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menyimpan data",
+        description: response.data.message,
+      });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      setIsDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+};
+
+export const useUpdateCustomerData = (
+  customerId: string | undefined,
+  setIsDialogOpen: React.Dispatch<SetStateAction<boolean>>,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/customer/update",
+        method: HttpMethod.POST,
+        params: { customerid: customerId },
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil mengubah data",
+        description: response.data.message,
+      });
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+      setIsDialogOpen(false);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+};
+
+export const useDeleteCustomerData = (
+  customerId: string | undefined,
+  setIsDialogOpen: Dispatch<SetStateAction<boolean>>,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/customer/delete",
+        method: HttpMethod.DELETE,
+        params: { customerid: customerId },
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menghapus data",
+        description: response.data.message,
+      });
+      setIsDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["customers"] });
+    },
+    onError: (error) => {
+      console.error(error);
     },
   });
 };

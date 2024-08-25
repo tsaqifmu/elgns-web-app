@@ -9,6 +9,7 @@ const ErrorLoadData = ({ error }: { error: any }) => {
         Terjadi kesalahan saat memuat data. Silakan coba lagi.
       </p>
       <p>{error.toString()}</p>
+      <p>{error.response.data.message.toString()}</p>
     </div>
   );
 };

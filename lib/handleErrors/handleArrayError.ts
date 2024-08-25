@@ -14,7 +14,7 @@ interface ErrorResponse {
 export function handleArrayError(
   error: unknown,
   toast: (params: {
-    variant: string;
+    variant: "default" | "destructive" | null;
     title: string;
     description: string;
   }) => void,

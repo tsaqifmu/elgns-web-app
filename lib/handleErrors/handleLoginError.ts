@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { loginSchema } from "@/schemas/loginSchema";
-import { handleError } from "./handleError";
+// import { handleError } from "./handleError";
+import { handleArrayError } from "./handleArrayError";
 
 type LoginValues = z.infer<typeof loginSchema>;
 type Toast = ReturnType<typeof useToast>["toast"];
@@ -52,7 +53,7 @@ export const handleLoginError = (
       break;
 
     default:
-      handleError(error, toast);
+      handleArrayError(error, toast);
       break;
   }
 };

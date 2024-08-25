@@ -1,6 +1,13 @@
-import { Table } from "@tanstack/react-table";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+
 import {
   Select,
   SelectContent,
@@ -8,42 +15,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
 
-interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
-}
-
-interface dataInfoProps {
-  totalDocs: number;
-  limit: number;
-  totalPages: number;
-  page: number;
-  hasPrevPage: boolean;
-  hasNextPage: boolean;
-}
-
-export function DataTablePagination<TData>({
-  dataInfo,
-}: {
-  dataInfo: dataInfoProps;
-}) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
+export function DataTablePagination({ dataInfo }: { dataInfo: any }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [pageIndex, setPageIndex] = useState<number>(
     parseInt(searchParams.get("page") || "1", 10),
   );
   const [pageSize, setPageSize] = useState<number>(
-    parseInt(searchParams.get("pageSize") || "10", 10),
+    parseInt(searchParams.get("pageSize") || "5", 10),
   );
 
   const { hasPrevPage, hasNextPage, totalPages, page } = dataInfo;
@@ -62,7 +44,7 @@ export function DataTablePagination<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Rows per page</p>
           <Select
-            value={pageSize?.toString()}
+            value={pageSize?.toString() || "5"}
             onValueChange={(value) => {
               const newSize = parseInt(value, 10);
               setPageSize(newSize);
