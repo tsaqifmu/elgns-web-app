@@ -1,14 +1,22 @@
 import { z } from "zod";
-import React, { ReactNode } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
+import { customerSchema } from "@/schemas/customerSchema";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Dialog,
   DialogContent,
@@ -33,61 +41,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-  phoneNumber: z.string().min(2, {
-    message: "phone must be at least 2 characters.",
-  }),
-  address: z.string().min(2, {
-    message: "Adress must be at least 2 characters.",
-  }),
-  regency: z.string().min(2, {
-    message: "Regency must be at least 2 characters.",
-  }),
-  status: z.string().min(2, {
-    message: "Status must be at least 2 characters.",
-  }),
-  statusDescription: z.string().min(2, {
-    message: "StatusDescription must be at least 2 characters.",
-  }),
-});
-
 const DialogTableDetail = ({
   customer,
-  isOpen,
-  setIsOpen,
   setIsEditOpen,
-  triger,
 }: {
-  customer?: DataCustomer;
-  isOpen: boolean;
-  setIsOpen: any;
-  setIsEditOpen: any;
-  triger: ReactNode;
+  customer: DataCustomer;
+  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: customer?.name,
-      address: customer?.address,
-      phoneNumber: customer?.phoneNumber,
-      regency: customer?.address,
-      status: customer?.status,
-      statusDescription: customer?.statusDescription,
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof customerSchema>>({
+    resolver: zodResolver(customerSchema),
+    values: {
+      username: customer?.name || "",
+      address: customer?.address || "",
+      phoneNumber: customer?.phoneNumber || "",
+      regency: customer?.regency || "",
+      status: customer?.status || "",
+      statusDescription: customer?.statusDescription || "",
     },
   });
 
   const handleEdit = (e: any) => {
     e.preventDefault();
-    setIsOpen(false);
+    setIsDialogOpen(false);
     setIsEditOpen(true);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{triger}</DialogTrigger>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <DialogTrigger asChild>
+        <Button className="group" variant={"ghost"} size={"icon"}>
+          <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
+        </Button>
+      </DialogTrigger>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-gray-900">
           <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>
@@ -201,7 +188,7 @@ const DialogTableDetail = ({
                       <FormControl>
                         <Textarea
                           readOnly
-                          placeholder="Tell us a little bit about yourself"
+                          placeholder="Keterangan status"
                           {...field}
                         />
                       </FormControl>
@@ -212,6 +199,20 @@ const DialogTableDetail = ({
               </div>
             </div>
 
+            <DialogFooter>
+              <Button
+                size={"modalTable"}
+                variant={"default"}
+                className="bg-gray-900"
+                onClick={handleEdit}
+              >
+                EDIT
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
             <DialogFooter>
               <Button
                 size={"modalTable"}

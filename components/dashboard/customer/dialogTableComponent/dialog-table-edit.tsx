@@ -1,15 +1,17 @@
 import { z } from "zod";
-import React, { ReactNode } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 
+import IconEdit from "@/public/icons/table/edit.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { updateCustomer } from "@/lib/customerService";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
+import { customerSchema } from "@/schemas/customerSchema";
+import { useUpdateCustomerData } from "@/hooks/useCustomers";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import ButtonPending from "@/components/button-pending";
 import {
   Dialog,
   DialogClose,
@@ -34,64 +36,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { customerSchema } from "@/schemas/customerSchema";
 
 const DialogTableEdit = ({
   customer,
   isOpen,
   setIsOpen,
-  triger,
 }: {
   customer?: DataCustomer;
   isOpen: boolean;
-  setIsOpen: any;
-  triger: ReactNode;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
-    defaultValues: {
-      username: customer?.name,
-      address: customer?.address,
-      phoneNumber: customer?.phoneNumber,
-      regency: customer?.regency,
-      status: customer?.status,
-      statusDescription: customer?.statusDescription,
+    values: {
+      username: customer?.name || "",
+      address: customer?.address || "",
+      phoneNumber: customer?.phoneNumber || "",
+      regency: customer?.regency || "",
+      status: customer?.status || "",
+      statusDescription: customer?.statusDescription || "",
     },
   });
 
-  const queryClient = useQueryClient();
-  // const editCustomerMutation = useMutation({
-  //   mutationFn: updateCustomer,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["customers"],
-  //       exact: true,
-  //       refetchType: "active",
-  //     });
-  //   },
-  // });
+  const { mutate: updateCustomerData, isPending } = useUpdateCustomerData(
+    customer?.id,
+    setIsOpen,
+  );
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
-    const myData: DataCustomer = {
-      id: customer!.id,
+    const payload = {
       name: values.username,
-      address: values.address,
-      regency: values.regency,
-      dateOfEntry: "",
-      phoneNumber: values.phoneNumber,
-      status: values.status as "DEAL" | "NEGO",
-      statusDescription: values.statusDescription,
+      noHp: values.phoneNumber,
+      status: values.status,
+      alamat: values.address,
+      alamatKabupaten: values.regency,
+      info: values.statusDescription,
     };
-    // editCustomerMutation.mutate(myData);
-    setIsOpen(false);
+    console.log(payload);
+    updateCustomerData(payload);
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{triger}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button className="group" variant={"ghost"} size={"icon"}>
+          <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
+        </Button>
+      </DialogTrigger>
+
       <DialogContent className="max-w-[737px]">
-        <DialogHeader className={cn("bg-yellow-500")}>
+        <DialogHeader className="bg-yellow-500">
           <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -202,7 +196,7 @@ const DialogTableEdit = ({
                       <FormControl>
                         <Textarea
                           className="focus-visible:ring-yellow-500"
-                          placeholder="Tell us a little bit about yourself"
+                          placeholder="Keterangan status"
                           {...field}
                         />
                       </FormControl>
@@ -224,15 +218,12 @@ const DialogTableEdit = ({
                   Batal
                 </Button>
               </DialogClose>
-              <Button
+              <ButtonPending
+                isPending={isPending}
+                variant={"yellow"}
                 size={"modalTable"}
-                variant={"default"}
-                type="submit"
-                className="bg-yellow-500 uppercase"
-                // disabled={editCustomerMutation.isPending}
-              >
-                Simpan
-              </Button>
+                title="Simpan"
+              />
             </DialogFooter>
           </form>
         </Form>

@@ -11,6 +11,7 @@ interface ButtonPendingProps {
     | "link"
     | "default"
     | "teal"
+    | "yellow"
     | "destructive"
     | "outline"
     | "secondary"
@@ -37,7 +38,7 @@ const ButtonPending: FC<ButtonPendingProps> = ({
       {isPending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Tunggu sebentar...
+          <p>Tunggu sebentar...</p>
         </>
       ) : (
         title

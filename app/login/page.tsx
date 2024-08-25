@@ -2,31 +2,32 @@
 
 import { z } from "zod";
 import { FC } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useLogin } from "@/hooks/useLogin";
 import { loginSchema } from "@/schemas/loginSchema";
-import axios, { isCancel, AxiosError } from "axios";
 
 import { Form } from "@/components/ui/form";
+import ButtonPending from "@/components/button-pending";
 import EmailField from "@/components/login/form-email-input";
 import PasswordField from "@/components/login/form-password-input";
-
-import { useLogin } from "@/hooks/useLogin";
-import ButtonPending from "@/components/button-pending";
 
 const Login: FC = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
   });
 
   const { mutate: sendLoginData, isPending } = useLogin(form);
+  const { mutate: sendLoginData, isPending } = useLogin(form);
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    const payload = {
+      email: data.username,
+      password: data.password,
+    };
+    sendLoginData(payload);
     const payload = {
       email: data.username,
       password: data.password,
@@ -42,6 +43,8 @@ const Login: FC = () => {
       >
         <EmailField form={form} />
         <PasswordField form={form} />
+
+        <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
 
         <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
       </form>

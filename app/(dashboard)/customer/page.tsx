@@ -1,27 +1,21 @@
 "use client";
 
-import { FC, useState, useEffect } from "react";
-import { CirclePlus } from "lucide-react";
-
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
-import { DataTablePagination } from "./data-table-pagination";
+import { FC } from "react";
 
 import { useFetchCustomerData } from "@/hooks/useCustomers";
 
-import { Button } from "@/components/ui/button";
+import { Columns } from "@/components/dashboard/customer/columns";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
+import { DataTable } from "@/components/dashboard/customer/data-table";
+import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 
 const CustomerPage: FC = () => {
-  const {
-    data: dataSource,
-    isError,
-    isLoading,
-    error,
-  } = useFetchCustomerData();
-  const [isOpen, setIsOpen] = useState(false);
+  const { data, isError, isLoading, error } = useFetchCustomerData();
+
+  const dataSource = data?.docs;
+  const dataInfo = data?.dataInfo;
 
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
@@ -29,8 +23,8 @@ const CustomerPage: FC = () => {
     if (dataSource)
       return (
         <>
-          <DataTable columns={columns} data={dataSource as any} />
-          <DataTablePagination />
+          <DataTable columns={Columns} data={dataSource as any} />
+          <DataTablePagination dataInfo={dataInfo} />
         </>
       );
     return null;
@@ -40,21 +34,10 @@ const CustomerPage: FC = () => {
     <>
       <header className="flex items-center justify-between">
         <h1 className="w-10 text-3xl font-semibold lg:w-full">DATA CUSTOMER</h1>
-        <DialogTableCreate
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          triger={
-            <Button
-              variant={"teal"}
-              className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-            >
-              <p>TAMBAH CUSTOMER</p>
-              <CirclePlus className="w-4 lg:w-6" />
-            </Button>
-          }
-        />
+        <DialogTableCreate />
       </header>
 
+      <main className="mt-9">{renderContent()}</main>
       <main className="mt-9">{renderContent()}</main>
     </>
   );

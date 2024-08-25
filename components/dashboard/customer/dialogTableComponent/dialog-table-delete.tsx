@@ -1,5 +1,10 @@
-import React from "react";
+import { ReactNode, useState } from "react";
 
+import IconDelete from "@/public/icons/table/delete.svg";
+import { useDeleteCustomerData } from "@/hooks/useCustomers";
+import { DataCustomer } from "@/components/dashboard/customer/columns";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -9,43 +14,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DataCustomer } from "@/app/(dashboard)/customer/columns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { deleteCustomer } from "@/lib/customerService";
-import { cn } from "@/lib/utils";
 
-const DialogTableDelete = ({
-  customer,
-  triger,
-  isOpen,
-  setIsOpen,
-}: {
-  customer?: DataCustomer;
-  triger: any;
-  isOpen: boolean;
-  setIsOpen: any;
-}) => {
-  const queryClient = useQueryClient();
+const DialogTableDelete = ({ customer }: { customer: DataCustomer }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // const deleteCustomerMutation = useMutation({
-  //   mutationFn: deleteCustomer,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["customers"] });
-  //   },
-  // });
-
-  const handleDelete = () => {
-    // deleteCustomerMutation.mutate(customer!.id);
-    setIsOpen(false);
-  };
+  const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
+    customer?.id,
+    setIsDialogOpen,
+  );
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>{triger}</DialogTrigger>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button className="group" variant={"ghost"} size={"icon"}>
+            <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
+          </Button>
+        </DialogTrigger>
         <DialogContent className="max-w-[737px]">
-          <DialogHeader className={cn("bg-destructive")}>
+          <DialogHeader className="bg-destructive">
             <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>
           </DialogHeader>
 
@@ -72,8 +59,10 @@ const DialogTableDelete = ({
               variant={"destructive"}
               type="submit"
               className="uppercase"
-              // disabled={deleteCustomerMutation.isPending}
-              onClick={handleDelete}
+              disabled={isPending}
+              onClick={() => {
+                deleteCustomer();
+              }}
             >
               Hapus
             </Button>
