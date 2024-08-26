@@ -18,14 +18,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Form,
   FormControl,
   FormField,
@@ -199,20 +191,6 @@ const DialogTableDetail = ({
               </div>
             </div>
 
-            <DialogFooter>
-              <Button
-                size={"modalTable"}
-                variant={"default"}
-                className="bg-gray-900"
-                onClick={handleEdit}
-              >
-                EDIT
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
             <DialogFooter>
               <Button
                 size={"modalTable"}

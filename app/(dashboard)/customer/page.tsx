@@ -38,7 +38,6 @@ const CustomerPage: FC = () => {
       </header>
 
       <main className="mt-9">{renderContent()}</main>
-      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };

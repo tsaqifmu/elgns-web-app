@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { FC } from "react";
-import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,14 +19,8 @@ const Login: FC = () => {
   });
 
   const { mutate: sendLoginData, isPending } = useLogin(form);
-  const { mutate: sendLoginData, isPending } = useLogin(form);
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-    const payload = {
-      email: data.username,
-      password: data.password,
-    };
-    sendLoginData(payload);
     const payload = {
       email: data.username,
       password: data.password,
@@ -43,8 +36,6 @@ const Login: FC = () => {
       >
         <EmailField form={form} />
         <PasswordField form={form} />
-
-        <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
 
         <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
       </form>

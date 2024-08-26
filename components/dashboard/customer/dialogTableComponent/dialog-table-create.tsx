@@ -45,8 +45,6 @@ const DialogTableCreate = () => {
       username: "",
       phoneNumber: "62",
       address: "",
-      phoneNumber: "62",
-      address: "",
       regency: "",
       status: "",
       statusDescription: "",
@@ -58,8 +56,6 @@ const DialogTableCreate = () => {
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     const payload = {
-  function onSubmit(values: z.infer<typeof customerSchema>) {
-    const payload = {
       name: values.username,
       noHp: values.phoneNumber,
       status: values.status,
@@ -68,7 +64,6 @@ const DialogTableCreate = () => {
       info: values.statusDescription,
     };
 
-    sendCustomerData(payload);
     sendCustomerData(payload);
   }
 
@@ -208,73 +203,7 @@ const DialogTableCreate = () => {
                 />
               </div>
             </div>
-              <div className="flex basis-1/2 flex-col gap-5">
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>STATUS</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="focus:ring-teal">
-                            <SelectValue placeholder="Pilih Status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="DEAL">DEAL</SelectItem>
-                          <SelectItem value="NEGO">NEGO</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="statusDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>KETERANGAN STATUS</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          className="focus-visible:ring-teal"
-                          placeholder="Tulis deskripsi status disini"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
 
-            <DialogFooter>
-              <DialogClose>
-                <Button
-                  size={"modalTable"}
-                  variant={"outline"}
-                  type="submit"
-                  className="uppercase"
-                >
-                  Batal
-                </Button>
-              </DialogClose>
-              <ButtonPending
-                isPending={isPending}
-                variant={"teal"}
-                size={"modalTable"}
-                title="Simpan"
-              />
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
             <DialogFooter>
               <DialogClose>
                 <Button
