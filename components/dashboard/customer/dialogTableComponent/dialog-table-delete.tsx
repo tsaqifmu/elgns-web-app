@@ -1,8 +1,4 @@
-import { ReactNode, useState } from "react";
-
-import IconDelete from "@/public/icons/table/delete.svg";
 import { useDeleteCustomerData } from "@/hooks/useCustomers";
-import { DataCustomer } from "@/components/dashboard/customer/columns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,25 +8,21 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { useCustomerDialog } from "@/contexts/CustomerDialogContext";
 
-const DialogTableDelete = ({ customer }: { customer: DataCustomer }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const DialogTableDelete = () => {
+  const { dialogType, customer, closeDialog } = useCustomerDialog();
+  const isOpen = dialogType === "delete";
 
   const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
     customer?.id,
-    setIsDialogOpen,
+    closeDialog,
   );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
-          </Button>
-        </DialogTrigger>
+      <Dialog open={isOpen} onOpenChange={closeDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
             <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>

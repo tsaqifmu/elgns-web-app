@@ -35,9 +35,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAddCustomerData } from "@/hooks/useCustomers";
+import { useCustomerDialog } from "@/contexts/CustomerDialogContext";
 
 const DialogTableCreate = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { dialogType, closeDialog } = useCustomerDialog();
+  const isOpen = dialogType === "create";
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -52,7 +54,7 @@ const DialogTableCreate = () => {
   });
 
   const { mutate: sendCustomerData, isPending } =
-    useAddCustomerData(setIsDialogOpen);
+    useAddCustomerData(closeDialog);
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     const payload = {
@@ -68,17 +70,7 @@ const DialogTableCreate = () => {
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant={"teal"}
-          className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-        >
-          <p>TAMBAH CUSTOMER</p>
-          <CirclePlus className="w-4 lg:w-6" />
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-teal">
           <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>

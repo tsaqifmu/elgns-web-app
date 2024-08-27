@@ -32,15 +32,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCustomerDialog } from "@/contexts/CustomerDialogContext";
 
-const DialogTableDetail = ({
-  customer,
-  setIsEditOpen,
-}: {
-  customer: DataCustomer;
-  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const DialogTableDetail = () => {
+  const { customer, dialogType, openDialog, closeDialog } = useCustomerDialog();
+  const isOpen = dialogType === "detail";
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -56,17 +52,12 @@ const DialogTableDetail = ({
 
   const handleEdit = (e: any) => {
     e.preventDefault();
-    setIsDialogOpen(false);
-    setIsEditOpen(true);
+    closeDialog();
+    openDialog("edit", customer);
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button className="group" variant={"ghost"} size={"icon"}>
-          <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-gray-900">
           <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>

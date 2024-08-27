@@ -36,16 +36,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useCustomerDialog } from "@/contexts/CustomerDialogContext";
 
-const DialogTableEdit = ({
-  customer,
-  isOpen,
-  setIsOpen,
-}: {
-  customer?: DataCustomer;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+const DialogTableEdit = () => {
+  const { customer, dialogType, closeDialog } = useCustomerDialog();
+  const isOpen = dialogType === "edit";
+
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     values: {
@@ -60,7 +56,7 @@ const DialogTableEdit = ({
 
   const { mutate: updateCustomerData, isPending } = useUpdateCustomerData(
     customer?.id,
-    setIsOpen,
+    closeDialog,
   );
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
@@ -77,13 +73,7 @@ const DialogTableEdit = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="group" variant={"ghost"} size={"icon"}>
-          <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-yellow-500">
           <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
@@ -212,7 +202,7 @@ const DialogTableEdit = ({
                 <Button
                   size={"modalTable"}
                   variant={"outline"}
-                  type="submit"
+                  type="button"
                   className="uppercase"
                 >
                   Batal

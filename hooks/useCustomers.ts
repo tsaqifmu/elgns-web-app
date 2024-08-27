@@ -123,9 +123,7 @@ export const useFetchCustomerData = () => {
   });
 };
 
-export const useAddCustomerData = (
-  setIsDialogOpen: React.Dispatch<SetStateAction<boolean>>,
-) => {
+export const useAddCustomerData = (closeDialog: any) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -144,7 +142,7 @@ export const useAddCustomerData = (
         description: response.data.message,
       });
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      setIsDialogOpen(false);
+      closeDialog();
     },
     onError: (error) => {
       console.error(error);
@@ -154,7 +152,7 @@ export const useAddCustomerData = (
 
 export const useUpdateCustomerData = (
   customerId: string | undefined,
-  setIsDialogOpen: React.Dispatch<SetStateAction<boolean>>,
+  closeDialog: any,
 ) => {
   const queryClient = useQueryClient();
 
@@ -175,7 +173,7 @@ export const useUpdateCustomerData = (
         description: response.data.message,
       });
       queryClient.invalidateQueries({ queryKey: ["customers"] });
-      setIsDialogOpen(false);
+      closeDialog();
     },
     onError: (error) => {
       console.error(error);
@@ -185,7 +183,7 @@ export const useUpdateCustomerData = (
 
 export const useDeleteCustomerData = (
   customerId: string | undefined,
-  setIsDialogOpen: Dispatch<SetStateAction<boolean>>,
+  closeDialog: any,
 ) => {
   const queryClient = useQueryClient();
 
@@ -204,7 +202,7 @@ export const useDeleteCustomerData = (
         title: "Berhasil menghapus data",
         description: response.data.message,
       });
-      setIsDialogOpen(false);
+      closeDialog();
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
     onError: (error) => {
