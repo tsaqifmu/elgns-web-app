@@ -22,7 +22,7 @@ const Login: FC = () => {
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     const payload = {
-      email: data.username,
+      name: data.username,
       password: data.password,
     };
     sendLoginData(payload);
