@@ -33,14 +33,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+interface DialogTableDetailProps {
+  customer: DataCustomer;
+  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
+}
+
 const DialogTableDetail = ({
   customer,
   setIsEditOpen,
-}: {
-  customer: DataCustomer;
-  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: DialogTableDetailProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  console.log("customer dari detail", customer);
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
