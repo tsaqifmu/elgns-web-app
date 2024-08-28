@@ -1,10 +1,7 @@
 import { z } from "zod";
-import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 
-import IconEdit from "@/public/icons/table/edit.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DataCustomer } from "@/components/dashboard/customer/columns";
 import { customerSchema } from "@/schemas/customerSchema";
 import { useUpdateCustomerData } from "@/hooks/useCustomers";
 
@@ -19,7 +16,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -36,16 +32,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
+import { useShallow } from "zustand/react/shallow";
 
-const DialogTableEdit = ({
-  customer,
-  isOpen,
-  setIsOpen,
-}: {
-  customer?: DataCustomer;
-  isOpen: boolean;
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
+const DialogTableEdit = () => {
+  const [editCustomerData, closeEditCustomerDialog] = useDialogStore(
+    useShallow((state: DialogState & DialogAction) => [
+      state.editCustomerData,
+      state.closeEditCustomerDialog,
+    ]),
+  );
+  const isOpen = editCustomerData !== undefined;
+  const customer = editCustomerData;
+  console.log("render edit");
+
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     values: {
@@ -60,7 +64,7 @@ const DialogTableEdit = ({
 
   const { mutate: updateCustomerData, isPending } = useUpdateCustomerData(
     customer?.id,
-    setIsOpen,
+    closeEditCustomerDialog,
   );
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
@@ -77,13 +81,7 @@ const DialogTableEdit = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="group" variant={"ghost"} size={"icon"}>
-          <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={isOpen} onOpenChange={closeEditCustomerDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-yellow-500">
           <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>

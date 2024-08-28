@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import { CircleCheck, CircleX } from "lucide-react";
+import { CircleCheck, CircleX, Info } from "lucide-react";
+import IconEdit from "@/public/icons/table/edit.svg";
+import IconDelete from "@/public/icons/table/delete.svg";
 
 import { cn } from "@/lib/utils";
 
-import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
-import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
-import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
+import { Button } from "@/components/ui/button";
 
 export type DataCustomer = {
   id: string;
@@ -37,84 +36,103 @@ const ColumnHeader = ({ title }: { title: string }) => {
   );
 };
 
-export const Columns: ColumnDef<DataCustomer>[] = [
-  {
-    id: "initial",
-    cell: ({ row }) => {
-      const customerName: string = row.getValue("name");
-      const status: string = row.getValue("status");
-      const firstCharName = customerName?.split("")[0];
+export const getColumns = (
+  openDetailDialog: any,
+  openEditDialog: any,
+  openDeleteDialog: any,
+): ColumnDef<DataCustomer>[] => {
+  return [
+    {
+      id: "initial",
+      cell: ({ row }) => {
+        const customerName: string = row.getValue("name");
+        const status: string = row.getValue("status");
+        const firstCharName = customerName?.split("")[0];
 
-      return (
-        <div
-          className={cn(
-            "flexCenter h-6 w-6 rounded-full bg-teal text-center text-white",
-            status === "NEGO" ? "bg-destructive" : "bg-teal",
-          )}
-        >
-          <p>{firstCharName}</p>
-        </div>
-      );
+        return (
+          <div
+            className={cn(
+              "flexCenter h-6 w-6 rounded-full bg-teal text-center text-white",
+              status === "NEGO" ? "bg-destructive" : "bg-teal",
+            )}
+          >
+            <p>{firstCharName}</p>
+          </div>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "dateOfEntry",
-    header: () => <ColumnHeader title={HEADER_TITLES.dateOfEntry} />,
-  },
-  {
-    accessorKey: "name",
-    header: () => <ColumnHeader title={HEADER_TITLES.name} />,
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
-  },
-  {
-    accessorKey: "regency",
-    header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
-  },
-  {
-    accessorKey: "status",
-    header: () => <ColumnHeader title={HEADER_TITLES.status} />,
-    cell: ({ row }) => {
-      const statusValue: string = row.getValue("status");
-      return (
-        <div
-          className={cn(
-            "flex w-fit items-center space-x-1 rounded-full px-[0.625rem] py-1 text-[0.625rem] text-white lg:w-20 lg:py-[0.3125rem] lg:text-sm",
-            statusValue === "NEGO" ? "bg-destructive" : "bg-teal",
-          )}
-        >
-          {statusValue === "NEGO" ? (
-            <CircleX className="w-4 lg:w-6" />
-          ) : (
-            <CircleCheck className="w-4 lg:w-6" />
-          )}
-          <p>{statusValue}</p>
-        </div>
-      );
+    {
+      accessorKey: "dateOfEntry",
+      header: () => <ColumnHeader title={HEADER_TITLES.dateOfEntry} />,
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const customer = row.original;
-      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+    {
+      accessorKey: "name",
+      header: () => <ColumnHeader title={HEADER_TITLES.name} />,
+    },
+    {
+      accessorKey: "phoneNumber",
+      header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
+    },
+    {
+      accessorKey: "regency",
+      header: () => <ColumnHeader title={HEADER_TITLES.regency} />,
+    },
+    {
+      accessorKey: "status",
+      header: () => <ColumnHeader title={HEADER_TITLES.status} />,
+      cell: ({ row }) => {
+        const statusValue: string = row.getValue("status");
+        return (
+          <div
+            className={cn(
+              "flex w-fit items-center space-x-1 rounded-full px-[0.625rem] py-1 text-[0.625rem] text-white lg:w-20 lg:py-[0.3125rem] lg:text-sm",
+              statusValue === "NEGO" ? "bg-destructive" : "bg-teal",
+            )}
+          >
+            {statusValue === "NEGO" ? (
+              <CircleX className="w-4 lg:w-6" />
+            ) : (
+              <CircleCheck className="w-4 lg:w-6" />
+            )}
+            <p>{statusValue}</p>
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const customer = row.original;
 
-      return (
-        <>
-          <DialogTableDetail
-            customer={customer}
-            setIsEditOpen={setIsEditOpen}
-          />
-          <DialogTableEdit
-            customer={customer}
-            isOpen={isEditOpen}
-            setIsOpen={setIsEditOpen}
-          />
-          <DialogTableDelete customer={customer} />
-        </>
-      );
+        return (
+          <>
+            <Button
+              className="group"
+              variant={"ghost"}
+              size={"icon"}
+              onClick={() => openDetailDialog(customer)}
+            >
+              <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
+            </Button>
+            <Button
+              className="group"
+              variant={"ghost"}
+              size={"icon"}
+              onClick={() => openEditDialog(customer)}
+            >
+              <IconEdit className="text-gray-300 transition-all group-hover:text-yellow-500" />
+            </Button>
+            <Button
+              className="group"
+              variant={"ghost"}
+              size={"icon"}
+              onClick={() => openDeleteDialog(customer)}
+            >
+              <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
+            </Button>
+          </>
+        );
+      },
     },
-  },
-];
+  ];
+};
