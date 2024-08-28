@@ -1,8 +1,4 @@
-import { ReactNode, useState } from "react";
-
-import IconDelete from "@/public/icons/table/delete.svg";
 import { useDeleteCustomerData } from "@/hooks/useCustomers";
-import { DataCustomer } from "@/components/dashboard/customer/columns";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,23 +10,32 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
+import { useShallow } from "zustand/react/shallow";
 
-const DialogTableDelete = ({ customer }: { customer: DataCustomer }) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+const DialogTableDelete = () => {
+  const [deleteCustomerData, closeDeleteCustomerDialog] = useDialogStore(
+    useShallow((state: DialogState & DialogAction) => [
+      state.deleteCustomerData,
+      state.closeDeleteCustomerDialog,
+    ]),
+  );
+  const isDialogOpen = deleteCustomerData !== undefined;
+  const customer = deleteCustomerData;
+  console.log("render delete");
 
   const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
     customer?.id,
-    setIsDialogOpen,
+    closeDeleteCustomerDialog,
   );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconDelete className="text-gray-300 transition-all group-hover:text-destructive" />
-          </Button>
-        </DialogTrigger>
+      <Dialog open={isDialogOpen} onOpenChange={closeDeleteCustomerDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
             <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>

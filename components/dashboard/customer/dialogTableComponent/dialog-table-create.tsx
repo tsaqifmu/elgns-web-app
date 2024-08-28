@@ -35,9 +35,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAddCustomerData } from "@/hooks/useCustomers";
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
+import { useShallow } from "zustand/react/shallow";
 
 const DialogTableCreate = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [createCustomerData, closeCreateCustomerDialog] = useDialogStore(
+    useShallow((state: DialogState & DialogAction) => [
+      state.createCustomerData,
+      state.closeCreateCustomerDialog,
+    ]),
+  );
+  const isDialogOpen = createCustomerData;
+  console.log("render create");
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -51,8 +64,9 @@ const DialogTableCreate = () => {
     },
   });
 
-  const { mutate: sendCustomerData, isPending } =
-    useAddCustomerData(setIsDialogOpen);
+  const { mutate: sendCustomerData, isPending } = useAddCustomerData(
+    closeCreateCustomerDialog,
+  );
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
     const payload = {
@@ -68,17 +82,7 @@ const DialogTableCreate = () => {
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant={"teal"}
-          className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-        >
-          <p>TAMBAH CUSTOMER</p>
-          <CirclePlus className="w-4 lg:w-6" />
-        </Button>
-      </DialogTrigger>
-
+    <Dialog open={isDialogOpen} onOpenChange={closeCreateCustomerDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-teal">
           <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
