@@ -1,27 +1,27 @@
 "use client";
 
-// SUDAH PIKSS
-import { FC, Suspense } from "react";
+import { FC } from "react";
+import { CirclePlus } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
 
 import { useFetchCustomerData } from "@/hooks/useCustomers";
 
-import { getColumns } from "@/components/dashboard/customer/columns";
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
+
+import { Button } from "@/components/ui/button";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
+import { getColumns } from "@/components/dashboard/customer/columns";
 import { DataTable } from "@/components/dashboard/customer/data-table";
 import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
 import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
 import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
-import {
-  DialogAction,
-  DialogState,
-  useDialogStore,
-} from "@/stores/dialog-store";
-import { useShallow } from "zustand/react/shallow";
-import { CirclePlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const CustomerPage: FC = () => {
   const { data, isError, isLoading, error } = useFetchCustomerData();
