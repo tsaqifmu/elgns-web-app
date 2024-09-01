@@ -8,6 +8,16 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "baru.azizfath.com",
+        port: "4040",
+        pathname: "/data/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
