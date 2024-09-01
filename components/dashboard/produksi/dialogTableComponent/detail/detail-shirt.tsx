@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -9,85 +9,69 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
+import { Shirt } from "@/types/production/detail/shirt";
 
-export interface RingkasanData {
-  id: string;
-  sablonBaju: string;
-  sablonCelana: string;
-  bahan: string;
-  pola: string;
-  warna: string;
-  lengan: string;
-  sizeS: number;
-  sizeM: number;
-  sizeL: number;
-  sizeXL: number;
-  sizeXXL: number;
-  size3XL: number;
-  size5XL: number;
-  size6XL: number;
-  size7XL: number;
-}
-
-const getDummyRingkasanData = (id: string) => {
-  return {
-    id: id,
-    sablonBaju: "",
-    sablonCelana: "",
-    bahan: "",
-    pola: "",
-    warna: "",
-    lengan: "",
-    sizeS: 0,
-    sizeM: 0,
-    sizeL: 0,
-    sizeXL: 0,
-    sizeXXL: 0,
-    size3XL: 0,
-    size5XL: 0,
-    size6XL: 0,
-    size7XL: 0,
-  } as RingkasanData;
-};
-
-export const DetailRingkasan = ({
-  ringkasanData,
-  setRingkasanData,
+export const DetailShirt = ({
+  shirts,
+  setShirts,
 }: {
-  ringkasanData: RingkasanData[];
-  setRingkasanData: any;
+  shirts: Shirt[];
+  setShirts: Dispatch<SetStateAction<Shirt[]>>;
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
-    data: RingkasanData,
+    changedShirt: Shirt,
   ) => {
     const { name, value } = e.target;
-
-    setRingkasanData((prevData: RingkasanData[]) => {
-      const updatedData = prevData.map((item: RingkasanData) =>
-        item.id === data.id ? { ...item, [name]: value } : { ...item },
+    setShirts((prevShirts: Shirt[]) => {
+      const updatedShirts = prevShirts.map((prevShirt: Shirt) =>
+        prevShirt.id === changedShirt.id
+          ? { ...prevShirt, [name]: value }
+          : { ...prevShirt },
       );
-      return [...updatedData];
+      return [...updatedShirts];
     });
+  };
+
+  const handleAddShirt = () => {
+    setShirts((prevData: Shirt[]) => [
+      ...prevData,
+      {
+        id: crypto.randomUUID(),
+        printingShirt: "",
+        material: "",
+        pattern: "",
+        color: "",
+        sleeve: "",
+        sizeS: 0,
+        sizeM: 0,
+        sizeL: 0,
+        sizeXL: 0,
+        sizeXXL: 0,
+        size3XL: 0,
+        size5XL: 0,
+        size6XL: 0,
+        size7XL: 0,
+        custom: 0,
+        total: 0,
+      },
+    ]);
   };
 
   return (
     <div>
       <div className="flex justify-between font-medium">
-        <h1>RINGKASAN</h1>
-        <h1>TOTAL: {ringkasanData.length}</h1>
+        <h1>BAJU</h1>
+        <h1>TOTAL: {shirts.length}</h1>
       </div>
       <div className="flex gap-2">
-        <div className="mt-2 max-h-[13rem] grow overflow-y-scroll rounded-md border border-gray-900">
+        <div className="mt-2 max-h-[10rem] grow overflow-y-scroll rounded-md border border-gray-900">
           <Table>
             <TableHeader className="bg-gray-900">
               <TableRow>
                 <TableHead className="text-sm text-white">NO</TableHead>
                 <TableHead className="w-32 py-0 text-sm text-white">
                   SABLON BAJU
-                </TableHead>
-                <TableHead className="w-32 py-0 text-sm text-white">
-                  SABLON CELANA
                 </TableHead>
                 <TableHead className="w-32 py-0 text-sm text-white">
                   BAHAN
@@ -110,27 +94,22 @@ export const DetailRingkasan = ({
                 <TableHead className="py-0 text-sm text-white">5XL</TableHead>
                 <TableHead className="py-0 text-sm text-white">6XL</TableHead>
                 <TableHead className="py-0 text-sm text-white">7XL</TableHead>
+                <TableHead className="py-0 text-sm text-white">
+                  CUSTOM
+                </TableHead>
+                <TableHead className="py-0 text-sm text-white">TOTAL</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ringkasanData.map((item, index) => (
+              {shirts.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-sm">{index + 1}</TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="sablonBaju"
-                      value={item.sablonBaju}
-                      onChange={(e) => handleChange(e, item)}
-                    />
-                  </TableCell>
-                  <TableCell className="p-0 text-sm">
-                    <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
-                      type="text"
-                      name="sablonCelana"
-                      value={item.sablonCelana}
+                      name="printingShirt"
+                      value={item.printingShirt}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -138,8 +117,8 @@ export const DetailRingkasan = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="bahan"
-                      value={item.bahan}
+                      name="material"
+                      value={item.material}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -147,8 +126,8 @@ export const DetailRingkasan = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="pola"
-                      value={item.pola}
+                      name="pattern"
+                      value={item.pattern}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -156,8 +135,8 @@ export const DetailRingkasan = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="warna"
-                      value={item.warna}
+                      name="color"
+                      value={item.color}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -165,8 +144,8 @@ export const DetailRingkasan = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="lengan"
-                      value={item.lengan}
+                      name="sleeve"
+                      value={item.sleeve}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -251,6 +230,24 @@ export const DetailRingkasan = ({
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
+                  <TableCell className="p-2 text-sm">
+                    <Input
+                      className="rounded-none bg-transparent p-1 uppercase"
+                      type="text"
+                      name="custom"
+                      value={item.custom}
+                      onChange={(e) => handleChange(e, item)}
+                    />
+                  </TableCell>
+                  <TableCell className="p-2 text-sm">
+                    <Input
+                      className="rounded-none bg-transparent p-1 uppercase"
+                      type="text"
+                      name="total"
+                      value={item.total}
+                      onChange={(e) => handleChange(e, item)}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -259,12 +256,7 @@ export const DetailRingkasan = ({
         <div className="flex items-end">
           <button
             className="flex items-center justify-center rounded-sm bg-gray-900 px-1 py-4 text-white hover:bg-gray-700"
-            onClick={() => {
-              setRingkasanData((prevData: any[]) => [
-                ...prevData,
-                getDummyRingkasanData(prevData[prevData.length - 1].id + "1"),
-              ]);
-            }}
+            onClick={handleAddShirt}
           >
             <IconAddFill className="inline h-4 w-4" viewBox="0 0 11 13" />
           </button>

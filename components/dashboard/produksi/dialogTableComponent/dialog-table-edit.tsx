@@ -6,38 +6,38 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Overview } from "../overview";
-import { Detail } from "../detail";
-import { Invoice } from "../invoice";
-import { Production } from "@/hooks/useFetchProductions";
+import { Overview } from "./overview/overview";
+import { Detail } from "./detail/detail";
+import { ProductionInvoice } from "./invoice/invoice";
+import { useShallow } from "zustand/react/shallow";
+import {
+  DialogProductionAction,
+  DialogProductionState,
+  useDialogProductionStore,
+} from "@/stores/dialog-production-store";
 
-interface DialogTableEditProps {
-  production: Production;
-  trigger: any;
-  isOpen: boolean;
-  setIsOpen: any;
-}
-
-const DialogTableEdit: FC<DialogTableEditProps> = ({
-  production,
-  trigger,
-  isOpen,
-  setIsOpen,
-}) => {
+const DialogTableEdit = () => {
   const menus = ["OVERVIEW", "DETAIL", "INVOICE"];
   const [activeMenu, setActiveMenu] = useState("OVERVIEW");
+  const [editProductionData, closeEditProductionDialog] =
+    useDialogProductionStore(
+      useShallow((state: DialogProductionState & DialogProductionAction) => [
+        state.editProductionData,
+        state.closeEditProductionDialog,
+      ]),
+    );
 
+  const isOpen = editProductionData !== undefined;
   const getContentComponent = () => {
     switch (activeMenu) {
       case "OVERVIEW":
-        return <Overview production={production} setIsOpen={setIsOpen} />;
+        return <Overview />;
       case "DETAIL":
         return <Detail />;
       default:
-        return <Invoice />;
+        return <ProductionInvoice />;
     }
   };
 
@@ -51,8 +51,7 @@ const DialogTableEdit: FC<DialogTableEditProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={closeEditProductionDialog}>
       <DialogContent
         className={cn("overflow-x-hidden font-oswald", getContentWidth())}
       >
