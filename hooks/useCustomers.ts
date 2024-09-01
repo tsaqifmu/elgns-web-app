@@ -44,7 +44,7 @@ interface CustomerQueryData {
   };
 }
 
-const dateIdFormat = (dateString: string) => {
+export const dateIdFormat = (dateString: string) => {
   const date = new Date(dateString);
 
   const day = date.getDate().toString().padStart(2, "0");
