@@ -1,9 +1,6 @@
 import { z } from "zod";
-import { Dispatch, SetStateAction, useState } from "react";
-import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DataCustomer } from "@/components/dashboard/customer/columns";
 import { customerSchema } from "@/schemas/customerSchema";
 
 import { Input } from "@/components/ui/input";
@@ -15,7 +12,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -32,19 +28,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
+import { useShallow } from "zustand/react/shallow";
 
-interface DialogTableDetailProps {
-  customer: DataCustomer;
-  setIsEditOpen: Dispatch<SetStateAction<boolean>>;
-}
-
-const DialogTableDetail = ({
-  customer,
-  setIsEditOpen,
-}: DialogTableDetailProps) => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  console.log("customer dari detail", customer);
+const DialogTableDetail = () => {
+  const [
+    detailCustomerData,
+    closeDetailCustomerDialog,
+    openEditCustomerDialog,
+  ] = useDialogStore(
+    useShallow((state: DialogState & DialogAction) => [
+      state.detailCustomerData,
+      state.closeDetailCustomerDialog,
+      state.openEditCustomerDialog,
+    ]),
+  );
+  const isDialogOpen = detailCustomerData !== undefined;
+  const customer = detailCustomerData;
+  console.log("render detail");
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
@@ -60,17 +65,12 @@ const DialogTableDetail = ({
 
   const handleEdit = (e: any) => {
     e.preventDefault();
-    setIsDialogOpen(false);
-    setIsEditOpen(true);
+    openEditCustomerDialog(customer!);
+    closeDetailCustomerDialog();
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button className="group" variant={"ghost"} size={"icon"}>
-          <Info className="text-gray-300 transition-all group-hover:text-gray-500" />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isDialogOpen} onOpenChange={closeDetailCustomerDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-gray-900">
           <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>
