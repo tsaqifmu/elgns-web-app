@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export const useUpdateProductionOverview = (
   productionId: string | undefined,
-  closeEditDialog: () => void,
+  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const queryClient = useQueryClient();
 
@@ -22,7 +22,7 @@ export const useUpdateProductionOverview = (
         description: "mantap",
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
-      closeEditDialog();
+      setIsEditing(false);
     },
     onError: (error) => {
       toast({
@@ -31,7 +31,6 @@ export const useUpdateProductionOverview = (
         description: error.message,
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
-      closeEditDialog();
     },
   });
 };

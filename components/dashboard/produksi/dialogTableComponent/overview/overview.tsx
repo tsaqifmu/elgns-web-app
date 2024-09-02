@@ -50,7 +50,7 @@ export const Overview = () => {
   } = useFetchProductionOverview(productionId);
   const { mutate: updateOverview, isPending } = useUpdateProductionOverview(
     production?.id,
-    closeEditProductionDialog,
+    setIsEditing,
   );
 
   function onSubmit(values: z.infer<typeof productionOverviewSchema>) {
@@ -166,11 +166,11 @@ export const Overview = () => {
                     <FormLabel>CATATAN</FormLabel>
                     <FormControl>
                       <Textarea
-                        readOnly
+                        readOnly={!isEditing}
                         className="border border-gray-300"
-                        placeholder="Masukkan catatan"
-                        value={field.value}
+                        placeholder={!isEditing ? "-" : "Masukkan catatan"}
                         rows={4}
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
