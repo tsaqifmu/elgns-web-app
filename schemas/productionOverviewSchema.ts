@@ -8,10 +8,8 @@ export const productionOverviewSchema = z.object({
   invoice: z.string().min(1, {
     message: "Invoice harus diisi",
   }),
-  dateOfEntry: z.date(),
-  dateOfExit: z.date(),
-  imageFile: z.instanceof(File).optional(),
-  cdrFile: z.instanceof(File).optional(),
+  imageFile: z.instanceof(File).nullable(),
+  cdrFile: z.instanceof(File).nullable(),
   type: z.string().min(1, {
     message: "Jenis harus diisi.",
   }),

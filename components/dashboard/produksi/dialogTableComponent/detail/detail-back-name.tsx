@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
 import {
   Table,
   TableBody,
@@ -9,41 +9,27 @@ import {
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { Input } from "@/components/ui/input";
+import { BackName } from "@/types/production/detail/back-name";
+import { Pant } from "@/types/production/detail/pant";
 
-export interface NamaPunggungData {
-  id: string;
-  namaPunggung: string;
-  nomor: number;
-  size: string;
-  keterangan: string;
-}
-
-const getDummyNamaPunggungData = (id: string) => {
-  return {
-    id: id,
-    namaPunggung: "",
-    nomor: 0,
-    size: "",
-    keterangan: "",
-  } as NamaPunggungData;
-};
-
-export const DetailNamaPunggung = ({
-  namaPunggungData,
-  setNamaPunggungData,
+export const DetailBackName = ({
+  backNames,
+  setBackNames,
 }: {
-  namaPunggungData: NamaPunggungData[];
-  setNamaPunggungData: any;
+  backNames: BackName[];
+  setBackNames: Dispatch<SetStateAction<BackName[]>>;
 }) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
-    data: NamaPunggungData,
+    changedBackName: BackName,
   ) => {
     const { name, value } = e.target;
 
-    setNamaPunggungData((prevData: NamaPunggungData[]) => {
-      const updatedData = prevData.map((item: NamaPunggungData) =>
-        item.id === data.id ? { ...item, [name]: value } : { ...item },
+    setBackNames((prevBackNames: BackName[]) => {
+      const updatedData = prevBackNames.map((prevBackName: BackName) =>
+        prevBackName.id === changedBackName.id
+          ? { ...prevBackName, [name]: value }
+          : { ...prevBackName },
       );
       return [...updatedData];
     });
@@ -53,7 +39,7 @@ export const DetailNamaPunggung = ({
     <div>
       <h1 className="font-medium">NAMA PUNGGUNG</h1>
       <div className="flex gap-2">
-        <div className="mt-2 max-h-[13rem] grow overflow-y-scroll rounded-md border border-[#6DB6CC]">
+        <div className="mt-2 max-h-[10rem] grow overflow-y-scroll rounded-md border border-[#6DB6CC]">
           <Table>
             <TableHeader className="bg-[#6DB6CC]">
               <TableRow>
@@ -67,7 +53,7 @@ export const DetailNamaPunggung = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {namaPunggungData.map((item, index) => (
+              {backNames.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-sm uppercase">
                     {index + 1}
@@ -76,8 +62,8 @@ export const DetailNamaPunggung = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="namaPunggung"
-                      value={item.namaPunggung}
+                      name="name"
+                      value={item.name}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -85,8 +71,8 @@ export const DetailNamaPunggung = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="number"
-                      name="nomor"
-                      value={item.nomor}
+                      name="number"
+                      value={item.number}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -103,8 +89,8 @@ export const DetailNamaPunggung = ({
                     <Input
                       className="rounded-none bg-transparent p-1 uppercase"
                       type="text"
-                      name="keterangan"
-                      value={item.keterangan}
+                      name="notes"
+                      value={item.notes}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
@@ -117,11 +103,15 @@ export const DetailNamaPunggung = ({
           <button
             className="flex items-center justify-center rounded-sm bg-[#6DB6CC] px-1 py-4 text-white hover:bg-[#8bc3d3]"
             onClick={() => {
-              setNamaPunggungData((prevData: NamaPunggungData[]) => [
-                ...prevData,
-                getDummyNamaPunggungData(
-                  prevData[prevData.length - 1].id + "1",
-                ),
+              setBackNames((prevBackNames: BackName[]) => [
+                ...prevBackNames,
+                {
+                  id: crypto.randomUUID(),
+                  name: "",
+                  number: "",
+                  size: "",
+                  notes: "",
+                },
               ]);
             }}
           >
