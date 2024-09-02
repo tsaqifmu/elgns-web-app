@@ -1,7 +1,7 @@
 "use client";
 
 // SUDAH PIKSS
-import { FC } from "react";
+import { FC, Suspense } from "react";
 
 import { useFetchCustomerData } from "@/hooks/useCustomers";
 
@@ -47,7 +47,6 @@ const CustomerPage: FC = () => {
     openEditCustomerDialog,
     openDeleteCustomerDialog,
   );
-  console.log("render page customer");
 
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
@@ -55,8 +54,10 @@ const CustomerPage: FC = () => {
     if (dataSource)
       return (
         <>
-          <DataTable columns={columns} data={dataSource as any} />
-          <DataTablePagination dataInfo={dataInfo} />
+          <Suspense fallback={<SkeletonTable />}>
+            <DataTable columns={columns} data={dataSource as any} />
+            <DataTablePagination dataInfo={dataInfo} />
+          </Suspense>
           <DialogTableCreate />
           <DialogTableDetail />
           <DialogTableEdit />
@@ -68,19 +69,23 @@ const CustomerPage: FC = () => {
 
   return (
     <>
-      <header className="flex items-center justify-between">
-        <h1 className="w-10 text-3xl font-semibold lg:w-full">DATA CUSTOMER</h1>
-        <Button
-          variant={"teal"}
-          className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-          onClick={openCreateCustomerDialog}
-        >
-          <p>TAMBAH CUSTOMER</p>
-          <CirclePlus className="w-4 lg:w-6" />
-        </Button>
-      </header>
+      <Suspense fallback={<SkeletonTable />}>
+        <header className="flex items-center justify-between">
+          <h1 className="w-10 text-3xl font-semibold lg:w-full">
+            DATA CUSTOMER
+          </h1>
+          <Button
+            variant={"teal"}
+            className="space-x-1 text-xs lg:space-x-3 lg:text-base"
+            onClick={openCreateCustomerDialog}
+          >
+            <p>TAMBAH CUSTOMER</p>
+            <CirclePlus className="w-4 lg:w-6" />
+          </Button>
+        </header>
 
-      <main className="mt-9">{renderContent()}</main>
+        <main className="mt-9">{renderContent()}</main>
+      </Suspense>
     </>
   );
 };

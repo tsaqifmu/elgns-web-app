@@ -1,9 +1,9 @@
+"use client";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { toast } from "@/components/ui/use-toast";
-import React, { Dispatch, SetStateAction } from "react";
 import { DataCustomer } from "@/components/dashboard/customer/columns";
 
 interface ApiResponse<ItemType> {

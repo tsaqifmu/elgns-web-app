@@ -1,15 +1,15 @@
-import { Production } from "@/hooks/production/useFetchProductions";
+import { ProductionItem } from "@/types/production/production-item";
 import { create } from "zustand";
 
 export interface DialogProductionState {
-  editProductionData?: Production;
-  deleteProductionData?: Production;
+  editProductionData?: ProductionItem;
+  deleteProductionData?: ProductionItem;
 }
 
 export interface DialogProductionAction {
-  openEditProductionDialog: (data: Production) => void;
+  openEditProductionDialog: (data: ProductionItem) => void;
   closeEditProductionDialog: () => void;
-  openDeleteProductionDialog: (data: Production) => void;
+  openDeleteProductionDialog: (data: ProductionItem) => void;
   closeDeleteProductionDialog: () => void;
 }
 
@@ -18,10 +18,10 @@ export const useDialogProductionStore = create<
 >((set) => ({
   editProductionData: undefined,
   deleteProductionData: undefined,
-  openEditProductionDialog: (data: Production) =>
+  openEditProductionDialog: (data: ProductionItem) =>
     set({ editProductionData: data }),
   closeEditProductionDialog: () => set({ editProductionData: undefined }),
-  openDeleteProductionDialog: (data: Production) =>
+  openDeleteProductionDialog: (data: ProductionItem) =>
     set({ deleteProductionData: data }),
   closeDeleteProductionDialog: () => set({ deleteProductionData: undefined }),
 }));

@@ -1,4 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import { getProductions } from "@/lib/productionService";
 import { mapProductionItemResponse } from "@/types/production/production-item-response";
 import { useSearchParams } from "next/navigation";
@@ -30,38 +32,3 @@ export const useFetchProductions = () => {
     },
   });
 };
-
-// export const useFetchProducts = () => {
-//   return useQuery<ApiResponse<Product>>({
-//     queryKey: ["products"],
-//     queryFn: async () => {
-//       const response = await apiRequest({
-//         path: "/customer/list",
-//         method: HttpMethod.GET,
-//         params: {
-//           alphabet: "ascending",
-//           year: "2024",
-//           month: "",
-//           week: "",
-//           name: "",
-//           status: "",
-//           page: "",
-//         },
-//       });
-
-//       console.log(response);
-//       return response;
-//     },
-// select: (response) => {
-//   console.log(response);
-//   // mapToProduct(response.data.message.docs);
-//   return {
-//     data: {
-//       message: {
-//         docs: [produkku],
-//       },
-//     },
-//   } as ApiResponse<Product[]>;
-// },
-//   });
-// };
