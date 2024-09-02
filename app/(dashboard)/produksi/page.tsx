@@ -3,7 +3,7 @@
 import { DataTable } from "@/components/dashboard/customer/data-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
-import React, { FC, Suspense } from "react";
+import { FC } from "react";
 import { getColumn } from "./columns";
 import { useFetchProductions } from "@/hooks/production/useFetchProductions";
 import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
@@ -53,9 +53,7 @@ const ProductionPage: FC = () => {
       <header className="flex items-center justify-between">
         <h1 className="w-10 text-3xl font-semibold lg:w-full">DATA PRODUKSI</h1>
       </header>
-      <main className="mt-9">
-        <Suspense fallback={<SkeletonTable />}>{renderContent()}</Suspense>
-      </main>
+      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };
