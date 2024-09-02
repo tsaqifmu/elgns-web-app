@@ -52,13 +52,13 @@ export const getColumn = (
       return (
         <div className="flex items-center">
           <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconImage className="text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            <IconImage className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
           </Button>
           <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconCdr className="text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            <IconCdr className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
           </Button>
           <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconDownload className="text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            <IconDownload className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
           </Button>
         </div>
       );
