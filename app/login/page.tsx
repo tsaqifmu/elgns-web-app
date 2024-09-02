@@ -1,58 +1,43 @@
 "use client";
 
 import { z } from "zod";
-import { FC, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useLogin } from "@/hooks/useLogin";
 import { loginSchema } from "@/schemas/loginSchema";
 
 import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import ButtonPending from "@/components/button-pending";
 import EmailField from "@/components/login/form-email-input";
 import PasswordField from "@/components/login/form-password-input";
 
 const Login: FC = () => {
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
   });
 
-  function onSubmit(data: z.infer<typeof loginSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  const { mutate: sendLoginData, isPending } = useLogin(form);
+
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    const payload = {
+      name: data.username,
+      password: data.password,
+    };
+    sendLoginData(payload);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-80 space-y-6">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="bggren w-80 space-y-6"
+      >
         <EmailField form={form} />
         <PasswordField form={form} />
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Tunggu sebentar...
-            </>
-          ) : (
-            "LOGIN"
-          )}
-        </Button>
+
+        <ButtonPending isPending={isPending} title="LOGIN" className="w-full" />
       </form>
     </Form>
   );
