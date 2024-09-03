@@ -11,12 +11,9 @@ interface BoardItem {
 
 export type BoardResponse = BoardItem[];
 
-const BoardItem = ({ board }: { board: BoardItem }) => {
+const BoardItemComponent = ({ board }: { board: BoardItem }) => {
   return (
-    <div
-      key={board._id}
-      className="h-fit w-52 flex-none rounded-md border-2 border-gray-500 bg-white p-[10px]"
-    >
+    <div className="h-fit w-52 flex-none rounded-md border-2 border-gray-500 bg-white p-[10px]">
       <div className="flex flex-col space-y-[10px]">
         <header className="flex space-x-2">
           <h3 className="w-fit rounded-sm bg-gray-400 px-[5px] py-[2px] text-sm font-bold uppercase text-white">
@@ -39,7 +36,7 @@ const BoardList = ({ boardList }: { boardList: BoardResponse }) => {
     <ScrollArea>
       <div className="flex space-x-[15px] overflow-auto pb-5">
         {boardList.map((board: BoardItem) => (
-          <BoardItem board={board} />
+          <BoardItemComponent key={board._id} board={board} />
         ))}
       </div>
       <ScrollBar orientation="horizontal" />
