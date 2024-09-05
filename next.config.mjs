@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ["baru.azizfath.com"],
-  },
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },

@@ -15,7 +15,10 @@ export interface InvoiceResponse {
     custName: string;
     noHp: string;
     catatan: string;
+    jenis?: string;
     noInvoice?: string;
+    tglMasuk?: string;
+    tglKeluar?: string;
     tabelInvoice1?: InvoiceTableItemResponse[];
     tabelInvoice2?: InvoiceTableTotalResponse;
   };
@@ -23,6 +26,12 @@ export interface InvoiceResponse {
 
 export const mapInvoiceResponse = (response: InvoiceResponse): Invoice => {
   return {
+    name: response.message.custName,
+    phoneNumber: response.message.noHp,
+    type: response.message.jenis ?? "",
+    invoiceNumber: response.message.noInvoice ?? "",
+    dateOfEntry: response.message.tglMasuk ?? "",
+    dateOfExit: response.message.tglKeluar ?? "",
     invoices: mapInvoiceItemResponse(response.message.tabelInvoice1),
     total: mapInvoiceTableTotalResponseToInvoiceTableTotal(
       response.message.tabelInvoice2,

@@ -29,6 +29,7 @@ import {
 import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
 import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
 import { useShallow } from "zustand/react/shallow";
+import { formatToIndonesianDate } from "@/lib/dateUtils";
 
 export const ProductionInvoice = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -68,8 +69,6 @@ export const ProductionInvoice = () => {
   useEffect(() => {
     let totalPrice = 0;
     tableInvoice.forEach((item) => (totalPrice += item.total));
-    let { discount, downPayment, initialDeposit } = tableTotal;
-    let totalFinal = totalPrice - discount - downPayment - initialDeposit;
     setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
   }, [tableInvoice]);
 
@@ -135,11 +134,14 @@ export const ProductionInvoice = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log({
-      invoices: tableInvoice,
-      total: tableTotal,
-    });
+
     updateInvoice({
+      invoiceNumber: "",
+      name: "",
+      phoneNumber: "",
+      type: "",
+      dateOfEntry: "",
+      dateOfExit: "",
       invoices: tableInvoice,
       total: tableTotal,
     });
@@ -162,46 +164,46 @@ export const ProductionInvoice = () => {
               <div className="flex basis-1/2 flex-col gap-2">
                 <h1>
                   <span className="font-medium text-gray-500">CUSTOMER:</span>
-                  <span className="ms-2 font-light text-gray-500">
-                    {"INGS (SEKARIBA)"}
+                  <span className="ms-2 font-light uppercase text-gray-500">
+                    {invoice.name}
                   </span>
                 </h1>
                 <h1>
                   <span className="font-medium text-gray-500">NOMOR WA:</span>
                   <span className="ms-2 font-light text-gray-500">
-                    {"6285155348643"}
+                    {invoice.phoneNumber}
                   </span>
                 </h1>
                 <h1>
                   <span className="font-medium text-gray-500">JENIS:</span>
-                  <span className="ms-2 font-light text-gray-500">
-                    {"BASEBALL FULLPRINT, KAOS, LANYARD"}
+                  <span className="ms-2 font-light uppercase text-gray-500">
+                    {invoice.type}
                   </span>
                 </h1>
               </div>
               <div className="flex basis-1/2 flex-col gap-2">
                 <h1>
                   <span className="font-medium text-gray-500">NO INVOICE:</span>
-                  <span className="ms-2 font-light text-gray-500">
-                    {"WO.01.20 FEB-SEKARIMBA-MAKLON"}
+                  <span className="ms-2 font-light uppercase text-gray-500">
+                    {invoice.invoiceNumber}
                   </span>
                 </h1>
-                {/* <h1>
-                <span className="font-medium text-gray-500">
-                  TANGGAL MASUK:
-                </span>
-                <span className="ms-2 font-light text-gray-500">
-                  {"20 FEB 2024"}
-                </span>
-              </h1>
-              <h1>
-                <span className="font-medium text-gray-500">
-                  TANGGAL KELUAR:
-                </span>
-                <span className="ms-2 font-light text-gray-500">
-                  {"27 FEB 2024"}
-                </span>
-              </h1> */}
+                <h1>
+                  <span className="font-medium text-gray-500">
+                    TANGGAL MASUK:
+                  </span>
+                  <span className="ms-2 font-light uppercase text-gray-500">
+                    {formatToIndonesianDate(invoice.dateOfEntry)}
+                  </span>
+                </h1>
+                <h1>
+                  <span className="font-medium text-gray-500">
+                    TANGGAL KELUAR:
+                  </span>
+                  <span className="ms-2 font-light uppercase text-gray-500">
+                    {formatToIndonesianDate(invoice.dateOfExit)}
+                  </span>
+                </h1>
               </div>
             </div>
             {/* TABLE INVOICE */}
