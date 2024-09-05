@@ -1,6 +1,8 @@
 import { toast } from "@/components/ui/use-toast";
 import { updateProductionInvoice } from "@/lib/productionService";
 import { Invoice } from "@/types/production/invoice/invoice";
+import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
+import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useUpdateProductionInvoice = (

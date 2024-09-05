@@ -14,6 +14,8 @@ import {
 import { z } from "zod";
 import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
 import { OverviewToSend } from "@/types/production/overview/overview-to-send";
+import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
+import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
 
 const wait = (duration: number) => {
   return new Promise((resolve) => setTimeout(resolve, duration));

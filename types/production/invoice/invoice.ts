@@ -5,6 +5,12 @@ import {
 import { InvoiceTableTotal } from "./invoice-table-total";
 
 export interface Invoice {
+  name: string;
+  phoneNumber: string;
+  type: string;
+  invoiceNumber: string;
+  dateOfEntry: string;
+  dateOfExit: string;
   invoices: InvoiceTableItem[];
   total: InvoiceTableTotal;
 }

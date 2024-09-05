@@ -1,4 +1,5 @@
-export const formatToIndonesianDate = (dateString: string) => {
+export const formatToIndonesianDate = (dateString?: string) => {
+  if (!dateString) return "-";
   try {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
