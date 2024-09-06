@@ -18,6 +18,11 @@ const nextConfig = {
         port: "4040",
         pathname: "/data/**",
       },
+      {
+        protocol: "http",
+        hostname: "elgns-api.vercel.app",
+        pathname: "/data/**",
+      },
     ],
   },
 };
