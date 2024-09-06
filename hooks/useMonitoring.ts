@@ -1,6 +1,5 @@
 "use client";
 
-import { CardsResponse } from "@/components/dashboard/monitoring/cardBoard";
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { useQuery } from "@tanstack/react-query";
 

@@ -3,18 +3,17 @@
 import { useFetchBoardList } from "@/hooks/useMonitoring";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
-import BoardList from "@/components/dashboard/monitoring/boardList";
+import ColumnList from "@/components/dashboard/monitoring/column-list";
 
 const MonitoringPage = () => {
-  const { data: boardList, isError, isLoading, error } = useFetchBoardList();
-
+  const { data, isError, isLoading, error } = useFetchBoardList();
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
     if (isError) return <ErrorLoadData error={error} />;
-    if (boardList)
+    if (data)
       return (
         <>
-          <BoardList boardList={boardList} />
+          <ColumnList columnList={data.boards} tasksResponse={data.cards} />
         </>
       );
     return null;
