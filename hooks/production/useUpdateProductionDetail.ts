@@ -1,7 +1,10 @@
-import { toast } from "@/components/ui/use-toast";
-import { updateProductionDetail } from "@/lib/productionService";
-import { Detail } from "@/types/production/detail/detail";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { Detail } from "@/types/production/detail/detail";
+import { updateProductionDetail } from "@/lib/productionService";
+
+import { toast } from "@/components/ui/use-toast";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 
 export const useUpdateProductionDetail = (
   productionId: string | undefined,
@@ -18,17 +21,13 @@ export const useUpdateProductionDetail = (
       toast({
         variant: "default",
         title: "Berhasil mengubah detail produksi.",
-        description: "mantap",
+        description: response.data.message,
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
       closeEditDialog();
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Gagal mengubah detail produksi.",
-        description: error.message.toString(),
-      });
+      handleArrayError(error, toast);
       console.log(error);
     },
   });

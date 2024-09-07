@@ -1,9 +1,9 @@
 "use client";
-
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+
 import { getProductions } from "@/lib/productionService";
 import { mapProductionItemResponse } from "@/types/production/production-item-response";
-import { useSearchParams } from "next/navigation";
 
 export const useFetchProductions = () => {
   const searchParams = useSearchParams();

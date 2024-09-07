@@ -1,8 +1,10 @@
-import { toast } from "@/components/ui/use-toast";
+import { z } from "zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { updateProductionOverview } from "@/lib/productionService";
 import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+
+import { toast } from "@/components/ui/use-toast";
 
 export const useUpdateProductionOverview = (
   productionId: string | undefined,
@@ -19,7 +21,7 @@ export const useUpdateProductionOverview = (
       toast({
         variant: "default",
         title: "Berhasil mengubah overview produksi.",
-        description: "mantap",
+        description: response,
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
       setIsEditing(false);

@@ -18,9 +18,9 @@ import ErrorLoadData from "@/components/dashboard/error-load-data";
 import { getColumns } from "@/components/dashboard/customer/columns";
 import { DataTable } from "@/components/dashboard/customer/data-table";
 import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
+import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
-import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
 import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
 
 const CustomerPage: FC = () => {

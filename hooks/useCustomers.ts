@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { toast } from "@/components/ui/use-toast";
 import { DataCustomer } from "@/components/dashboard/customer/columns";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 
 interface ApiResponse<ItemType> {
   data: {
@@ -145,6 +146,7 @@ export const useAddCustomerData = (closeCustomerDialog: () => void) => {
       closeCustomerDialog();
     },
     onError: (error) => {
+      handleArrayError(error, toast);
       console.error(error);
     },
   });
@@ -176,6 +178,7 @@ export const useUpdateCustomerData = (
       closeCustomerDialog();
     },
     onError: (error) => {
+      handleArrayError(error, toast);
       console.error(error);
     },
   });
@@ -206,6 +209,7 @@ export const useDeleteCustomerData = (
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
     onError: (error) => {
+      handleArrayError(error, toast);
       console.error(error);
     },
   });

@@ -41,6 +41,7 @@ export const deleteProduction = async (productionId: string | undefined) => {
     method: HttpMethod.DELETE,
     params: { productionid: productionId },
   });
+  return response;
 };
 
 // ------------------------------ PRODUCTION OVERVIEW ------------------------------

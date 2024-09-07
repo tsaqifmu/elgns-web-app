@@ -1,7 +1,8 @@
-import { toast } from "@/components/ui/use-toast";
-import { apiRequest, HttpMethod } from "@/lib/apiRequest";
-import { deleteProduction } from "@/lib/productionService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { toast } from "@/components/ui/use-toast";
+import { deleteProduction } from "@/lib/productionService";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 
 export const useDeleteProduction = (
   productionId: string | undefined,
@@ -19,17 +20,13 @@ export const useDeleteProduction = (
       toast({
         variant: "default",
         title: "Berhasil menghapus data",
-        description: "mantap",
+        description: response?.data.message,
       });
       closeProductionDialog();
       queryClient.invalidateQueries({ queryKey: ["productions"] });
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Berhasil menghapus data",
-        description: error.message.toString(),
-      });
+      handleArrayError(error, toast);
     },
   });
 };

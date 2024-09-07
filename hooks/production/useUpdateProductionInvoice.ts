@@ -1,9 +1,11 @@
-import { toast } from "@/components/ui/use-toast";
-import { updateProductionInvoice } from "@/lib/productionService";
-import { Invoice } from "@/types/production/invoice/invoice";
-import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
-import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { Invoice } from "@/types/production/invoice/invoice";
+
+import { updateProductionInvoice } from "@/lib/productionService";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
+
+import { toast } from "@/components/ui/use-toast";
 
 export const useUpdateProductionInvoice = (
   productionId: string | undefined,
@@ -20,12 +22,13 @@ export const useUpdateProductionInvoice = (
       toast({
         variant: "default",
         title: "Berhasil mengubah invoice produksi.",
-        description: "mantap",
+        description: response.data.message,
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
       closeEditDialog();
     },
     onError: (error) => {
+      handleArrayError(error, toast);
       console.error(error);
     },
   });
