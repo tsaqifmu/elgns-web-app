@@ -17,7 +17,7 @@ import { useMemo, useState } from "react";
 import { Task } from "@/types/monitoring/task";
 import { createPortal } from "react-dom";
 import { TaskCard } from "./task-card";
-import { useUpdateTaskPosition } from "@/hooks/monitoring/useMoveTask";
+import { useUpdateTaskPosition } from "@/hooks/monitoring/useUpdateTaskPosition";
 
 interface ColumnListProps {
   columnList: BoardResponse;
