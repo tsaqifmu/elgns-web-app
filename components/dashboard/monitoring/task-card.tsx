@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { dateIdFormat } from "@/hooks/useCustomers";
 import { useFetchCardBoard } from "@/hooks/useMonitoring";
 
 import IconCDR from "@/public/icons/table/cdr.svg";
@@ -9,6 +8,7 @@ import { ProductionData, Task } from "@/types/monitoring/task";
 import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
+import { dateIdFormat } from "@/lib/dateUtils";
 
 interface TaskCardProps {
   task: Task;
