@@ -20,6 +20,26 @@ export interface Shirt {
   total: number;
 }
 
+export const emptyShirtData = {
+  id: crypto.randomUUID(),
+  printingShirt: "",
+  material: "",
+  pattern: "",
+  color: "",
+  sleeve: "",
+  sizeS: 0,
+  sizeM: 0,
+  sizeL: 0,
+  sizeXL: 0,
+  sizeXXL: 0,
+  size3XL: 0,
+  size5XL: 0,
+  size6XL: 0,
+  size7XL: 0,
+  custom: 0,
+  total: 0,
+};
+
 export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
   return shirts.map((pant) => {
     const {

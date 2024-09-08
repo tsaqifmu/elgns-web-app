@@ -3,6 +3,6 @@ export interface ProductionItem {
   invoice: string;
   name: string;
   regency: string;
-  notes: string;
-  type: string;
+  imgUrl: string;
+  cdrUrl: string;
 }

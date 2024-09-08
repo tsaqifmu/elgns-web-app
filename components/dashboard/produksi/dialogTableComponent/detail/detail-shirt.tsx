@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -9,60 +9,66 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { Shirt } from "@/types/production/detail/shirt";
+import { emptyShirtData, Shirt } from "@/types/production/detail/shirt";
+
+interface DetailShirtProps {
+  shirts: Shirt[];
+  setShirts: Dispatch<SetStateAction<Shirt[]>>;
+  setTotalItems: () => void;
+}
 
 export const DetailShirt = ({
   shirts,
   setShirts,
-}: {
-  shirts: Shirt[];
-  setShirts: Dispatch<SetStateAction<Shirt[]>>;
-}) => {
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    changedShirt: Shirt,
-  ) => {
+  setTotalItems,
+}: DetailShirtProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, curShirt: Shirt) => {
     const { name, value } = e.target;
+    let updatedCurrentShirt: Shirt = curShirt;
+
+    if (name.includes("size") || name === "custom") {
+      let newValue = isNaN(parseInt(value)) ? 0 : parseInt(value);
+      let totalShirts = 0;
+      Object.keys(curShirt).forEach((key) => {
+        if (key === name) {
+          totalShirts += newValue;
+        } else if (key.includes("size") || key === "custom") {
+          totalShirts += updatedCurrentShirt[key as keyof Shirt] as number;
+        }
+      });
+
+      updatedCurrentShirt = {
+        ...curShirt,
+        [name]: newValue,
+        total: totalShirts,
+      };
+    } else {
+      updatedCurrentShirt = {
+        ...curShirt,
+        [name]: value,
+      };
+    }
+
     setShirts((prevShirts: Shirt[]) => {
       const updatedShirts = prevShirts.map((prevShirt: Shirt) =>
-        prevShirt.id === changedShirt.id
-          ? { ...prevShirt, [name]: value }
-          : { ...prevShirt },
+        prevShirt.id === curShirt.id ? updatedCurrentShirt : { ...prevShirt },
       );
       return [...updatedShirts];
     });
   };
 
   const handleAddShirt = () => {
-    setShirts((prevData: Shirt[]) => [
-      ...prevData,
-      {
-        id: crypto.randomUUID(),
-        printingShirt: "",
-        material: "",
-        pattern: "",
-        color: "",
-        sleeve: "",
-        sizeS: 0,
-        sizeM: 0,
-        sizeL: 0,
-        sizeXL: 0,
-        sizeXXL: 0,
-        size3XL: 0,
-        size5XL: 0,
-        size6XL: 0,
-        size7XL: 0,
-        custom: 0,
-        total: 0,
-      },
-    ]);
+    setShirts((prevData: Shirt[]) => [...prevData, emptyShirtData]);
   };
+
+  useEffect(() => {
+    setTotalItems();
+  }, [shirts, setTotalItems]);
 
   return (
     <div>
       <div className="flex justify-between font-medium">
         <h1>BAJU</h1>
-        <h1>TOTAL: {shirts.length}</h1>
       </div>
       <div className="flex gap-2">
         <div className="mt-2 max-h-[10rem] grow overflow-y-scroll rounded-md border border-gray-900">
@@ -241,11 +247,11 @@ export const DetailShirt = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly
+                      className="rounded-none border-none bg-transparent p-1 uppercase"
                       type="text"
                       name="total"
                       value={item.total}
-                      onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
                 </TableRow>

@@ -18,8 +18,10 @@ import { Shirt } from "@/types/production/detail/shirt";
 import { Pant } from "@/types/production/detail/pant";
 import { BackName } from "@/types/production/detail/back-name";
 import { DetailPant } from "./detail-pant";
+import { IDetail } from "@/types/production/detail/detail";
 
 export const Detail = () => {
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [editProductionData, closeEditProductionDialog] =
     useDialogProductionStore(
       useShallow((state: DialogProductionState & DialogProductionAction) => [
@@ -49,14 +51,22 @@ export const Detail = () => {
   }, [productionDetailData]);
 
   const handleSubmit = () => {
-    console.log("submitting", { shirts, pants, backNames });
-    updateProductionDetail({
+    const payload: IDetail = {
       data: {
+        total: totalItems,
         shirts: shirts,
         pants: pants,
         backNames: backNames,
       },
-    });
+    };
+    updateProductionDetail(payload);
+  };
+
+  const setTotalItemsValue = () => {
+    setTotalItems(
+      shirts.reduce((acc, cur) => acc + cur.total, 0) +
+        pants.reduce((acc, cur) => acc + cur.total, 0),
+    );
   };
 
   const renderContent = () => {
@@ -71,8 +81,17 @@ export const Detail = () => {
       return (
         <div>
           <div className="flex flex-col gap-4 px-5 pb-5">
-            <DetailShirt shirts={shirts} setShirts={setShirts} />
-            <DetailPant pants={pants} setPants={setPants} />
+            <h1 className="me-8 text-end font-medium">TOTAL: {totalItems}</h1>
+            <DetailShirt
+              shirts={shirts}
+              setShirts={setShirts}
+              setTotalItems={setTotalItemsValue}
+            />
+            <DetailPant
+              pants={pants}
+              setPants={setPants}
+              setTotalItems={setTotalItemsValue}
+            />
             <DetailBackName backNames={backNames} setBackNames={setBackNames} />
           </div>
 
