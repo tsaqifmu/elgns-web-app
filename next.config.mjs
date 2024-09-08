@@ -19,7 +19,7 @@ const nextConfig = {
         pathname: "/data/**",
       },
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "elgns-api.vercel.app",
         pathname: "/data/**",
       },

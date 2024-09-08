@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -9,60 +9,66 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { Pant } from "@/types/production/detail/pant";
+import { emptyPantData, Pant } from "@/types/production/detail/pant";
+
+interface DetailPantProps {
+  pants: Pant[];
+  setPants: Dispatch<SetStateAction<Pant[]>>;
+  setTotalItems: () => void;
+}
 
 export const DetailPant = ({
   pants,
   setPants,
-}: {
-  pants: Pant[];
-  setPants: Dispatch<SetStateAction<Pant[]>>;
-}) => {
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    changedPant: Pant,
-  ) => {
+  setTotalItems,
+}: DetailPantProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>, curPant: Pant) => {
     const { name, value } = e.target;
+    let updatedCurrentPant: Pant = curPant;
+
+    if (name.includes("size") || name === "custom") {
+      let newValue = isNaN(parseInt(value)) ? 0 : parseInt(value);
+      let totalPants = 0;
+      Object.keys(curPant).forEach((key) => {
+        if (key === name) {
+          totalPants += newValue;
+        } else if (key.includes("size") || key === "custom") {
+          totalPants += updatedCurrentPant[key as keyof Pant] as number;
+        }
+      });
+
+      updatedCurrentPant = {
+        ...curPant,
+        [name]: newValue,
+        total: totalPants,
+      };
+    } else {
+      updatedCurrentPant = {
+        ...curPant,
+        [name]: value,
+      };
+    }
+
     setPants((prevPants: Pant[]) => {
       const updatedPants = prevPants.map((prevPant: Pant) =>
-        prevPant.id === changedPant.id
-          ? { ...prevPant, [name]: value }
-          : { ...prevPant },
+        prevPant.id === curPant.id ? updatedCurrentPant : { ...prevPant },
       );
       return [...updatedPants];
     });
   };
 
   const handleAddPant = () => {
-    setPants((prevData: Pant[]) => [
-      ...prevData,
-      {
-        id: crypto.randomUUID(),
-        printingPant: "",
-        material: "",
-        pattern: "",
-        color: "",
-        sleeve: "",
-        sizeS: 0,
-        sizeM: 0,
-        sizeL: 0,
-        sizeXL: 0,
-        sizeXXL: 0,
-        size3XL: 0,
-        size5XL: 0,
-        size6XL: 0,
-        size7XL: 0,
-        custom: 0,
-        total: 0,
-      },
-    ]);
+    setPants((prevData: Pant[]) => [...prevData, emptyPantData]);
   };
+
+  useEffect(() => {
+    setTotalItems();
+  }, [pants, setTotalItems]);
 
   return (
     <div>
       <div className="flex justify-between font-medium">
         <h1>CELANA</h1>
-        <h1>TOTAL: {pants.length}</h1>
       </div>
       <div className="flex gap-2">
         <div className="mt-2 max-h-[10rem] grow overflow-y-scroll rounded-md border border-gray-900">
@@ -241,11 +247,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly
+                      className="rounded-none border-none bg-transparent p-1 uppercase"
                       type="text"
                       name="total"
                       value={item.total}
-                      onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>
                 </TableRow>

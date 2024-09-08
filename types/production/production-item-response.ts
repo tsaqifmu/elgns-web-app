@@ -5,8 +5,8 @@ export interface ProductionItemResponse {
   noInvoice: string;
   custName: string;
   alamatKabupaten: string;
-  catatan: string;
-  jenis: string;
+  desainImgUrl: string;
+  desainCdrUrl: string;
 }
 
 export const mapProductionItemResponse = (
@@ -18,8 +18,8 @@ export const mapProductionItemResponse = (
       noInvoice,
       custName: name,
       alamatKabupaten,
-      jenis,
-      catatan,
+      desainImgUrl,
+      desainCdrUrl,
     } = data;
     const invoice = noInvoice === undefined ? "-" : noInvoice;
 
@@ -28,8 +28,8 @@ export const mapProductionItemResponse = (
       invoice,
       name,
       regency: alamatKabupaten,
-      notes: catatan,
-      type: jenis,
+      imgUrl: desainImgUrl,
+      cdrUrl: desainCdrUrl,
     };
   });
 };

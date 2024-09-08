@@ -8,6 +8,7 @@ import IconCdr from "@/public/icons/table/cdr.svg";
 import IconDownload from "@/public/icons/table/download.svg";
 import { Button } from "@/components/ui/button";
 import { ProductionItem } from "@/types/production/production-item";
+import Link from "next/link";
 
 const HEADER_TITLES = {
   invoice: "INVOICE",
@@ -47,15 +48,35 @@ export const getColumn = (
     accessorKey: "quickActions",
     header: () => <ColumnHeader title={HEADER_TITLES.quickActions} />,
     cell: ({ row }) => {
-      const customerName = row.getValue("name");
+      const production: ProductionItem = row.original;
 
       return (
         <div className="flex items-center">
           <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconImage className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            <Link
+              href={
+                production?.cdrUrl
+                  ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                      production?.imgUrl
+                    }`
+                  : "#"
+              }
+            >
+              <IconImage className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            </Link>
           </Button>
           <Button className="group" variant={"ghost"} size={"icon"}>
-            <IconCdr className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            <Link
+              href={
+                production?.cdrUrl
+                  ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                      production?.cdrUrl
+                    }`
+                  : "#"
+              }
+            >
+              <IconCdr className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            </Link>
           </Button>
           <Button className="group" variant={"ghost"} size={"icon"}>
             <IconDownload className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
