@@ -1,17 +1,18 @@
 "use client";
 
-import { apiRequest, HttpMethod } from "@/lib/apiRequest";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useMemo } from "react";
+import { dateIdFormat } from "@/lib/dateUtils";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { Percent } from "lucide-react";
+import { uesFetchTimelineData } from "@/hooks/timeline/useTimeline";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
 
+// Define Customer and DateData interfaces
 interface CustomerData {
   alamatKabupaten: string;
   custName: string;
@@ -26,65 +27,81 @@ interface DateData {
   date: string;
 }
 
-const TimelinePage = () => {
-  const { data, isError, isLoading, error } = useQuery({
-    queryKey: ["timeline"],
-    queryFn: async () => {
-      const { data } = await apiRequest({
-        path: "/production/calendar",
-        method: HttpMethod.GET,
-      });
-      return data;
-    },
-    select: (response) => response.message,
-  });
+// Extract components for better readability and maintainability
+const CustomerTooltip = ({ customer }: { customer: CustomerData }) => {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          style={{ width: `${calculateWidth(customer.jumlah)}%` }}
+          className="flex h-full flex-col justify-end bg-teal px-[10px] py-[5px]"
+        >
+          <h4>{customer.jumlah}</h4>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="right" align="start">
+        <div className="space-y-3 text-xs uppercase">
+          <div>
+            <h4>{customer.noInvoice}</h4>
+            <h4 className="text-gray-400">{dateIdFormat(customer.tglMasuk)}</h4>
+          </div>
+          <div>
+            <h4>{customer.custName}</h4>
+            <h4>TOTAL: {customer.jumlah}</h4>
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
-  const calculateWidth = (total: number) => {
-    if (total >= 35) return "w-[100%]";
-    const percent = Math.round((total / 35) * 100);
-    return `w-[${percent}%]`;
+const DateColumn = ({ dateData }: { dateData: DateData }) => {
+  return (
+    <div className="relative flex h-[120px] w-full bg-gray-600">
+      <h3 className="absolute px-[10px] py-[5px]">{dateData.date}</h3>
+      {dateData.data.length > 0 &&
+        dateData.data.map((customer) => (
+          <CustomerTooltip key={customer._id} customer={customer} />
+        ))}
+    </div>
+  );
+};
+
+// Utility function for width calculation
+const calculateWidth = (total: number): number => {
+  return total >= 35 ? 100 : Math.round((total / 35) * 100);
+};
+
+const TimelinePage: React.FC = () => {
+  const { data, isError, isLoading, error } = uesFetchTimelineData();
+
+  // Memoize calculated data for better performance
+  const timelineData = useMemo(() => data, [data]);
+
+  // Handle loading and error states
+  const renderContent = () => {
+    if (isLoading) return <SkeletonTable />;
+    if (isError) return <ErrorLoadData error={error} />;
+    if (data)
+      return (
+        <TooltipProvider delayDuration={500}>
+          <div className="grid grid-cols-7 gap-1 text-white">
+            {timelineData?.map((dateData: DateData) => (
+              <DateColumn key={dateData.date} dateData={dateData} />
+            ))}
+          </div>
+        </TooltipProvider>
+      );
+    return null;
   };
 
   return (
-    <TooltipProvider delayDuration={500}>
-      <div className="grid grid-cols-7 gap-1 text-white">
-        {data?.map((dateData: DateData) => {
-          return (
-            <>
-              <div className="relative flex h-[120px] w-full bg-gray-600">
-                <h3 className="absolute px-[10px] py-[5px]">{dateData.date}</h3>
-                {dateData.data.length > 0 &&
-                  dateData.data.map((customer: CustomerData) => {
-                    console.log(calculateWidth(customer.jumlah));
-                    return (
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <div
-                            className={cn(
-                              "flex h-full flex-col justify-end bg-teal px-[10px] py-[5px]",
-                              calculateWidth(customer.jumlah),
-                            )}
-                          >
-                            <h4>{customer.jumlah}</h4>
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" align="start">
-                          <div className="uppercase">
-                            <h4>{customer.noInvoice}</h4>
-                            <h4>{customer.tglMasuk}</h4>
-                            <h4>{customer.custName}</h4>
-                            <h4>{customer.jumlah}</h4>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    );
-                  })}
-              </div>
-            </>
-          );
-        })}
-      </div>
-    </TooltipProvider>
+    <>
+      <header className="flex items-center justify-between">
+        <h1 className="w-10 text-3xl font-semibold lg:w-full">TIMELINE</h1>
+      </header>
+      <main className="mt-9">{renderContent()}</main>
+    </>
   );
 };
 

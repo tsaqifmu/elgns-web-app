@@ -7,6 +7,7 @@ import ColumnList from "@/components/dashboard/monitoring/column-list";
 
 const MonitoringPage = () => {
   const { data, isError, isLoading, error } = useFetchBoardList();
+
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
     if (isError) return <ErrorLoadData error={error} />;
