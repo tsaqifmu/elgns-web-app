@@ -75,9 +75,6 @@ const calculateWidth = (total: number): number => {
 const TimelinePage: React.FC = () => {
   const { data, isError, isLoading, error } = uesFetchTimelineData();
 
-  // Memoize calculated data for better performance
-  const timelineData = useMemo(() => data, [data]);
-
   // Handle loading and error states
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
@@ -86,7 +83,7 @@ const TimelinePage: React.FC = () => {
       return (
         <TooltipProvider delayDuration={500}>
           <div className="grid grid-cols-7 gap-1 text-white">
-            {timelineData?.map((dateData: DateData) => (
+            {data.data?.map((dateData: DateData) => (
               <DateColumn key={dateData.date} dateData={dateData} />
             ))}
           </div>
@@ -98,7 +95,9 @@ const TimelinePage: React.FC = () => {
   return (
     <>
       <header className="flex items-center justify-between">
-        <h1 className="w-10 text-3xl font-semibold lg:w-full">TIMELINE</h1>
+        <h1 className="w-10 text-3xl font-semibold lg:w-full">
+          {data.dateHeader}
+        </h1>
       </header>
       <main className="mt-9">{renderContent()}</main>
     </>
