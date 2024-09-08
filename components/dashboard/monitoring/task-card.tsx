@@ -1,26 +1,20 @@
 import Image from "next/image";
-import { dateIdFormat } from "@/hooks/useCustomers";
-import { useFetchCardBoard } from "@/hooks/useMonitoring";
 
 import IconCDR from "@/public/icons/table/cdr.svg";
 import IconImage from "@/public/icons/table/image.svg";
 import IconDownload from "@/public/icons/table/download.svg";
-import { ProductionData, Task } from "@/types/monitoring/task";
+import { Task } from "@/types/monitoring/task";
 import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import { useDialogMonitoringStore } from "@/stores/dialog-monitoring-store";
-import { useShallow } from "zustand/react/shallow";
+import { dateIdFormat } from "@/lib/dateUtils";
 
 interface TaskCardProps {
   task: Task;
 }
 
 export const TaskCard = ({ task }: TaskCardProps) => {
-  const openDetailMonitoringDialog = useDialogMonitoringStore(
-    useShallow((state) => state.openDetailMonitoringDialog),
-  );
-
+  const [isEditing, setIsEditing] = useState(false);
   const {
     setNodeRef,
     attributes,
@@ -34,6 +28,7 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       type: "Task",
       task,
     },
+    disabled: isEditing,
   });
 
   const style = {
@@ -61,13 +56,6 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       {...attributes}
       {...listeners}
       className="flex cursor-grab flex-col space-y-[5px] rounded-md border-2 border-gray-400 bg-gray-100 p-[10px]"
-      onClick={() => {
-        if (task.productionData) {
-          openDetailMonitoringDialog(task.productionData);
-        } else {
-          alert("Belum ada data produksi untuk card ini.");
-        }
-      }}
     >
       <div className="flex flex-row-reverse items-center justify-between uppercase">
         <h4 className="text-xs font-normal">
@@ -78,7 +66,7 @@ export const TaskCard = ({ task }: TaskCardProps) => {
         </div>
       </div>
       <Image
-        src={`http://baru.azizfath.com:4040/data/${desainImgUrl}`}
+        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${desainImgUrl}`}
         alt="Kaos"
         width={160}
         height={77}

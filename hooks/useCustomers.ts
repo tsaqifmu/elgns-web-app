@@ -6,6 +6,7 @@ import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { toast } from "@/components/ui/use-toast";
 import { DataCustomer } from "@/components/dashboard/customer/columns";
 import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
+import { dateIdFormat } from "@/lib/dateUtils";
 
 interface ApiResponse<ItemType> {
   data: {
@@ -44,32 +45,6 @@ interface CustomerQueryData {
     hasNextPage: boolean;
   };
 }
-
-export const dateIdFormat = (dateString: string) => {
-  const date = new Date(dateString);
-
-  const day = date.getDate().toString().padStart(2, "0");
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mei",
-    "Jun",
-    "Jul",
-    "Agu",
-    "Sep",
-    "Okt",
-    "Nov",
-    "Des",
-  ];
-  const month = monthNames[date.getMonth()];
-  const year = date.getFullYear();
-
-  const formattedDate = `${day} ${month} ${year}`;
-
-  return formattedDate;
-};
 
 const mapCustomerData = (data: CustomerData[]): DataCustomer[] =>
   data.map((data) => ({

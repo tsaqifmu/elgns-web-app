@@ -8,6 +8,7 @@ import DialogTableMonitoringDetail from "@/components/dashboard/monitoring/dialo
 
 const MonitoringPage = () => {
   const { data, isError, isLoading, error } = useFetchBoardList();
+
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
     if (isError) return <ErrorLoadData error={error} />;
