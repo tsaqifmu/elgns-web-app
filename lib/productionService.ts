@@ -16,6 +16,7 @@ import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
 import { OverviewToSend } from "@/types/production/overview/overview-to-send";
 import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
 import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
+import { MonitoringOverviewResponse } from "@/types/monitoring/overview/monitoring-overview-response";
 
 const wait = (duration: number) => {
   return new Promise((resolve) => setTimeout(resolve, duration));
@@ -186,4 +187,21 @@ export const updateProductionInvoice = async (
   });
 
   return response;
+};
+
+// ------------------------------ MONITORING OVERVIEW ------------------------------
+
+export const getMonitoringOverview = async (
+  productionId: string | undefined,
+): Promise<MonitoringOverviewResponse> => {
+  if (!productionId) return Promise.reject(new Error("production id kosong"));
+
+  const response: AxiosResponse<MonitoringOverviewResponse> = await apiRequest({
+    path: "/monitoring/get-card-overview",
+    method: HttpMethod.GET,
+    params: {
+      productionid: productionId,
+    },
+  });
+  return response.data;
 };

@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+
 import { getProductionDetailMenu } from "@/lib/productionService";
 import { IDetail } from "@/types/production/detail/detail";
+
 import {
   DetailResponse,
   mapProductionDetailResponse,

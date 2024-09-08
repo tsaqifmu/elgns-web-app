@@ -1,4 +1,4 @@
-export interface BoardItem {
+export interface ColumnItem {
   id: string;
   name: string;
   counts: number;
