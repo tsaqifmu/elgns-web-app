@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 import { updateTaskPosition } from "@/lib/monitoringService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -17,19 +18,16 @@ export const useUpdateTaskPosition = () => {
       return response;
     },
     onSuccess: (response) => {
+      console.log("response", response);
       toast({
         variant: "default",
         title: "Berhasil memindahkan data.",
-        description: "mantap",
+        description: response?.message,
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "GAGAL memindahkan data.",
-        description: error.message,
-      });
+      handleArrayError(error, toast);
       queryClient.invalidateQueries({ queryKey: ["productions"] });
     },
   });
