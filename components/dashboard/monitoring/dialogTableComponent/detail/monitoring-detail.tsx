@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useFetchProductionDetail } from "@/hooks/production/useFetchProductionDetail";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
-import { useUpdateProductionDetail } from "@/hooks/production/useUpdateProductionDetail";
-import {
-  DialogProductionAction,
-  DialogProductionState,
-  useDialogProductionStore,
-} from "@/stores/dialog-production-store";
 import { useShallow } from "zustand/react/shallow";
 import { Loader2 } from "lucide-react";
 import { Shirt } from "@/types/production/detail/shirt";
@@ -19,48 +12,38 @@ import { IDetail } from "@/types/production/detail/detail";
 import { DetailPant } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-pant";
 import { DetailBackName } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-back-name";
 import { DetailShirt } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-shirt";
+import {
+  DialogMonitoringAction,
+  DialogMonitoringState,
+  useDialogMonitoringStore,
+} from "@/stores/dialog-monitoring-store";
 
 export const MonitoringDetail = () => {
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [editProductionData, closeEditProductionDialog] =
-    useDialogProductionStore(
-      useShallow((state: DialogProductionState & DialogProductionAction) => [
-        state.editProductionData,
-        state.closeEditProductionDialog,
+  const [editMonitoringData, closeEditMonitoringDialog] =
+    useDialogMonitoringStore(
+      useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
+        state.editMonitoringData,
+        state.closeEditMonitoringDialog,
       ]),
     );
-  const production = editProductionData;
+  const productionId = editMonitoringData?._id;
   const {
-    data: productionDetailData,
+    data: monitoringDetailData,
     isLoading,
     isError,
     error,
-  } = useFetchProductionDetail(production?.id);
+  } = useFetchProductionDetail(productionId);
   const [shirts, setShirts] = useState<Shirt[]>([]);
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
-  const { mutate: updateProductionDetail, isPending } =
-    useUpdateProductionDetail(production?.id, closeEditProductionDialog);
-
   useEffect(() => {
-    if (!productionDetailData) return;
+    if (!monitoringDetailData) return;
 
-    setShirts(productionDetailData.data.shirts);
-    setPants(productionDetailData.data.pants);
-    setBackNames(productionDetailData.data.backNames);
-  }, [productionDetailData]);
-
-  const handleSubmit = () => {
-    const payload: IDetail = {
-      data: {
-        total: totalItems,
-        shirts: shirts,
-        pants: pants,
-        backNames: backNames,
-      },
-    };
-    updateProductionDetail(payload);
-  };
+    setShirts(monitoringDetailData.data.shirts);
+    setPants(monitoringDetailData.data.pants);
+    setBackNames(monitoringDetailData.data.backNames);
+  }, [monitoringDetailData]);
 
   const setTotalItemsValue = () => {
     setTotalItems(
@@ -77,42 +60,34 @@ export const MonitoringDetail = () => {
         </div>
       );
     if (isError) return <ErrorLoadData error={error} />;
-    if (productionDetailData) {
+    if (monitoringDetailData) {
       return (
         <div>
           <div className="flex flex-col gap-4 px-5 pb-5">
-            <h1 className="me-8 text-end font-medium">TOTAL: {totalItems}</h1>
+            <div className="flex justify-between font-medium">
+              <h1>BAJU</h1>
+              <h1>TOTAL: {totalItems}</h1>
+            </div>
             <DetailShirt
               shirts={shirts}
               setShirts={setShirts}
               setTotalItems={setTotalItemsValue}
+              isReadOnly
             />
             <DetailPant
               pants={pants}
               setPants={setPants}
               setTotalItems={setTotalItemsValue}
+              isReadOnly
             />
-            <DetailBackName backNames={backNames} setBackNames={setBackNames} />
+            <DetailBackName
+              backNames={backNames}
+              setBackNames={setBackNames}
+              isReadOnly
+            />
           </div>
 
-          <DialogFooter>
-            <Button
-              size={"modalTable"}
-              variant={"default"}
-              type="submit"
-              className="bg-yellow-500 uppercase"
-              onClick={handleSubmit}
-              disabled={isPending}
-            >
-              {isPending && (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <p>Tunggu sebentar...</p>
-                </>
-              )}
-              {!isPending && "Simpan"}
-            </Button>
-          </DialogFooter>
+          <DialogFooter></DialogFooter>
         </div>
       );
     }

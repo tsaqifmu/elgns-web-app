@@ -81,7 +81,10 @@ export const Detail = () => {
       return (
         <div>
           <div className="flex flex-col gap-4 px-5 pb-5">
-            <h1 className="me-8 text-end font-medium">TOTAL: {totalItems}</h1>
+            <div className="flex justify-between font-medium">
+              <h1>BAJU</h1>
+              <h1>TOTAL: {totalItems}</h1>
+            </div>{" "}
             <DetailShirt
               shirts={shirts}
               setShirts={setShirts}

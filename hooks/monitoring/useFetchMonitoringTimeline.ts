@@ -1,22 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { Invoice } from "@/types/production/invoice/invoice";
-import { getProductionInvoiceMenu } from "@/lib/productionService";
+import { getMonitoringTimeline } from "@/lib/productionService";
+import { MonitoringTimelineResponse } from "@/types/monitoring/timeline/monitoring-timeline-response";
 
-import {
-  InvoiceResponse,
-  mapInvoiceResponse,
-} from "@/types/production/invoice/invoice-response";
-
-export const useFetchProductionInvoice = (productionId: string | undefined) => {
+export const useFetchMonitoringTimeline = (taskId: string | undefined) => {
   return useQuery({
-    queryKey: ["productionInvoice", productionId],
-    queryFn: async (): Promise<InvoiceResponse> => {
-      const response = await getProductionInvoiceMenu(productionId);
+    queryKey: ["monitoringTimeline", taskId],
+    queryFn: async (): Promise<MonitoringTimelineResponse> => {
+      const response = await getMonitoringTimeline(taskId);
       return response;
     },
-    select: (response): Invoice => {
-      return mapInvoiceResponse(response);
+    select: (response) => {
+      return response.message.buktiPengerjaan;
     },
   });
 };

@@ -2,21 +2,25 @@ import { ProductionData } from "@/types/monitoring/task";
 import { create } from "zustand";
 
 export interface DialogMonitoringState {
-  detailMonitoringData?: ProductionData;
+  cardMonitoringId?: string;
+  editMonitoringData?: ProductionData;
   deleteMonitoringData?: ProductionData;
 }
 
 export interface DialogMonitoringAction {
-  openDetailMonitoringDialog: (data: ProductionData) => void;
-  closeDetailMonitoringDialog: () => void;
+  setCardMonitoringId: (cardId: string) => void;
+  openEditMonitoringDialog: (data: ProductionData) => void;
+  closeEditMonitoringDialog: () => void;
 }
 
 export const useDialogMonitoringStore = create<
   DialogMonitoringState & DialogMonitoringAction
 >((set) => ({
-  detailMonitoringData: undefined,
+  cardMonitoringId: undefined,
+  editMonitoringData: undefined,
   deleteMonitoringData: undefined,
-  openDetailMonitoringDialog: (data: ProductionData) =>
-    set({ detailMonitoringData: data }),
-  closeDetailMonitoringDialog: () => set({ detailMonitoringData: undefined }),
+  setCardMonitoringId: (cardId: string) => set({ cardMonitoringId: cardId }),
+  openEditMonitoringDialog: (data: ProductionData) =>
+    set({ editMonitoringData: data }),
+  closeEditMonitoringDialog: () => set({ editMonitoringData: undefined }),
 }));

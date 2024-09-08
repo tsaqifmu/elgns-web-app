@@ -9,16 +9,23 @@ import {
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { Input } from "@/components/ui/input";
-import { BackName } from "@/types/production/detail/back-name";
-import { Pant } from "@/types/production/detail/pant";
+import {
+  BackName,
+  emptyBackNameData,
+} from "@/types/production/detail/back-name";
+import { cn } from "@/lib/utils";
+
+interface DetailBackNameProps {
+  backNames: BackName[];
+  setBackNames: Dispatch<SetStateAction<BackName[]>>;
+  isReadOnly?: boolean;
+}
 
 export const DetailBackName = ({
   backNames,
   setBackNames,
-}: {
-  backNames: BackName[];
-  setBackNames: Dispatch<SetStateAction<BackName[]>>;
-}) => {
+  isReadOnly = false,
+}: DetailBackNameProps) => {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
     changedBackName: BackName,
@@ -60,7 +67,11 @@ export const DetailBackName = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm uppercase">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="name"
                       value={item.name}
@@ -69,7 +80,11 @@ export const DetailBackName = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="number"
                       name="number"
                       value={item.number}
@@ -78,7 +93,11 @@ export const DetailBackName = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm uppercase">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="size"
                       value={item.size}
@@ -87,7 +106,11 @@ export const DetailBackName = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm uppercase">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="notes"
                       value={item.notes}
@@ -99,25 +122,21 @@ export const DetailBackName = ({
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-end">
-          <button
-            className="flex items-center justify-center rounded-sm bg-[#6DB6CC] px-1 py-4 text-white hover:bg-[#8bc3d3]"
-            onClick={() => {
-              setBackNames((prevBackNames: BackName[]) => [
-                ...prevBackNames,
-                {
-                  id: crypto.randomUUID(),
-                  name: "",
-                  number: "",
-                  size: "",
-                  notes: "",
-                },
-              ]);
-            }}
-          >
-            <IconAddFill className="inline h-4 w-4" viewBox="0 0 11 13" />
-          </button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex items-end">
+            <button
+              className="flex items-center justify-center rounded-sm bg-[#6DB6CC] px-1 py-4 text-white hover:bg-[#8bc3d3]"
+              onClick={() => {
+                setBackNames((prevBackNames: BackName[]) => [
+                  ...prevBackNames,
+                  emptyBackNameData,
+                ]);
+              }}
+            >
+              <IconAddFill className="inline h-4 w-4" viewBox="0 0 11 13" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

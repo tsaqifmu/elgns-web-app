@@ -21,7 +21,7 @@ export const useUpdateProductionOverview = (
       toast({
         variant: "default",
         title: "Berhasil mengubah overview produksi.",
-        description: response,
+        description: "Successfully updated overview.",
       });
       queryClient.invalidateQueries({ queryKey: ["productions"] });
       setIsEditing(false);

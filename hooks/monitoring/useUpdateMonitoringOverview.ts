@@ -1,38 +1,50 @@
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { updateProductionOverview } from "@/lib/productionService";
-import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
+import {
+  updateMonitoringOverview,
+  updateProductionOverview,
+} from "@/lib/productionService";
+import { monitoringOverviewSchema } from "@/schemas/monitoringOverviewSchema";
 
 import { toast } from "@/components/ui/use-toast";
 
-export const useUpdateProductionOverview = (
+export const useUpdateMonitoringOverview = (
   productionId: string | undefined,
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (overview: z.infer<typeof productionOverviewSchema>) => {
-      const response = updateProductionOverview(productionId, overview);
+    mutationFn: async (overview: z.infer<typeof monitoringOverviewSchema>) => {
+      const response = updateMonitoringOverview(
+        productionId,
+        overview,
+        "",
+        "boardname",
+      );
       return response;
     },
     onSuccess: (response) => {
       toast({
         variant: "default",
-        title: "Berhasil mengubah overview produksi.",
-        description: response,
+        title: "Berhasil mengubah card overview.",
+        description: "Successfully updated card overview.",
       });
-      queryClient.invalidateQueries({ queryKey: ["productions"] });
+      queryClient.invalidateQueries({
+        queryKey: ["monitoringOverview", productionId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["boards"],
+      });
       setIsEditing(false);
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "GAGAL mengubah overview produksi.",
+        title: "GAGAL mengubah overview card.",
         description: error.message,
       });
-      queryClient.invalidateQueries({ queryKey: ["productions"] });
     },
   });
 };

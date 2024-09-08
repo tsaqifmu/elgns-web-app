@@ -6,6 +6,14 @@ export interface BackName {
   notes: string;
 }
 
+export const emptyBackNameData: BackName = {
+  id: crypto.randomUUID(),
+  name: "",
+  number: "",
+  size: "",
+  notes: "",
+};
+
 export const mapBackNameToBackNameResponse = (backNames: BackName[]) => {
   return backNames.map((backName) => {
     const { name, number, size, notes } = backName;

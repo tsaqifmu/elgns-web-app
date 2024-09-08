@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -22,7 +22,6 @@ import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import { useUpdateProductionOverview } from "@/hooks/production/useUpdateProductionOverview";
 import ButtonPending from "@/components/button-pending";
-import { useFetchProductionOverview } from "@/hooks/production/useFetchProductionOverview";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import {
@@ -31,21 +30,32 @@ import {
   useDialogMonitoringStore,
 } from "@/stores/dialog-monitoring-store";
 import { useFetchMonitoringOverview } from "@/hooks/monitoring/useFetchMonitoringOverview";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { add7DaysToDate, formatToIndonesianDate } from "@/lib/dateUtils";
+import { CalendarIcon, CirclePlus } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import AddFill from "@/public/icons/table/add-fill.svg";
+import { useUpdateMonitoringOverview } from "@/hooks/monitoring/useUpdateMonitoringOverview";
 
 export const MonitoringOverview = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const [previewImageProofing, setPreviewImageProofing] = useState<
     string | null
   >(null);
-  const [detailMonitoringData, closeDetailMonitoringDialog] =
+  const [editMonitoringData, closeEditMonitoringDialog] =
     useDialogMonitoringStore(
       useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
-        state.detailMonitoringData,
-        state.closeDetailMonitoringDialog,
+        state.editMonitoringData,
+        state.closeEditMonitoringDialog,
       ]),
     );
-  const productionId = detailMonitoringData?._id;
+  const productionId = editMonitoringData?._id;
   const {
     data: production,
     isLoading,
@@ -53,13 +63,12 @@ export const MonitoringOverview = () => {
     error,
   } = useFetchMonitoringOverview(productionId);
 
-  const { mutate: updateOverview, isPending } = useUpdateProductionOverview(
+  const { mutate: updateOverview, isPending } = useUpdateMonitoringOverview(
     production?.id,
     setIsEditing,
   );
 
   function onSubmit(values: z.infer<typeof monitoringOverviewSchema>) {
-    console.log("submitted val: ", values);
     updateOverview(values);
   }
 
@@ -72,13 +81,17 @@ export const MonitoringOverview = () => {
       address: "",
       notes: "",
       type: "",
+      dateIn: undefined,
+      dateOut: undefined,
       imageFile: null,
       cdrFile: null,
+      proofFile: null,
     },
   });
 
-  const { setValue, watch } = form;
-  const typeValue = watch("type", "");
+  const { setValue } = form;
+  const [isDatePopOverOpen, setIsDatePopOverOpen] = useState(false);
+  const dateInWatch = form.watch("dateIn");
 
   useEffect(() => {
     if (production) {
@@ -88,6 +101,14 @@ export const MonitoringOverview = () => {
       setValue("address", production?.address ?? "");
       setValue("notes", production?.notes ?? "");
       setValue("type", production?.type ?? "");
+      setValue(
+        "dateIn",
+        production?.dateIn ? new Date(production?.dateIn!) : null,
+      );
+      setValue(
+        "dateOut",
+        production?.dateOut ? new Date(production?.dateOut!) : null,
+      );
     }
   }, [production, setValue]);
 
@@ -128,65 +149,7 @@ export const MonitoringOverview = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>NOMOR HP</FormLabel>
-                    <FormControl>
-                      <Input
-                        readOnly
-                        className="border border-gray-300"
-                        placeholder="62851XXXX"
-                        type="tel"
-                        value={field.value}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ALAMAT LENGKAP</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        readOnly
-                        className="border border-gray-300"
-                        placeholder="Masukkan alamat anda"
-                        value={field.value}
-                        rows={4}
-                      />
-                    </FormControl>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CATATAN</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        readOnly={!isEditing}
-                        className="border border-gray-300"
-                        placeholder={!isEditing ? "-" : "Masukkan catatan"}
-                        rows={4}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex basis-1/2 flex-col gap-4">
               <FormField
                 control={form.control}
                 name="invoice"
@@ -195,7 +158,7 @@ export const MonitoringOverview = () => {
                     <FormLabel>INVOICE WORK ORDER</FormLabel>
                     <FormControl>
                       <Input
-                        readOnly={!isEditing}
+                        readOnly
                         className="border border-gray-300 uppercase"
                         placeholder="Masukkan invoice"
                         {...field}
@@ -207,176 +170,260 @@ export const MonitoringOverview = () => {
                 )}
               />
 
-              {/* JENIS */}
-              {isEditing === false && (
-                <div>
-                  <label className="text-sm font-medium">JENIS</label>
-                  <div className="mt-1 flex flex-wrap gap-2 rounded-md border border-gray-300 bg-gray-100 p-2">
-                    {typeValue?.split(",").map((item, index) => (
-                      <span
-                        key={index}
-                        className="min-h-6 rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white"
+              {/* TANGGAL MASUK & KELUAR */}
+              <FormField
+                control={form.control}
+                name="dateIn"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="mb-[2px] mt-2">
+                      TANGGAL MASUK
+                    </FormLabel>
+
+                    {!isEditing && (
+                      <Button
+                        variant={"outline"}
+                        type="button"
+                        className={cn(
+                          "border border-gray-300 font-normal uppercase text-gray-900",
+                        )}
                       >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {isEditing === true && (
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>JENIS</FormLabel>
-                      <FormControl>
-                        <Input
-                          disabled={!isEditing}
-                          className="border border-gray-300 uppercase"
-                          placeholder="Masukkan jenis"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {/* INPUT FILES */}
-              <div className="mt-[2px] flex h-24 gap-1">
-                {/* INPUT IMAGE */}
-                <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm border border-gray-900">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <Image
-                    alt="halo"
-                    className="h-full w-full object-cover"
-                    width={1000}
-                    height={500}
-                    src={
-                      previewImage !== null
-                        ? previewImage
-                        : production?.imgUrl !== undefined
-                          ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
-                              production?.imgUrl
-                            }`
-                          : imgBaju
-                    }
-                  />
-                  <div
-                    className={cn(
-                      "absolute bottom-0 left-0 right-0 hidden justify-between bg-gray-900",
-                      isEditing && "group-hover:flex",
+                        {formatToIndonesianDate(
+                          form.getValues("dateIn")?.toISOString(),
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
                     )}
-                  >
-                    <div className="flex flex-1 items-end px-2 py-1">
-                      <a
-                        href={
-                          production?.imgUrl
+
+                    {isEditing && (
+                      <Popover
+                        open={isDatePopOverOpen}
+                        onOpenChange={setIsDatePopOverOpen}
+                      >
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "border border-gray-300 font-normal uppercase text-gray-900",
+                                !field.value && "text-gray-400",
+                              )}
+                            >
+                              {field.value &&
+                                formatToIndonesianDate(
+                                  field.value.toISOString(),
+                                )}
+                              {!field.value && <span>Pilih Tanggal</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ?? undefined}
+                            onSelect={(e) => {
+                              field.onChange(e);
+                              setIsDatePopOverOpen(false);
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dateOut"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="mb-[2px] mt-2">
+                      TANGGAL KELUAR
+                    </FormLabel>
+                    <Button
+                      variant={"outline"}
+                      type="button"
+                      className={cn(
+                        "border border-gray-300 font-normal uppercase text-gray-900",
+                      )}
+                    >
+                      {add7DaysToDate(dateInWatch?.toISOString())}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CATATAN</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        readOnly
+                        className="border border-gray-300"
+                        placeholder="-"
+                        rows={4}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex basis-1/2 flex-col gap-4">
+              {/* LAMPIRAN */}
+              <div>
+                <h1 className="mt-1 text-sm font-medium">LAMPIRAN</h1>
+                <div className="mt-2 flex h-24 gap-1">
+                  {/* INPUT IMAGE */}
+                  <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm border border-gray-900">
+                    <Image
+                      alt="img.."
+                      className="h-full w-full object-cover"
+                      width={1000}
+                      height={500}
+                      src={
+                        previewImage !== null
+                          ? previewImage
+                          : production?.imgUrl !== undefined
                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
                                 production?.imgUrl
                               }`
-                            : "#"
-                        }
-                        className="text-[.5rem] font-semibold text-white"
-                      >
-                        DOWNLOAD
-                      </a>
+                            : imgBaju
+                      }
+                    />
+                    {/* IMAGE DOWNLOAD & UPLOAD ULANG */}
+                    <div
+                      className={cn(
+                        "absolute bottom-0 left-0 right-0 hidden justify-between bg-gray-900",
+                        isEditing && "group-hover:flex",
+                      )}
+                    >
+                      <div className="flex flex-1 items-end px-2 py-1">
+                        <a
+                          href={
+                            production?.imgUrl
+                              ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                                  production?.imgUrl
+                                }`
+                              : "#"
+                          }
+                          className="text-[.5rem] font-semibold text-white"
+                        >
+                          DOWNLOAD
+                        </a>
+                      </div>
+                      <div className="flex flex-1 items-end justify-end px-2 py-1">
+                        <FormField
+                          control={form.control}
+                          name="imageFile"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="relative flex">
+                                  <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                      if (!e.target.files) return;
+                                      const file = e.target.files[0];
+                                      field.onChange(file);
+                                      const previewUrl =
+                                        URL.createObjectURL(file);
+                                      setPreviewImage(previewUrl);
+                                    }}
+                                    className="absolute inset-0 cursor-pointer opacity-0"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="p-0 text-[.5rem] font-semibold uppercase text-white hover:bg-transparent hover:text-white"
+                                  >
+                                    UPLOAD ULANG
+                                  </button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
-                    <div className="flex flex-1 items-end justify-end px-2 py-1">
-                      <FormField
-                        control={form.control}
-                        name="imageFile"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <div className="relative flex">
-                                <Input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={(e) => {
-                                    if (!e.target.files) return;
-                                    const file = e.target.files[0];
-                                    field.onChange(file);
-                                    const previewUrl =
-                                      URL.createObjectURL(file);
-                                    setPreviewImage(previewUrl);
-                                  }}
-                                  className="absolute inset-0 cursor-pointer opacity-0"
-                                />
-                                <button
-                                  type="button"
-                                  className="p-0 text-[.5rem] font-semibold uppercase text-white hover:bg-transparent hover:text-white"
-                                >
-                                  UPLOAD ULANG
-                                </button>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                  </div>
+                  {/* INPUT CDR */}
+                  <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
+                      <IconCdr width="24px" />
+                    </div>
+                    <div
+                      className={cn(
+                        "absolute bottom-0 left-0 right-0 hidden justify-between bg-white",
+                        isEditing && "group-hover:flex",
+                      )}
+                    >
+                      <div className="flex flex-1 items-end px-2 py-1">
+                        <a
+                          href={
+                            production?.cdrUrl
+                              ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                                  production?.cdrUrl
+                                }`
+                              : "#"
+                          }
+                          className="text-[.5rem] font-semibold text-[#6DB6CC]"
+                        >
+                          DOWNLOAD
+                        </a>
+                      </div>
+                      <div className="flex flex-1 items-end justify-end px-2 py-1">
+                        <FormField
+                          control={form.control}
+                          name="cdrFile"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className="relative flex">
+                                  <Input
+                                    type="file"
+                                    accept=".cdr"
+                                    onChange={(e) =>
+                                      field.onChange(e.target.files?.[0])
+                                    }
+                                    className="absolute inset-0 cursor-pointer opacity-0"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="p-0 text-[.5rem] font-semibold uppercase text-[#6DB6CC] hover:bg-transparent hover:text-white"
+                                  >
+                                    UPLOAD ULANG
+                                  </button>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-                {/* INPUT CDR */}
-                <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
-                    <IconCdr />
-                  </div>
-                  <div
-                    className={cn(
-                      "absolute bottom-0 left-0 right-0 hidden justify-between bg-white",
-                      isEditing && "group-hover:flex",
-                    )}
-                  >
-                    <div className="flex flex-1 items-end px-2 py-1">
-                      <a
-                        href={
-                          production?.cdrUrl
-                            ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
-                                production?.cdrUrl
-                              }`
-                            : "#"
-                        }
-                        className="text-[.5rem] font-semibold text-[#6DB6CC]"
-                      >
-                        DOWNLOAD
-                      </a>
-                    </div>
-                    <div className="flex flex-1 items-end justify-end px-2 py-1">
-                      <FormField
-                        control={form.control}
-                        name="cdrFile"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <div className="relative flex">
-                                <Input
-                                  type="file"
-                                  accept=".cdr"
-                                  onChange={(e) =>
-                                    field.onChange(e.target.files?.[0])
-                                  }
-                                  className="absolute inset-0 cursor-pointer opacity-0"
-                                />
-                                <button
-                                  type="button"
-                                  className="p-0 text-[.5rem] font-semibold uppercase text-[#6DB6CC] hover:bg-transparent hover:text-white"
-                                >
-                                  UPLOAD ULANG
-                                </button>
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
+              </div>
+              <div>
+                <h1 className="mt-1 text-sm font-medium">BUKTI PEKERJAAN</h1>
+                <div className="mt-2 flex h-20 w-full items-center justify-center rounded-md border border-gray-400 bg-gray-200">
+                  <AddFill className="text-gray-400" width="24px" />
                 </div>
+                <h1 className="font-regular text-sm italic">
+                  *Upload bukti pekerjaan dalam pengembangan
+                </h1>
               </div>
             </div>
           </div>
@@ -408,94 +455,3 @@ export const MonitoringOverview = () => {
       </Form>
     );
 };
-
-// const [isDatePopOverOpen, setIsDatePopOverOpen] = useState(false);
-// const dateOfEntryWatch = form.watch("dateOfEntry");
-// {
-//   /* <FormField
-//               control={form.control}
-//               name="dateOfEntry"
-//               render={({ field }) => (
-//                 <FormItem className="flex flex-col">
-//                   <FormLabel className="mb-[2px] mt-2">TANGGAL MASUK</FormLabel>
-//                   <Popover
-//                     open={isDatePopOverOpen}
-//                     onOpenChange={setIsDatePopOverOpen}
-//                   >
-//                     <PopoverTrigger asChild>
-//                       <FormControl>
-//                         <Button
-//                           variant={"outline"}
-//                           disabled={!isEditing}
-//                           className={cn(
-//                             "border border-gray-300 font-normal uppercase text-gray-900",
-//                             !field.value && "text-gray-400",
-//                           )}
-//                         >
-//                           {field.value ? (
-//                             formatToIndonesianDate(field.value.toISOString())
-//                           ) : (
-//                             <span>Pilih Tanggal</span>
-//                           )}
-//                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                         </Button>
-//                       </FormControl>
-//                     </PopoverTrigger>
-//                     <PopoverContent className="w-auto p-0" align="start">
-//                       <Calendar
-//                         mode="single"
-//                         selected={field.value}
-//                         onSelect={(e) => {
-//                           field.onChange(e);
-//                           setIsDatePopOverOpen(false);
-//                         }}
-//                         initialFocus
-//                       />
-//                     </PopoverContent>
-//                   </Popover>
-
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="dateOfExit"
-//               render={({ field }) => (
-//                 <FormItem className="flex flex-col">
-//                   <FormLabel className="mb-[2px] mt-2">
-//                     TANGGAL KELUAR
-//                   </FormLabel>
-//                   <Popover>
-//                     <PopoverTrigger asChild>
-//                       <FormControl>
-//                         <Button
-//                           variant={"outline"}
-//                           disabled
-//                           className={cn(
-//                             "border border-gray-300 font-normal uppercase text-gray-900",
-//                           )}
-//                         >
-//                           {add7DaysToDate(dateOfEntryWatch.toISOString())}
-//                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                         </Button>
-//                       </FormControl>
-//                     </PopoverTrigger>
-//                     <PopoverContent className="w-auto p-0" align="start">
-//                       <Calendar
-//                         mode="single"
-//                         // selected={field.value}
-//                         onSelect={field.onChange}
-//                         disabled={(date) =>
-//                           date > new Date() || date < new Date("1900-01-01")
-//                         }
-//                         initialFocus
-//                       />
-//                     </PopoverContent>
-//                   </Popover>
-
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             /> */
-// }

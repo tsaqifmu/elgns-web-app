@@ -30,6 +30,7 @@ import ButtonPending from "@/components/button-pending";
 import { useFetchProductionOverview } from "@/hooks/production/useFetchProductionOverview";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
+import Link from "next/link";
 
 export const Overview = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -54,7 +55,6 @@ export const Overview = () => {
   );
 
   function onSubmit(values: z.infer<typeof productionOverviewSchema>) {
-    console.log("submitted val: ", values);
     updateOverview(values);
   }
   const form = useForm<z.infer<typeof productionOverviewSchema>>({
@@ -72,6 +72,7 @@ export const Overview = () => {
   });
   const { setValue, watch } = form;
   const typeValue = watch("type", "");
+
   useEffect(() => {
     if (production) {
       setValue("name", production?.customerName ?? "");
@@ -241,9 +242,8 @@ export const Overview = () => {
               <div className="mt-[2px] flex h-24 gap-1">
                 {/* INPUT IMAGE */}
                 <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm border border-gray-900">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <Image
-                    alt="halo"
+                    alt="img.."
                     className="h-full w-full object-cover"
                     width={1000}
                     height={500}
@@ -264,7 +264,7 @@ export const Overview = () => {
                     )}
                   >
                     <div className="flex flex-1 items-end px-2 py-1">
-                      <a
+                      <Link
                         href={
                           production?.imgUrl
                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
@@ -275,7 +275,7 @@ export const Overview = () => {
                         className="text-[.5rem] font-semibold text-white"
                       >
                         DOWNLOAD
-                      </a>
+                      </Link>
                     </div>
                     <div className="flex flex-1 items-end justify-end px-2 py-1">
                       <FormField
@@ -316,7 +316,7 @@ export const Overview = () => {
                 {/* INPUT CDR */}
                 <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
-                    <IconCdr />
+                    <IconCdr width="24px" />
                   </div>
                   <div
                     className={cn(
@@ -325,7 +325,7 @@ export const Overview = () => {
                     )}
                   >
                     <div className="flex flex-1 items-end px-2 py-1">
-                      <a
+                      <Link
                         href={
                           production?.cdrUrl
                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
@@ -336,7 +336,7 @@ export const Overview = () => {
                         className="text-[.5rem] font-semibold text-[#6DB6CC]"
                       >
                         DOWNLOAD
-                      </a>
+                      </Link>
                     </div>
                     <div className="flex flex-1 items-end justify-end px-2 py-1">
                       <FormField
@@ -400,94 +400,3 @@ export const Overview = () => {
       </Form>
     );
 };
-
-// const [isDatePopOverOpen, setIsDatePopOverOpen] = useState(false);
-// const dateOfEntryWatch = form.watch("dateOfEntry");
-// {
-//   /* <FormField
-//               control={form.control}
-//               name="dateOfEntry"
-//               render={({ field }) => (
-//                 <FormItem className="flex flex-col">
-//                   <FormLabel className="mb-[2px] mt-2">TANGGAL MASUK</FormLabel>
-//                   <Popover
-//                     open={isDatePopOverOpen}
-//                     onOpenChange={setIsDatePopOverOpen}
-//                   >
-//                     <PopoverTrigger asChild>
-//                       <FormControl>
-//                         <Button
-//                           variant={"outline"}
-//                           disabled={!isEditing}
-//                           className={cn(
-//                             "border border-gray-300 font-normal uppercase text-gray-900",
-//                             !field.value && "text-gray-400",
-//                           )}
-//                         >
-//                           {field.value ? (
-//                             formatToIndonesianDate(field.value.toISOString())
-//                           ) : (
-//                             <span>Pilih Tanggal</span>
-//                           )}
-//                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                         </Button>
-//                       </FormControl>
-//                     </PopoverTrigger>
-//                     <PopoverContent className="w-auto p-0" align="start">
-//                       <Calendar
-//                         mode="single"
-//                         selected={field.value}
-//                         onSelect={(e) => {
-//                           field.onChange(e);
-//                           setIsDatePopOverOpen(false);
-//                         }}
-//                         initialFocus
-//                       />
-//                     </PopoverContent>
-//                   </Popover>
-
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="dateOfExit"
-//               render={({ field }) => (
-//                 <FormItem className="flex flex-col">
-//                   <FormLabel className="mb-[2px] mt-2">
-//                     TANGGAL KELUAR
-//                   </FormLabel>
-//                   <Popover>
-//                     <PopoverTrigger asChild>
-//                       <FormControl>
-//                         <Button
-//                           variant={"outline"}
-//                           disabled
-//                           className={cn(
-//                             "border border-gray-300 font-normal uppercase text-gray-900",
-//                           )}
-//                         >
-//                           {add7DaysToDate(dateOfEntryWatch.toISOString())}
-//                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                         </Button>
-//                       </FormControl>
-//                     </PopoverTrigger>
-//                     <PopoverContent className="w-auto p-0" align="start">
-//                       <Calendar
-//                         mode="single"
-//                         // selected={field.value}
-//                         onSelect={field.onChange}
-//                         disabled={(date) =>
-//                           date > new Date() || date < new Date("1900-01-01")
-//                         }
-//                         initialFocus
-//                       />
-//                     </PopoverContent>
-//                   </Popover>
-
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             /> */
-// }

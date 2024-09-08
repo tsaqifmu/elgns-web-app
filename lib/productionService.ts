@@ -16,6 +16,9 @@ import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
 import { OverviewToSend } from "@/types/production/overview/overview-to-send";
 import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
 import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
+import { MonitoringOverviewResponse } from "@/types/monitoring/overview/monitoring-overview-response";
+import { MonitoringTimelineResponse } from "@/types/monitoring/timeline/monitoring-timeline-response";
+import { monitoringOverviewSchema } from "@/schemas/monitoringOverviewSchema";
 
 const wait = (duration: number) => {
   return new Promise((resolve) => setTimeout(resolve, duration));
@@ -202,5 +205,82 @@ export const getMonitoringOverview = async (
       productionid: productionId,
     },
   });
+  return response.data;
+};
+
+export const updateMonitoringOverview = async (
+  productionId: string | undefined,
+  overview: z.infer<typeof monitoringOverviewSchema>,
+  cardId: string | undefined,
+  boardName: string | undefined,
+) => {
+  if (!productionId) return Promise.reject(new Error("production id kosong"));
+
+  const uploadFile = async (file: File, resourceType: "img" | "cdr") => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiRequest({
+      path: `/production/add-assets/${resourceType}`,
+      method: HttpMethod.POST,
+      params: { productionid: productionId },
+      data: formData,
+    });
+
+    return response.data;
+  };
+
+  const uploadProof = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await apiRequest({
+      path: `/monitoring/add-proof`,
+      method: HttpMethod.POST,
+      params: { cardid: productionId },
+      data: formData,
+    });
+
+    return response.data;
+  };
+
+  const { imageFile, cdrFile } = overview;
+
+  const overviewToSend = {
+    tglMasuk: overview.dateIn?.toISOString(),
+    tglKeluar: overview.dateOut?.toISOString(),
+  };
+
+  const updateOverview = await apiRequest({
+    path: "/monitoring/add-card-overview",
+    method: HttpMethod.POST,
+    params: {
+      productionid: productionId,
+    },
+    data: overviewToSend,
+  });
+
+  const uploadImage = (imageFile: File) => uploadFile(imageFile, "img");
+  const uploadCDR = (cdrFile: File) => uploadFile(cdrFile, "cdr");
+  // const uploadProofImage = (proofFile: File) => uploadProof(proofFile);
+
+  return Promise.all([
+    updateOverview,
+    overview.imageFile && uploadImage(imageFile!),
+    overview.cdrFile && uploadImage(cdrFile!),
+  ]);
+};
+
+export const getMonitoringTimeline = async (cardId: string | undefined) => {
+  if (!cardId) return Promise.reject(new Error("card id kosong"));
+  console.log("card:", cardId);
+  const response: AxiosResponse<MonitoringTimelineResponse> = await apiRequest({
+    path: "/monitoring/list-proof",
+    method: HttpMethod.GET,
+    params: {
+      cardid: cardId,
+    },
+  });
+  console.log("resapan:", response);
   return response.data;
 };

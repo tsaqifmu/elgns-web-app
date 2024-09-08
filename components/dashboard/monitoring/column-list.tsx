@@ -71,7 +71,6 @@ const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
       columnId: columnId,
     };
     updateTaskPosition(payload);
-    console.log(columnId);
   };
 
   const handleDragOver = (event: DragOverEvent) => {

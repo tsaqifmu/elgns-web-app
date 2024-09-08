@@ -9,11 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useShallow } from "zustand/react/shallow";
-import {
-  DialogProductionAction,
-  DialogProductionState,
-  useDialogProductionStore,
-} from "@/stores/dialog-production-store";
 import { MonitoringOverview } from "./overview/monitoring-overview";
 import { MonitoringDetail } from "./detail/monitoring-detail";
 import MonitoringTimeline from "./timeline/monitoring-timeline";
@@ -29,8 +24,8 @@ const DialogTableMonitoringDetail = () => {
   const [detailMonitoringData, closeDetailMonitoringDialog] =
     useDialogMonitoringStore(
       useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
-        state.detailMonitoringData,
-        state.closeDetailMonitoringDialog,
+        state.editMonitoringData,
+        state.closeEditMonitoringDialog,
       ]),
     );
 
