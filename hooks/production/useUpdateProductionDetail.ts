@@ -1,8 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-import { Detail } from "@/types/production/detail/detail";
+import { IDetail } from "@/types/production/detail/detail";
 import { updateProductionDetail } from "@/lib/productionService";
-
 import { toast } from "@/components/ui/use-toast";
 import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 
@@ -13,7 +11,7 @@ export const useUpdateProductionDetail = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (detail: Detail) => {
+    mutationFn: async (detail: IDetail) => {
       const response = updateProductionDetail(productionId, detail);
       return response;
     },
@@ -31,28 +29,4 @@ export const useUpdateProductionDetail = (
       console.log(error);
     },
   });
-
-  // return useMutation({
-  //   mutationFn: async (data: any) => {
-  //     const response = await apiRequest({
-  //       path: "/production/update",
-  //       method: HttpMethod.POST,
-  //       params: { productionId: productionId },
-  //       data,
-  //     });
-  //     return response;
-  //   },
-  //   onSuccess: (response) => {
-  //     toast({
-  //       variant: "default",
-  //       title: "Berhasil mengubah data",
-  //       description: response.data.message,
-  //     });
-  //     queryClient.invalidateQueries({ queryKey: ["productions"] });
-  //     closeEditDialog();
-  //   },
-  //   onError: (error) => {
-  //     console.error(error);
-  //   },
-  // });
 };

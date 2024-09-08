@@ -4,7 +4,7 @@ import { InvoiceResponse } from "@/types/production/invoice/invoice-response";
 import { OverviewResponse } from "@/types/production/overview/overview-response";
 import { AxiosResponse } from "axios";
 import {
-  Detail,
+  IDetail,
   mapDetailToDetailToSend,
 } from "@/types/production/detail/detail";
 import {
@@ -134,7 +134,7 @@ export const getProductionDetailMenu = async (
 
 export const updateProductionDetail = async (
   productionId: string | undefined,
-  detail: Detail,
+  detail: IDetail,
 ) => {
   if (!productionId) return Promise.reject(new Error("production id kosong"));
 

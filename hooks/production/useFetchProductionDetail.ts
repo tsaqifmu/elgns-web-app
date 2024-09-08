@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getProductionDetailMenu } from "@/lib/productionService";
-import { Detail } from "@/types/production/detail/detail";
+import { IDetail } from "@/types/production/detail/detail";
 
 import {
   DetailResponse,
@@ -15,6 +15,6 @@ export const useFetchProductionDetail = (productionId: string | undefined) => {
       const response = await getProductionDetailMenu(productionId);
       return response;
     },
-    select: (response): Detail => mapProductionDetailResponse(response),
+    select: (response): IDetail => mapProductionDetailResponse(response),
   });
 };
