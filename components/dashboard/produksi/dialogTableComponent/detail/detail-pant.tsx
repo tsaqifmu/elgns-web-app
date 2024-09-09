@@ -10,17 +10,20 @@ import {
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { emptyPantData, Pant } from "@/types/production/detail/pant";
+import { cn } from "@/lib/utils";
 
 interface DetailPantProps {
   pants: Pant[];
   setPants: Dispatch<SetStateAction<Pant[]>>;
   setTotalItems: () => void;
+  isReadOnly?: boolean;
 }
 
 export const DetailPant = ({
   pants,
   setPants,
   setTotalItems,
+  isReadOnly = false,
 }: DetailPantProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>, curPant: Pant) => {
     const { name, value } = e.target;
@@ -112,7 +115,11 @@ export const DetailPant = ({
                   <TableCell className="text-sm">{index + 1}</TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="printingPant"
                       value={item.printingPant}
@@ -121,7 +128,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="material"
                       value={item.material}
@@ -130,7 +141,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="pattern"
                       value={item.pattern}
@@ -139,7 +154,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="color"
                       value={item.color}
@@ -148,7 +167,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sleeve"
                       value={item.sleeve}
@@ -157,7 +180,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sizeS"
                       value={item.sizeS}
@@ -166,7 +193,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sizeM"
                       value={item.sizeM}
@@ -175,7 +206,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sizeL"
                       value={item.sizeL}
@@ -184,7 +219,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sizeXL"
                       value={item.sizeXL}
@@ -193,7 +232,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="sizeXXL"
                       value={item.sizeXXL}
@@ -202,7 +245,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="size3XL"
                       value={item.size3XL}
@@ -211,7 +258,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="size5XL"
                       value={item.size5XL}
@@ -220,7 +271,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="size6XL"
                       value={item.size6XL}
@@ -229,7 +284,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="size7XL"
                       value={item.size7XL}
@@ -238,7 +297,11 @@ export const DetailPant = ({
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
-                      className="rounded-none bg-transparent p-1 uppercase"
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1 uppercase",
+                        isReadOnly && "border-none",
+                      )}
                       type="text"
                       name="custom"
                       value={item.custom}
@@ -259,14 +322,16 @@ export const DetailPant = ({
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-end">
-          <button
-            className="flex items-center justify-center rounded-sm bg-gray-900 px-1 py-4 text-white hover:bg-gray-700"
-            onClick={handleAddPant}
-          >
-            <IconAddFill className="inline h-4 w-4" viewBox="0 0 11 13" />
-          </button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex items-end">
+            <button
+              className="flex items-center justify-center rounded-sm bg-gray-900 px-1 py-4 text-white hover:bg-gray-700"
+              onClick={handleAddPant}
+            >
+              <IconAddFill className="inline h-4 w-4" viewBox="0 0 11 13" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -344,6 +344,7 @@ export const ProductionInvoice = () => {
           {/* FOOTER */}
           <DialogFooter className="flex gap-1">
             <Button
+              disabled={true}
               size={"modalTable"}
               variant={"outline"}
               className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium"

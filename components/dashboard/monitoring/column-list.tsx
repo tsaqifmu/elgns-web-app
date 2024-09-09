@@ -1,7 +1,7 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Column } from "./column";
-import { BoardResponse } from "@/types/monitoring/board-response";
-import { BoardItem } from "@/types/monitoring/board-item";
+import { ColumnResponse } from "@/types/monitoring/board-response";
+import { ColumnItem } from "@/types/monitoring/board-item";
 import {
   DndContext,
   DragEndEvent,
@@ -20,7 +20,7 @@ import { TaskCard } from "./task-card";
 import { useUpdateTaskPosition } from "@/hooks/monitoring/useUpdateTaskPosition";
 
 interface ColumnListProps {
-  columnList: BoardResponse;
+  columnList: ColumnResponse;
   tasksResponse: Task[];
 }
 
@@ -71,7 +71,6 @@ const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
       columnId: columnId,
     };
     updateTaskPosition(payload);
-    console.log(columnId);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -114,7 +113,7 @@ const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
       <ScrollArea>
         <div className="flex space-x-[15px] overflow-auto pb-5">
           <SortableContext items={columnsId}>
-            {columnList.map((column: BoardItem) => (
+            {columnList.map((column: ColumnItem) => (
               <Column
                 key={column.id}
                 column={column}

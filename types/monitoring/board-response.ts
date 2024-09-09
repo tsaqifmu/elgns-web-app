@@ -1,3 +1,3 @@
-import { BoardItem } from "./board-item";
+import { ColumnItem } from "./board-item";
 
-export type BoardResponse = BoardItem[];
+export type ColumnResponse = ColumnItem[];

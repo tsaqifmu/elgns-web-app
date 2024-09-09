@@ -78,7 +78,7 @@ export const getColumn = (
               <IconCdr className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
             </Link>
           </Button>
-          <Button className="group" variant={"ghost"} size={"icon"}>
+          <Button className="group" variant={"ghost"} size={"icon"} disabled>
             <IconDownload className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
           </Button>
         </div>

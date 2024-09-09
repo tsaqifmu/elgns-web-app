@@ -1,21 +1,28 @@
 import Image from "next/image";
-import { useFetchCardBoard } from "@/hooks/useMonitoring";
 
 import IconCDR from "@/public/icons/table/cdr.svg";
 import IconImage from "@/public/icons/table/image.svg";
 import IconDownload from "@/public/icons/table/download.svg";
-import { ProductionData, Task } from "@/types/monitoring/task";
-import { useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import { dateIdFormat } from "@/lib/dateUtils";
+import { useDialogMonitoringStore } from "@/stores/dialog-monitoring-store";
+import { useShallow } from "zustand/react/shallow";
+import { formatToIndonesianDate } from "@/lib/dateUtils";
+import { Task } from "@/types/monitoring/task";
 
 interface TaskCardProps {
   task: Task;
 }
 
 export const TaskCard = ({ task }: TaskCardProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [openDetailMonitoringDialog, setCardMonitoringId] =
+    useDialogMonitoringStore(
+      useShallow((state) => [
+        state.openEditMonitoringDialog,
+        state.setCardMonitoringId,
+      ]),
+    );
+
   const {
     setNodeRef,
     attributes,
@@ -29,7 +36,6 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       type: "Task",
       task,
     },
-    disabled: isEditing,
   });
 
   const style = {
@@ -57,33 +63,43 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       {...attributes}
       {...listeners}
       className="flex cursor-grab flex-col space-y-[5px] rounded-md border-2 border-gray-400 bg-gray-100 p-[10px]"
+      onClick={() => {
+        if (task.productionData) {
+          openDetailMonitoringDialog(task.productionData);
+          setCardMonitoringId(task._id);
+        } else {
+          alert("Belum ada data produksi untuk card ini.");
+        }
+      }}
     >
       <div className="flex flex-row-reverse items-center justify-between uppercase">
         <h4 className="text-xs font-normal">
-          {dateIdFormat(task.deadlineCurrentBoard)}
+          {formatToIndonesianDate(task.deadlineCurrentBoard)}
         </h4>
         <div className="rounded bg-destructive px-[5px] py-[2px] text-xs font-normal text-white">
           wip
         </div>
       </div>
       <Image
-        src={`http://baru.azizfath.com:4040/data/${desainImgUrl}`}
+        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${desainImgUrl}`}
         alt="Kaos"
         width={160}
         height={77}
         className="h-[76px] rounded-md border border-gray-400 object-cover"
       />
       <div className="flex justify-between text-xs font-normal uppercase">
-        <p className="text-teal">{dateIdFormat(tglMasuk ?? "")}</p>
-        <p className="text-yellow-500">{dateIdFormat(tglKeluar ?? "")}</p>
+        <p className="text-teal">{formatToIndonesianDate(tglMasuk ?? "")}</p>
+        <p className="text-yellow-500">
+          {formatToIndonesianDate(tglKeluar ?? "")}
+        </p>
       </div>
       <div className="flex flex-col space-y-[3px] text-xs font-normal uppercase">
         <h4>{noInvoice}</h4>
         <p className="text-gray-400">{jumlah} pcs</p>
         <div className="flex space-x-[5px]">
-          <IconImage className="h-[14px] w-[14px] text-teal" />
-          <IconCDR className="h-[14px] w-[14px] text-teal" />
-          <IconDownload className="h-[14px] w-[14px] text-teal" />
+          <IconImage className="h-[14px] w-[14px] cursor-pointer text-teal" />
+          <IconCDR className="h-[14px] w-[14px] cursor-pointer text-teal" />
+          <IconDownload className="h-[14px] w-[14px] cursor-pointer text-teal" />
         </div>
       </div>
     </div>

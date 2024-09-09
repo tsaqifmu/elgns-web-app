@@ -1,4 +1,4 @@
-export const formatToIndonesianDate = (dateString?: string) => {
+export const formatToIndonesianDate = (dateString?: string | null) => {
   if (!dateString) return "-";
   try {
     const date = new Date(dateString);
@@ -27,7 +27,8 @@ export const formatToIndonesianDate = (dateString?: string) => {
   }
 };
 
-export const add7DaysToDate = (date: string): string => {
+export const add7DaysToDate = (date: string | undefined): string => {
+  if (!date) return "-";
   const futureDate = new Date(date);
   futureDate.setDate(futureDate.getDate() + 7);
   return formatToIndonesianDate(futureDate.toISOString());
