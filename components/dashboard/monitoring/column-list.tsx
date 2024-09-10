@@ -1,7 +1,7 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Column } from "./column";
-import { ColumnResponse } from "@/types/monitoring/board-response";
-import { ColumnItem } from "@/types/monitoring/board-item";
+import { ColumnResponse } from "@/types/monitoring/column-response";
+import { ColumnItem } from "@/types/monitoring/column-item";
 import {
   DndContext,
   DragEndEvent,
@@ -31,17 +31,21 @@ const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
     () => columnList.map((column) => column.id),
     [columnList],
   );
-  const {
-    mutate: updateTaskPosition,
-    isPending,
-    isError,
-    error,
-  } = useUpdateTaskPosition();
+  const { mutate: updateTaskPosition } = useUpdateTaskPosition();
 
   const filterTasks = (columnId: string) => {
-    const filteredTasks: Task[] = tasks.filter(
+    let filteredTasks = tasks.filter(
       (task) => task.currentBoardId === columnId,
     );
+
+    // sort waiting list tasks descendingly
+    if (columnId === "669e5c021129806c40041128") {
+      filteredTasks.sort((a, b) => {
+        const dateA = new Date(a.startDateCurrentBoard).getTime();
+        const dateB = new Date(b.startDateCurrentBoard).getTime();
+        return dateB - dateA;
+      });
+    }
     return filteredTasks;
   };
 

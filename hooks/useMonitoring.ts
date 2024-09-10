@@ -19,16 +19,16 @@ export const useFetchBoardList = () => {
   });
 };
 
-export const useFetchCardBoard = (boardId: string) => {
-  return useQuery({
-    queryKey: ["cards", boardId],
-    queryFn: async () => {
-      const { data } = await apiRequest({
-        path: "/monitoring/list-card",
-        method: HttpMethod.GET,
-        params: { currentboardid: boardId },
-      });
-      return data.message;
-    },
-  });
-};
+// export const useFetchCardBoard = (boardId: string) => {
+//   return useQuery({
+//     queryKey: ["cards", boardId],
+//     queryFn: async () => {
+//       const { data } = await apiRequest({
+//         path: "/monitoring/list-card",
+//         method: HttpMethod.GET,
+//         params: { currentboardid: boardId },
+//       });
+//       return data.message;
+//     },
+//   });
+// };

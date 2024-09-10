@@ -18,17 +18,16 @@ export const useUpdateTaskPosition = () => {
       return response;
     },
     onSuccess: (response) => {
-      console.log("response", response);
       toast({
         variant: "default",
         title: "Berhasil memindahkan data.",
         description: response?.message,
       });
-      queryClient.invalidateQueries({ queryKey: ["productions"] });
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
     onError: (error) => {
       handleArrayError(error, toast);
-      queryClient.invalidateQueries({ queryKey: ["productions"] });
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
   });
 };

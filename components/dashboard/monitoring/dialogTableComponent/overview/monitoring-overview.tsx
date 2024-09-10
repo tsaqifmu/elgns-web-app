@@ -40,6 +40,7 @@ import { CalendarIcon, CirclePlus } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import AddFill from "@/public/icons/table/add-fill.svg";
 import { useUpdateMonitoringOverview } from "@/hooks/monitoring/useUpdateMonitoringOverview";
+import Link from "next/link";
 
 export const MonitoringOverview = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -48,13 +49,15 @@ export const MonitoringOverview = () => {
   const [previewImageProofing, setPreviewImageProofing] = useState<
     string | null
   >(null);
-  const [editMonitoringData, closeEditMonitoringDialog] =
+  const [cardMonitoringId, editMonitoringData, closeEditMonitoringDialog] =
     useDialogMonitoringStore(
       useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
+        state.cardMonitoringId,
         state.editMonitoringData,
         state.closeEditMonitoringDialog,
       ]),
     );
+  console.log("lah: ", cardMonitoringId);
   const productionId = editMonitoringData?._id;
   const {
     data: production,
@@ -65,6 +68,7 @@ export const MonitoringOverview = () => {
 
   const { mutate: updateOverview, isPending } = useUpdateMonitoringOverview(
     production?.id,
+    cardMonitoringId,
     setIsEditing,
   );
 
@@ -309,7 +313,8 @@ export const MonitoringOverview = () => {
                       )}
                     >
                       <div className="flex flex-1 items-end px-2 py-1">
-                        <a
+                        <Link
+                          target="_blank"
                           href={
                             production?.imgUrl
                               ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
@@ -320,7 +325,7 @@ export const MonitoringOverview = () => {
                           className="text-[.5rem] font-semibold text-white"
                         >
                           DOWNLOAD
-                        </a>
+                        </Link>
                       </div>
                       <div className="flex flex-1 items-end justify-end px-2 py-1">
                         <FormField
@@ -417,13 +422,50 @@ export const MonitoringOverview = () => {
                 </div>
               </div>
               <div>
-                <h1 className="mt-1 text-sm font-medium">BUKTI PEKERJAAN</h1>
-                <div className="mt-2 flex h-20 w-full items-center justify-center rounded-md border border-gray-400 bg-gray-200">
-                  <AddFill className="text-gray-400" width="24px" />
-                </div>
-                <h1 className="font-regular text-sm italic">
-                  *Upload bukti pekerjaan dalam pengembangan
-                </h1>
+                <FormField
+                  control={form.control}
+                  name="proofFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>BUKTI PEKERJAAN</FormLabel>
+                      <FormControl>
+                        <div className="relative mt-2 h-40 w-full overflow-hidden rounded-md border border-gray-400 bg-gray-200">
+                          {!previewImageProofing && (
+                            <AddFill
+                              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400"
+                              width="24px"
+                            />
+                          )}
+                          {previewImageProofing && (
+                            <Image
+                              className="absolute inset-0 h-full object-cover"
+                              width={600}
+                              height={400}
+                              alt=""
+                              src={previewImageProofing}
+                            />
+                          )}
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            className={cn(
+                              "absolute inset-0 box-border h-full cursor-pointer opacity-0",
+                              !isEditing && "hidden",
+                            )}
+                            onChange={(e) => {
+                              if (!e.target.files) return;
+                              const file = e.target.files[0];
+                              field.onChange(file);
+                              const previewUrl = URL.createObjectURL(file);
+                              setPreviewImageProofing(previewUrl);
+                            }}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
           </div>

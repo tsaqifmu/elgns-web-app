@@ -265,6 +265,7 @@ export const Overview = () => {
                   >
                     <div className="flex flex-1 items-end px-2 py-1">
                       <Link
+                        target="_blank"
                         href={
                           production?.imgUrl
                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
