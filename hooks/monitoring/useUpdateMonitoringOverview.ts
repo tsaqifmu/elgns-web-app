@@ -1,27 +1,29 @@
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import {
-  updateMonitoringOverview,
-  updateProductionOverview,
-} from "@/lib/productionService";
 import { monitoringOverviewSchema } from "@/schemas/monitoringOverviewSchema";
 
 import { toast } from "@/components/ui/use-toast";
+import {
+  getBoardName,
+  updateMonitoringOverview,
+} from "@/lib/monitoringService";
 
 export const useUpdateMonitoringOverview = (
   productionId: string | undefined,
+  cardId: string | undefined,
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (overview: z.infer<typeof monitoringOverviewSchema>) => {
-      const response = updateMonitoringOverview(
+      const boardName = await getBoardName(cardId);
+      const response = await updateMonitoringOverview(
         productionId,
         overview,
-        "",
-        "boardname",
+        cardId,
+        boardName,
       );
       return response;
     },

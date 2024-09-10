@@ -9,6 +9,7 @@ import { useDialogMonitoringStore } from "@/stores/dialog-monitoring-store";
 import { useShallow } from "zustand/react/shallow";
 import { formatToIndonesianDate } from "@/lib/dateUtils";
 import { Task } from "@/types/monitoring/task";
+import Link from "next/link";
 
 interface TaskCardProps {
   task: Task;
@@ -94,11 +95,34 @@ export const TaskCard = ({ task }: TaskCardProps) => {
         </p>
       </div>
       <div className="flex flex-col space-y-[3px] text-xs font-normal uppercase">
-        <h4>{noInvoice}</h4>
-        <p className="text-gray-400">{jumlah} pcs</p>
+        <h4>{noInvoice ?? "-"}</h4>
+        <p className="text-gray-400">{jumlah ?? 0} pcs</p>
         <div className="flex space-x-[5px]">
-          <IconImage className="h-[14px] w-[14px] cursor-pointer text-teal" />
-          <IconCDR className="h-[14px] w-[14px] cursor-pointer text-teal" />
+          <Link
+            onClick={(e) => e.stopPropagation()}
+            href={
+              task.productionData?.desainImgUrl
+                ? process.env.NEXT_PUBLIC_API_BASE_URL +
+                  "/data/" +
+                  task.productionData?.desainImgUrl
+                : "#"
+            }
+            target="_blank"
+          >
+            <IconImage className="h-[14px] w-[14px] cursor-pointer text-teal" />
+          </Link>
+          <Link
+            href={
+              task.productionData?.desainCdrUrl
+                ? process.env.NEXT_PUBLIC_API_BASE_URL +
+                  "/data" +
+                  task.productionData?.desainCdrUrl
+                : "#"
+            }
+            target="_blank"
+          >
+            <IconCDR className="h-[14px] w-[14px] cursor-pointer text-teal" />
+          </Link>
           <IconDownload className="h-[14px] w-[14px] cursor-pointer text-teal" />
         </div>
       </div>

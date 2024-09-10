@@ -1,4 +1,4 @@
-import { ColumnItem } from "@/types/monitoring/board-item";
+import { ColumnItem } from "@/types/monitoring/column-item";
 import { Task } from "@/types/monitoring/task";
 import TaskList from "./task-list";
 import { CSS } from "@dnd-kit/utilities";

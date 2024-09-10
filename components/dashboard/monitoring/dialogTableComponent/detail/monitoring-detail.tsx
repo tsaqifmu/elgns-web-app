@@ -4,11 +4,9 @@ import { useFetchProductionDetail } from "@/hooks/production/useFetchProductionD
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import { useShallow } from "zustand/react/shallow";
-import { Loader2 } from "lucide-react";
 import { Shirt } from "@/types/production/detail/shirt";
 import { Pant } from "@/types/production/detail/pant";
 import { BackName } from "@/types/production/detail/back-name";
-import { IDetail } from "@/types/production/detail/detail";
 import { DetailPant } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-pant";
 import { DetailBackName } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-back-name";
 import { DetailShirt } from "@/components/dashboard/produksi/dialogTableComponent/detail/detail-shirt";
