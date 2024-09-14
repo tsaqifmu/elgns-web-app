@@ -15,6 +15,7 @@ import { DataTable } from "@/components/dashboard/data-table";
 import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
+import DialogTableCreateUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-create";
 
 const AdminPage = () => {
   const { data, isError, isLoading, error } = useFetchUserData();
@@ -23,12 +24,14 @@ const AdminPage = () => {
   const dataInfo = data?.dataInfo;
 
   // Zustand store
-  const [openEditAdminDialog, openDeleteAdminDialog] = useDialogAdminStore(
-    useShallow((state: DialogAdminAction) => [
-      state.openEditAdminDialog,
-      state.openDeleteAdminDialog,
-    ]),
-  );
+  const [openCreateAdminDialog, openEditAdminDialog, openDeleteAdminDialog] =
+    useDialogAdminStore(
+      useShallow((state: DialogAdminAction) => [
+        state.openCreateAdminDialog,
+        state.openEditAdminDialog,
+        state.openDeleteAdminDialog,
+      ]),
+    );
 
   // Data column for table
   const columns = getColumnsAdmin(openEditAdminDialog, openDeleteAdminDialog);
@@ -41,9 +44,8 @@ const AdminPage = () => {
         <>
           <DataTable columns={columns} data={dataSource as any} />
           <DataTablePagination dataInfo={dataInfo} />
-          {/* <DialogTableCreate />
-          <DialogTableDetail />
-          <DialogTableEdit />
+          <DialogTableCreateUser />
+          {/* <DialogTableEdit />
           <DialogTableDelete /> */}
         </>
       );
@@ -56,7 +58,7 @@ const AdminPage = () => {
         <Button
           variant={"teal"}
           className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-          // onClick={openCreateCustomerDialog}
+          onClick={openCreateAdminDialog}
         >
           <p>TAMBAH PEGAWAI</p>
           <CirclePlus className="w-4 lg:w-6" />

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { UserDataColumns } from "@/types/admin/user-data-response";
 
 export interface DialogAdminState {
-  createCustomerData?: boolean;
+  createAdminData?: boolean;
   detailCustomerData?: UserDataColumns;
   editCustomerData?: UserDataColumns;
   deleteCustomerData?: UserDataColumns;
@@ -19,12 +19,12 @@ export interface DialogAdminAction {
 
 export const useDialogAdminStore = create<DialogAdminState & DialogAdminAction>(
   (set) => ({
-    createCustomerData: undefined,
+    createAdminData: undefined,
     detailCustomerData: undefined,
     editCustomerData: undefined,
     deleteCustomerData: undefined,
-    openCreateAdminDialog: () => set({ createCustomerData: true }),
-    closeCreateAdminDialog: () => set({ createCustomerData: undefined }),
+    openCreateAdminDialog: () => set({ createAdminData: true }),
+    closeCreateAdminDialog: () => set({ createAdminData: undefined }),
     openEditAdminDialog: (data: UserDataColumns) =>
       set({ editCustomerData: data }),
     closeEditAdminDialog: () => set({ editCustomerData: undefined }),
