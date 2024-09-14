@@ -4,7 +4,7 @@ import { FC } from "react";
 import { CirclePlus } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
-import { useFetchCustomerData } from "@/hooks/useCustomers";
+import { useFetchCustomerData } from "@/hooks/customer/useCustomers";
 
 import {
   DialogAction,
@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/button";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import { getColumns } from "@/components/dashboard/customer/columns";
-import { DataTable } from "@/components/dashboard/customer/data-table";
-import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
+import { DataTable } from "@/components/dashboard/data-table";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponent/dialog-table-edit";
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";

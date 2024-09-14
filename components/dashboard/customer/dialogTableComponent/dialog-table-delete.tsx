@@ -1,4 +1,11 @@
-import { useDeleteCustomerData } from "@/hooks/useCustomers";
+import { useShallow } from "zustand/react/shallow";
+import { useDeleteCustomerData } from "@/hooks/customer/useCustomers";
+
+import {
+  DialogAction,
+  DialogState,
+  useDialogStore,
+} from "@/stores/dialog-store";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,12 +17,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DialogAction,
-  DialogState,
-  useDialogStore,
-} from "@/stores/dialog-store";
-import { useShallow } from "zustand/react/shallow";
 
 const DialogTableDelete = () => {
   const [deleteCustomerData, closeDeleteCustomerDialog] = useDialogStore(

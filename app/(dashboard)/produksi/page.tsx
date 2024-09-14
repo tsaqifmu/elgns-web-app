@@ -1,18 +1,21 @@
 "use client";
 
-import { DataTable } from "@/components/dashboard/customer/data-table";
-import ErrorLoadData from "@/components/dashboard/error-load-data";
-import SkeletonTable from "@/components/dashboard/skeleton-table";
 import { FC } from "react";
-import { getColumn } from "./columns";
+import { useShallow } from "zustand/react/shallow";
+
 import { useFetchProductions } from "@/hooks/production/useFetchProductions";
-import { DataTablePagination } from "@/components/dashboard/customer/data-table-pagination";
-import DialogTableEdit from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-edit";
+
 import {
   DialogProductionAction,
   useDialogProductionStore,
 } from "@/stores/dialog-production-store";
-import { useShallow } from "zustand/react/shallow";
+
+import { DataTable } from "@/components/dashboard/data-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import { getColumn } from "@/components/dashboard/produksi/columns";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
+import DialogTableEdit from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-edit";
 import DialogTableDelete from "@/components/dashboard/produksi/dialogTableComponent/dialog-table-delete";
 
 const ProductionPage: FC = () => {

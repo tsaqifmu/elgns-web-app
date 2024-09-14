@@ -1,8 +1,9 @@
 import { z } from "zod";
-import { useState } from "react";
-import { CirclePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useShallow } from "zustand/react/shallow";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAddCustomerData } from "@/hooks/customer/useCustomers";
 
 import { customerSchema } from "@/schemas/customerSchema";
 
@@ -32,15 +33,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAddCustomerData } from "@/hooks/useCustomers";
 import {
   DialogAction,
   DialogState,
   useDialogStore,
 } from "@/stores/dialog-store";
-import { useShallow } from "zustand/react/shallow";
 
 const DialogTableCreate = () => {
   const [createCustomerData, closeCreateCustomerDialog] = useDialogStore(

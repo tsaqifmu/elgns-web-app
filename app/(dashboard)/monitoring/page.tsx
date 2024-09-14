@@ -1,6 +1,6 @@
 "use client";
 
-import { useFetchBoardList } from "@/hooks/useMonitoring";
+import { useFetchBoardList } from "@/hooks/monitoring/useMonitoring";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ColumnList from "@/components/dashboard/monitoring/column-list";
