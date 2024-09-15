@@ -3,6 +3,7 @@ export type UserDataColumns = {
   name: string;
   email: string;
   phoneNumber: string;
+  password?: string;
   role: string;
 };
 
@@ -11,6 +12,7 @@ export interface UserDocument {
   name: string;
   email: string;
   noHp: string;
+  password?: string;
   role: string;
   __v: number;
 }

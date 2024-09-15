@@ -1,4 +1,5 @@
 "use client";
+import { CirclePlus } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useFetchUserData } from "@/hooks/admin/useAdmin";
@@ -8,15 +9,17 @@ import {
   useDialogAdminStore,
 } from "@/stores/dialog-admin-store";
 
-import ErrorLoadData from "@/components/dashboard/error-load-data";
-import SkeletonTable from "@/components/dashboard/skeleton-table";
-import { getColumnsAdmin } from "@/components/dashboard/admin/columns";
-import { DataTable } from "@/components/dashboard/data-table";
-import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 import { Button } from "@/components/ui/button";
-import { CirclePlus } from "lucide-react";
+import { DataTable } from "@/components/dashboard/data-table";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
+import { getColumnsAdmin } from "@/components/dashboard/admin/columns";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
+import DialogTableEditUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-edit";
 import DialogTableCreateUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-create";
+import DialogTableDeleteUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-delete";
 
+//! tinggal bikin pagination nya, apakah pake limit juga?
 const AdminPage = () => {
   const { data, isError, isLoading, error } = useFetchUserData();
 
@@ -45,8 +48,8 @@ const AdminPage = () => {
           <DataTable columns={columns} data={dataSource as any} />
           <DataTablePagination dataInfo={dataInfo} />
           <DialogTableCreateUser />
-          {/* <DialogTableEdit />
-          <DialogTableDelete /> */}
+          <DialogTableEditUser />
+          <DialogTableDeleteUser />
         </>
       );
     return null;

@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { useShallow } from "zustand/react/shallow";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAddCustomerData } from "@/hooks/customer/useCustomers";
+import { useUpdateCustomerData } from "@/hooks/customer/useCustomers";
+import { customerSchema } from "@/schemas/customerSchema";
 
 import {
   DialogAdminAction,
@@ -11,11 +12,18 @@ import {
   useDialogAdminStore,
 } from "@/stores/dialog-admin-store";
 
-import { adminSchema } from "@/schemas/adminSchema";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import ButtonPending from "@/components/button-pending";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -31,61 +39,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { adminSchema } from "@/schemas/adminSchema";
+import { LIST_ROLE } from "./dialog-table-create";
 
-export const LIST_ROLE = [
-  {
-    value: "pekerja_design",
-    title: "PEKERJA DESIGN",
-  },
-  {
-    value: "pekerja_profing",
-    title: "PEKERJA PROFING",
-  },
-  {
-    value: "pekerja_mal",
-    title: "PEKERJA MAL",
-  },
-  {
-    value: "pekerja_printing",
-    title: "PEKERJA PRINTING",
-  },
-  {
-    value: "pekerja_potong",
-    title: "PEKERJA POTONG",
-  },
-];
+//! tinggal connect ke API,
+//! password sama role masih belum keisi langsung
+//! karena data password belum ada, dan data role bentuknya belum nemu
 
-const DialogTableCreateUser = () => {
-  const [createCustomerData, closeCreateCustomerDialog] = useDialogAdminStore(
+const DialogTableEditUser = () => {
+  const [editAdminData, closeEditAdminDialog] = useDialogAdminStore(
     useShallow((state: DialogAdminState & DialogAdminAction) => [
-      state.createAdminData,
-      state.closeCreateAdminDialog,
+      state.editAdminData,
+      state.closeEditAdminDialog,
     ]),
   );
-  const isDialogOpen = createCustomerData;
+  const isOpen = editAdminData !== undefined;
+  const user = editAdminData;
 
   const form = useForm<z.infer<typeof adminSchema>>({
     resolver: zodResolver(adminSchema),
-    defaultValues: {
-      username: "",
-      phoneNumber: "62",
-      email: "",
-      password: "",
-      role: "",
+    values: {
+      username: user?.name || "",
+      phoneNumber: user?.phoneNumber || "",
+      email: user?.email || "",
+      password: user?.password || "",
+      role: user?.role || "",
     },
   });
 
-  //! API belum dikerjakan
-  const { mutate: sendCustomerData, isPending } = useAddCustomerData(
-    closeCreateCustomerDialog,
+  const { mutate: updateCustomerData, isPending } = useUpdateCustomerData(
+    user?.id,
+    closeEditAdminDialog,
   );
 
   function onSubmit(values: z.infer<typeof adminSchema>) {
@@ -96,17 +80,15 @@ const DialogTableCreateUser = () => {
       password: values.password,
       role: values.role,
     };
-
-    sendCustomerData(payload);
+    updateCustomerData(payload);
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={closeCreateCustomerDialog}>
+    <Dialog open={isOpen} onOpenChange={closeEditAdminDialog}>
       <DialogContent className="max-w-[737px]">
-        <DialogHeader className="bg-teal">
-          <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
+        <DialogHeader className="bg-yellow-500">
+          <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex w-full gap-5 px-5 pb-5">
@@ -119,7 +101,7 @@ const DialogTableCreateUser = () => {
                       <FormLabel>NAMA PEKERJA</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-teal"
+                          className="focus-visible:ring-yellow-500"
                           placeholder="Masukkan nama pekerja"
                           {...field}
                         />
@@ -128,17 +110,17 @@ const DialogTableCreateUser = () => {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>EMAIL</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-teal"
+                          className="focus-visible:ring-yellow-500"
                           placeholder="Masukkan alamat email"
+                          type="tel"
                           {...field}
                         />
                       </FormControl>
@@ -154,7 +136,7 @@ const DialogTableCreateUser = () => {
                       <FormLabel>PASSWORD</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-teal"
+                          className="focus-visible:ring-yellow-500"
                           placeholder="Masukkan password"
                           {...field}
                         />
@@ -164,7 +146,6 @@ const DialogTableCreateUser = () => {
                   )}
                 />
               </div>
-
               <div className="flex basis-1/2 flex-col gap-5">
                 <FormField
                   control={form.control}
@@ -174,7 +155,7 @@ const DialogTableCreateUser = () => {
                       <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-teal"
+                          className="focus-visible:ring-yellow-500"
                           placeholder="62851XXXX"
                           type="tel"
                           {...field}
@@ -195,7 +176,7 @@ const DialogTableCreateUser = () => {
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="focus:ring-teal">
+                          <SelectTrigger className="focus:ring-yellow-500">
                             <SelectValue placeholder="Pilih Role" />
                           </SelectTrigger>
                         </FormControl>
@@ -227,7 +208,7 @@ const DialogTableCreateUser = () => {
               </DialogClose>
               <ButtonPending
                 isPending={isPending}
-                variant={"teal"}
+                variant={"yellow"}
                 size={"modalTable"}
                 title="Simpan"
               />
@@ -239,4 +220,4 @@ const DialogTableCreateUser = () => {
   );
 };
 
-export default DialogTableCreateUser;
+export default DialogTableEditUser;
