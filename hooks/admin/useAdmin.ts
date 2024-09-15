@@ -1,9 +1,12 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { UserDocument } from "@/types/admin/user-data-response";
+
+import { toast } from "@/components/ui/use-toast";
+import { handleArrayError } from "@/lib/handleErrors/handleArrayError";
 
 const mapUserData = (data: UserDocument[]) =>
   data.map((data) => ({
@@ -20,7 +23,7 @@ export const useFetchUserData = () => {
   // const limit = searchParams.get("pageSize")?.toString() || "5";
 
   return useQuery({
-    queryKey: ["customers", page],
+    queryKey: ["users", page],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/admin/user/list",
@@ -51,6 +54,65 @@ export const useFetchUserData = () => {
           hasNextPage: response.data.message.hasNextPage,
         },
       };
+    },
+  });
+};
+
+export const useAddUserData = (closeCreateAdminDialog: () => void) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/admin/user/add",
+        method: HttpMethod.POST,
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menyimpan data",
+        description: response.data.message,
+      });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      closeCreateAdminDialog();
+    },
+    onError: (error) => {
+      handleArrayError(error, toast);
+      console.error(error);
+    },
+  });
+};
+
+export const useDeleteUserData = (
+  userId: string | undefined,
+  closeUserDialog: () => void,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/admin/user/delete",
+        method: HttpMethod.DELETE,
+        params: { userid: userId },
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil menghapus data",
+        description: response.data.message,
+      });
+      closeUserDialog();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      handleArrayError(error, toast);
+      console.error(error);
     },
   });
 };

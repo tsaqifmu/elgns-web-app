@@ -39,6 +39,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAddUserData } from "@/hooks/admin/useAdmin";
 
 export const LIST_ROLE = [
   {
@@ -64,7 +65,7 @@ export const LIST_ROLE = [
 ];
 
 const DialogTableCreateUser = () => {
-  const [createCustomerData, closeCreateCustomerDialog] = useDialogAdminStore(
+  const [createCustomerData, closeCreateAdminDialog] = useDialogAdminStore(
     useShallow((state: DialogAdminState & DialogAdminAction) => [
       state.createAdminData,
       state.closeCreateAdminDialog,
@@ -83,9 +84,8 @@ const DialogTableCreateUser = () => {
     },
   });
 
-  //! API belum dikerjakan
-  const { mutate: sendCustomerData, isPending } = useAddCustomerData(
-    closeCreateCustomerDialog,
+  const { mutate: sendUserData, isPending } = useAddUserData(
+    closeCreateAdminDialog,
   );
 
   function onSubmit(values: z.infer<typeof adminSchema>) {
@@ -97,11 +97,11 @@ const DialogTableCreateUser = () => {
       role: values.role,
     };
 
-    sendCustomerData(payload);
+    sendUserData(payload);
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={closeCreateCustomerDialog}>
+    <Dialog open={isDialogOpen} onOpenChange={closeCreateAdminDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-teal">
           <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>

@@ -1,5 +1,5 @@
 import { useShallow } from "zustand/react/shallow";
-import { useDeleteCustomerData } from "@/hooks/customer/useCustomers";
+import { useDeleteUserData } from "@/hooks/admin/useAdmin";
 
 import {
   DialogAdminAction,
@@ -17,27 +17,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-//! tinggal connect ke API delete
 const DialogTableDeleteUser = () => {
   // Zustand store
-  const [deleteCustomerData, closeDeleteCustomerDialog] = useDialogAdminStore(
+  const [deleteAdminData, closeDeleteAdminDialog] = useDialogAdminStore(
     useShallow((state: DialogAdminState & DialogAdminAction) => [
       state.deleteAdminData,
       state.closeDeleteAdminDialog,
     ]),
   );
-  const isDialogOpen = deleteCustomerData !== undefined;
-  const customer = deleteCustomerData;
+  const isDialogOpen = deleteAdminData !== undefined;
+  const user = deleteAdminData;
 
-  //! API belum dikerjakan
-  const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
-    customer?.id,
-    closeDeleteCustomerDialog,
+  const { mutate: deleteUser, isPending } = useDeleteUserData(
+    user?.id,
+    closeDeleteAdminDialog,
   );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={closeDeleteCustomerDialog}>
+      <Dialog open={isDialogOpen} onOpenChange={closeDeleteAdminDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
             <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>
@@ -45,8 +43,8 @@ const DialogTableDeleteUser = () => {
 
           <div className="h-80 px-5 pb-5">
             <p className="text-base font-normal">
-              Data Customer <span className="font-bold">{customer?.name}</span>{" "}
-              akan dihapus, Anda Yakin?
+              Data Customer <span className="font-bold">{user?.name}</span> akan
+              dihapus, Anda Yakin?
             </p>
           </div>
 
@@ -68,7 +66,7 @@ const DialogTableDeleteUser = () => {
               className="uppercase"
               disabled={isPending}
               onClick={() => {
-                deleteCustomer();
+                deleteUser();
               }}
             >
               Hapus
