@@ -49,13 +49,13 @@ export const getColumn = (
     header: () => <ColumnHeader title={HEADER_TITLES.quickActions} />,
     cell: ({ row }) => {
       const production: ProductionItem = row.original;
-
+      console.log(production);
       return (
         <div className="flex items-center">
           <Button className="group" variant={"ghost"} size={"icon"}>
             <Link
               href={
-                production?.cdrUrl
+                production?.imgUrl
                   ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
                       production?.imgUrl
                     }`

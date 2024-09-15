@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { uesFetchTimelineData } from "@/hooks/timeline/useTimeline";
+import { useFetchTimelineData } from "@/hooks/timeline/useTimeline";
 import { DateData } from "@/types/timeline/timeline-response";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +11,7 @@ import SelectMonth from "@/components/dashboard/timeline/select-month";
 import { DateColumn } from "@/components/dashboard/timeline/customer-tooltip";
 
 const TimelinePage: React.FC = () => {
-  const { data, isError, isLoading, error } = uesFetchTimelineData();
+  const { data, isError, isLoading, error } = useFetchTimelineData();
 
   // Memoize calculated data for better performance
   const timelineData = useMemo(() => data, [data]);

@@ -63,7 +63,7 @@ export const updateMonitoringOverview = async (
     formData.append("file", file);
 
     const response = await apiRequest({
-      path: `/production/add-assets/${resourceType}`,
+      path: `/monitoring/add-assets/${resourceType}`,
       method: HttpMethod.POST,
       params: { productionid: productionId },
       data: formData,
@@ -102,13 +102,10 @@ export const updateMonitoringOverview = async (
     data: overviewToSend,
   });
 
-  const uploadImage = (imageFile: File) => uploadFile(imageFile, "img");
-  const uploadCDR = (cdrFile: File) => uploadFile(cdrFile, "cdr");
-
   return Promise.all([
     updateOverview,
-    imageFile && uploadImage(imageFile),
-    cdrFile && uploadCDR(cdrFile),
+    imageFile && uploadFile(imageFile, "img"),
+    cdrFile && uploadFile(cdrFile, "cdr"),
     proofFile && uploadProof(proofFile),
   ]);
 };

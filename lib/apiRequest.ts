@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 import axios, { AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
+import { useRouter } from "next/router";
 
 const SERVICE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -48,5 +49,17 @@ export const apiRequest = async ({
 
     withCredentials: true,
   };
+
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.log(error);
+      // if (error.response?.status === 401) {
+      //   window.location.href = "/login";
+      // }
+      return Promise.reject(error);
+    },
+  );
+
   return axios(config);
 };

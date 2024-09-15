@@ -25,6 +25,7 @@ interface ColumnListProps {
 }
 
 const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
+  console.log("harusnya rerender columnlist sih");
   const [tasks, setTasks] = useState<Task[]>(tasksResponse);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const columnsId = useMemo(

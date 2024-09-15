@@ -30,8 +30,10 @@ export const formatToIndonesianDate = (dateString?: string | null) => {
 export const add7DaysToDate = (date: string | undefined): string => {
   if (!date) return "-";
   const futureDate = new Date(date);
-  futureDate.setDate(futureDate.getDate() + 7);
-  return formatToIndonesianDate(futureDate.toISOString());
+  const futureDatee = new Date(futureDate);
+  futureDatee.setDate(futureDatee.getDate() + 7);
+
+  return futureDatee.toISOString();
 };
 
 export const dateIdFormat = (dateString: string) => {
