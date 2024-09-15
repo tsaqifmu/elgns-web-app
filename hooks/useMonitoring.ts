@@ -11,6 +11,7 @@ export const useFetchBoardList = () => {
         path: "/monitoring/board/list",
         method: HttpMethod.GET,
       });
+      console.log("refetching chuy", data.message);
       return data;
     },
     select: (response) => {

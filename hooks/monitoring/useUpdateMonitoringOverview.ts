@@ -40,6 +40,7 @@ export const useUpdateMonitoringOverview = (
         queryKey: ["boards"],
       });
       setIsEditing(false);
+      window.location.reload();
     },
     onError: (error) => {
       toast({

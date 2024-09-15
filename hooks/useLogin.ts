@@ -31,7 +31,7 @@ export const useLogin = (
     },
     onSuccess: (response) => {
       Cookies.set("accessToken", response.data.data.accessToken, {
-        expires: 7,
+        expires: 1,
         secure: true,
       });
       router.push("/dashboard");
