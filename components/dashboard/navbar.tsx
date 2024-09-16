@@ -1,14 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import Cookies from "js-cookie";
 import Container from "./container";
 import { FC, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Icons } from "@/public/icons";
 import { navLinks } from "@/constants/navbarLink";
 import MobileSidebar from "./mobile-nav";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useMutation } from "@tanstack/react-query";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 
 interface NavItem {
   href: string;
@@ -50,12 +74,60 @@ const Logo: FC = () => (
   </Link>
 );
 
-const UserInfo: FC = () => (
-  <button className="flex h-[2.4rem] items-center justify-between gap-x-[0.625rem] rounded-full bg-gray-100 px-[0.625rem] py-2">
-    <div className="h-6 w-6 rounded-full bg-gray-900"></div>
-    <h4 className="text-base font-normal lg:text-lg">Admin</h4>
-  </button>
-);
+const UserInfo: FC = () => {
+  const router = useRouter();
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+
+  const { mutate: logOut, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/auth/signout",
+        method: HttpMethod.GET,
+      });
+      return response;
+    },
+    onSuccess: () => {
+      Cookies.remove("accessToken");
+      router.push("/");
+    },
+  });
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <div className="flex h-[2.4rem] items-center justify-between gap-x-[0.625rem] rounded-full bg-gray-100 px-[0.625rem] py-2">
+            <div className="h-6 w-6 rounded-full bg-gray-900"></div>
+            <h4 className="text-base font-normal lg:text-lg">Admin</h4>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Link href={"/admin"}>Menu Admin</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setIsAlertOpen((prev) => !prev)}>
+            <h4 className="text-destructive">Logout</h4>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apakah anda yakin ingin keluar?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={() => logOut()}>
+              Gasss!
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+};
 
 const DesktopMenu: FC = () => (
   <div className="hidden w-full items-center lg:flex">

@@ -5,11 +5,16 @@ import { useShallow } from "zustand/react/shallow";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAddCustomerData } from "@/hooks/customer/useCustomers";
 
-import { customerSchema } from "@/schemas/customerSchema";
+import {
+  DialogAdminAction,
+  DialogAdminState,
+  useDialogAdminStore,
+} from "@/stores/dialog-admin-store";
+
+import { adminSchema } from "@/schemas/adminSchema";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import ButtonPending from "@/components/button-pending";
 import {
   Form,
@@ -34,56 +39,76 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DialogAction,
-  DialogState,
-  useDialogStore,
-} from "@/stores/dialog-store";
+import { useAddUserData } from "@/hooks/admin/useAdmin";
 
-const DialogTableCreate = () => {
-  const [createCustomerData, closeCreateCustomerDialog] = useDialogStore(
-    useShallow((state: DialogState & DialogAction) => [
-      state.createCustomerData,
-      state.closeCreateCustomerDialog,
+export const LIST_ROLE = [
+  {
+    value: "desain",
+    title: "PEKERJA DESIGN",
+  },
+  {
+    value: "proofing",
+    title: "PEKERJA PROOFING",
+  },
+  {
+    value: "mal",
+    title: "PEKERJA MAL",
+  },
+  {
+    value: "printing",
+    title: "PEKERJA PRINTING",
+  },
+  {
+    value: "potong",
+    title: "PEKERJA POTONG",
+  },
+  {
+    value: "jahit",
+    title: "PEKERJA JAHIT",
+  },
+];
+
+const DialogTableCreateUser = () => {
+  const [createCustomerData, closeCreateAdminDialog] = useDialogAdminStore(
+    useShallow((state: DialogAdminState & DialogAdminAction) => [
+      state.createAdminData,
+      state.closeCreateAdminDialog,
     ]),
   );
   const isDialogOpen = createCustomerData;
-  console.log("render create");
 
-  const form = useForm<z.infer<typeof customerSchema>>({
-    resolver: zodResolver(customerSchema),
+  const form = useForm<z.infer<typeof adminSchema>>({
+    resolver: zodResolver(adminSchema),
     defaultValues: {
       username: "",
       phoneNumber: "62",
-      address: "",
-      regency: "",
-      status: "",
-      statusDescription: "",
+      email: "",
+      password: "",
+      role: "",
     },
   });
 
-  const { mutate: sendCustomerData, isPending } = useAddCustomerData(
-    closeCreateCustomerDialog,
+  const { mutate: sendUserData, isPending } = useAddUserData(
+    closeCreateAdminDialog,
   );
 
-  function onSubmit(values: z.infer<typeof customerSchema>) {
+  function onSubmit(values: z.infer<typeof adminSchema>) {
     const payload = {
       name: values.username,
       noHp: values.phoneNumber,
-      status: values.status,
-      alamat: values.address,
-      alamatKabupaten: values.regency,
-      info: values.statusDescription,
+      email: values.email,
+      password: values.password,
+      role: values.role,
     };
 
-    sendCustomerData(payload);
+    sendUserData(payload);
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={closeCreateCustomerDialog}>
+    <Dialog open={isDialogOpen} onOpenChange={closeCreateAdminDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-teal">
-          <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
+          <DialogTitle>MENAMBAH DATA USER</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -95,11 +120,11 @@ const DialogTableCreate = () => {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NAMA CUSTOMER</FormLabel>
+                      <FormLabel>NAMA PEKERJA</FormLabel>
                       <FormControl>
                         <Input
                           className="focus-visible:ring-teal"
-                          placeholder="Masukkan nama customer"
+                          placeholder="Masukkan nama pekerja"
                           {...field}
                         />
                       </FormControl>
@@ -107,6 +132,44 @@ const DialogTableCreate = () => {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EMAIL</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-teal"
+                          placeholder="Masukkan alamat email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PASSWORD</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="focus-visible:ring-teal"
+                          placeholder="Masukkan password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex basis-1/2 flex-col gap-5">
                 <FormField
                   control={form.control}
                   name="phoneNumber"
@@ -127,78 +190,27 @@ const DialogTableCreate = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ALAMAT LENGKAP</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="focus-visible:ring-teal"
-                          placeholder="Masukkan alamat lengkap"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="regency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>ASAL KABUPATEN</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="focus-visible:ring-teal"
-                          placeholder="Masukkan Alamat (Kabupaten)"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="flex basis-1/2 flex-col gap-5">
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>STATUS</FormLabel>
+                      <FormLabel>ROLE</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="focus:ring-teal">
-                            <SelectValue placeholder="Pilih Status" />
+                            <SelectValue placeholder="Pilih Role" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="DEAL">DEAL</SelectItem>
-                          <SelectItem value="NEGO">NEGO</SelectItem>
+                          {LIST_ROLE.map((data) => (
+                            <SelectItem value={data.value}>
+                              {data.title}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="statusDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>KETERANGAN STATUS</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          className="focus-visible:ring-teal"
-                          placeholder="Tulis deskripsi status disini"
-                          {...field}
-                        />
-                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -231,4 +243,4 @@ const DialogTableCreate = () => {
   );
 };
 
-export default DialogTableCreate;
+export default DialogTableCreateUser;

@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
+import { useShallow } from "zustand/react/shallow";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUpdateCustomerData } from "@/hooks/customer/useCustomers";
 import { customerSchema } from "@/schemas/customerSchema";
-import { useUpdateCustomerData } from "@/hooks/useCustomers";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,6 @@ import {
   DialogState,
   useDialogStore,
 } from "@/stores/dialog-store";
-import { useShallow } from "zustand/react/shallow";
 
 const DialogTableEdit = () => {
   const [editCustomerData, closeEditCustomerDialog] = useDialogStore(

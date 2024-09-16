@@ -102,9 +102,6 @@ export const updateProductionOverview = async (
   const uploadImage = (imageFile: File) => uploadFile(imageFile, "img");
   const uploadCDR = (cdrFile: File) => uploadFile(cdrFile, "cdr");
 
-  console.log("asdfkjasdfk");
-  console.log(!imageFile);
-
   return Promise.all([
     updateOverview,
     overview.imageFile && uploadImage(imageFile!),

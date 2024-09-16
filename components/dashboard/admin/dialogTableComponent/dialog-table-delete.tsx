@@ -1,11 +1,11 @@
 import { useShallow } from "zustand/react/shallow";
-import { useDeleteCustomerData } from "@/hooks/customer/useCustomers";
+import { useDeleteUserData } from "@/hooks/admin/useAdmin";
 
 import {
-  DialogAction,
-  DialogState,
-  useDialogStore,
-} from "@/stores/dialog-store";
+  DialogAdminAction,
+  DialogAdminState,
+  useDialogAdminStore,
+} from "@/stores/dialog-admin-store";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,37 +15,36 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
-const DialogTableDelete = () => {
-  const [deleteCustomerData, closeDeleteCustomerDialog] = useDialogStore(
-    useShallow((state: DialogState & DialogAction) => [
-      state.deleteCustomerData,
-      state.closeDeleteCustomerDialog,
+const DialogTableDeleteUser = () => {
+  // Zustand store
+  const [deleteAdminData, closeDeleteAdminDialog] = useDialogAdminStore(
+    useShallow((state: DialogAdminState & DialogAdminAction) => [
+      state.deleteAdminData,
+      state.closeDeleteAdminDialog,
     ]),
   );
-  const isDialogOpen = deleteCustomerData !== undefined;
-  const customer = deleteCustomerData;
-  console.log("render delete");
+  const isDialogOpen = deleteAdminData !== undefined;
+  const user = deleteAdminData;
 
-  const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
-    customer?.id,
-    closeDeleteCustomerDialog,
+  const { mutate: deleteUser, isPending } = useDeleteUserData(
+    user?.id,
+    closeDeleteAdminDialog,
   );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={closeDeleteCustomerDialog}>
+      <Dialog open={isDialogOpen} onOpenChange={closeDeleteAdminDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
-            <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>
+            <DialogTitle>HAPUS DATA USER</DialogTitle>
           </DialogHeader>
 
           <div className="h-80 px-5 pb-5">
             <p className="text-base font-normal">
-              Data Customer <span className="font-bold">{customer?.name}</span>{" "}
-              akan dihapus, Anda Yakin?
+              Data Customer <span className="font-bold">{user?.name}</span> akan
+              dihapus, Anda Yakin?
             </p>
           </div>
 
@@ -67,7 +66,7 @@ const DialogTableDelete = () => {
               className="uppercase"
               disabled={isPending}
               onClick={() => {
-                deleteCustomer();
+                deleteUser();
               }}
             >
               Hapus
@@ -79,4 +78,4 @@ const DialogTableDelete = () => {
   );
 };
 
-export default DialogTableDelete;
+export default DialogTableDeleteUser;
