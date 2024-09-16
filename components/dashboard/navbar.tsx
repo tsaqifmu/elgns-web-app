@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Cookies from "js-cookie";
 import Container from "./container";
 import { FC, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -86,7 +87,8 @@ const UserInfo: FC = () => {
       return response;
     },
     onSuccess: () => {
-      router.push("/dashboard");
+      Cookies.remove("accessToken");
+      router.push("/");
     },
   });
 
