@@ -57,7 +57,6 @@ export const MonitoringOverview = () => {
         state.closeEditMonitoringDialog,
       ]),
     );
-  console.log("lah: ", cardMonitoringId);
   const productionId = editMonitoringData?._id;
   const {
     data: production,
@@ -247,17 +246,65 @@ export const MonitoringOverview = () => {
                     <FormLabel className="mb-[2px] mt-2">
                       TANGGAL KELUAR
                     </FormLabel>
-                    <Button
+                    {/* <Button
                       variant={"outline"}
                       type="button"
                       className={cn(
                         "border border-gray-300 font-normal uppercase text-gray-900",
                       )}
                     >
-                      {add7DaysToDate(dateInWatch?.toISOString())}
+                      {formatToIndonesianDate(
+                        add7DaysToDate(dateInWatch?.toISOString()),
+                      )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    </Button> */}
+                    {!isEditing && (
+                      <Button
+                        variant={"outline"}
+                        type="button"
+                        className={cn(
+                          "border border-gray-300 font-normal uppercase text-gray-900",
+                        )}
+                      >
+                        {formatToIndonesianDate(
+                          form.getValues("dateOut")?.toISOString(),
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    )}
 
+                    {isEditing && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "border border-gray-300 font-normal uppercase text-gray-900",
+                                !field.value && "text-gray-400",
+                              )}
+                            >
+                              {field.value &&
+                                formatToIndonesianDate(
+                                  field.value.toISOString(),
+                                )}
+                              {!field.value && <span>Pilih Tanggal</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value ?? undefined}
+                            onSelect={(e) => {
+                              field.onChange(e);
+                              setIsDatePopOverOpen(false);
+                            }}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

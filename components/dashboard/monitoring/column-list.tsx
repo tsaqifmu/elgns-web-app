@@ -13,7 +13,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Task } from "@/types/monitoring/task";
 import { createPortal } from "react-dom";
 import { TaskCard } from "./task-card";
@@ -25,12 +25,18 @@ interface ColumnListProps {
 }
 
 const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
+  console.log("taskResponse: ", tasksResponse);
   const [tasks, setTasks] = useState<Task[]>(tasksResponse);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const columnsId = useMemo(
     () => columnList.map((column) => column.id),
     [columnList],
   );
+
+  useEffect(() => {
+    setTasks(tasksResponse);
+  }, [tasksResponse]);
+
   const { mutate: updateTaskPosition } = useUpdateTaskPosition();
 
   const filterTasks = (columnId: string) => {
