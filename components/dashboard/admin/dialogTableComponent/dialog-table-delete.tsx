@@ -38,7 +38,7 @@ const DialogTableDeleteUser = () => {
       <Dialog open={isDialogOpen} onOpenChange={closeDeleteAdminDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
-            <DialogTitle>HAPUS DATA CUSTOMER</DialogTitle>
+            <DialogTitle>HAPUS DATA USER</DialogTitle>
           </DialogHeader>
 
           <div className="h-80 px-5 pb-5">

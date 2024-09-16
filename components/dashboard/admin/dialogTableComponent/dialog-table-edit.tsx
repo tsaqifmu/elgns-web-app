@@ -4,7 +4,6 @@ import { useShallow } from "zustand/react/shallow";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateCustomerData } from "@/hooks/customer/useCustomers";
-import { customerSchema } from "@/schemas/customerSchema";
 
 import {
   DialogAdminAction,
@@ -14,7 +13,6 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import ButtonPending from "@/components/button-pending";
 import {
   Dialog,
@@ -41,10 +39,10 @@ import {
 } from "@/components/ui/select";
 import { adminSchema } from "@/schemas/adminSchema";
 import { LIST_ROLE } from "./dialog-table-create";
+import { useUpdateUserData } from "@/hooks/admin/useAdmin";
 
 //! tinggal connect ke API,
 //! password sama role masih belum keisi langsung
-//! karena data password belum ada, dan data role bentuknya belum nemu
 
 const DialogTableEditUser = () => {
   const [editAdminData, closeEditAdminDialog] = useDialogAdminStore(
@@ -67,7 +65,7 @@ const DialogTableEditUser = () => {
     },
   });
 
-  const { mutate: updateCustomerData, isPending } = useUpdateCustomerData(
+  const { mutate: updateCustomerData, isPending } = useUpdateUserData(
     user?.id,
     closeEditAdminDialog,
   );
@@ -87,7 +85,7 @@ const DialogTableEditUser = () => {
     <Dialog open={isOpen} onOpenChange={closeEditAdminDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-yellow-500">
-          <DialogTitle>EDIT DATA CUSTOMER</DialogTitle>
+          <DialogTitle>EDIT DATA USER</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

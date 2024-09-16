@@ -14,16 +14,16 @@ const mapUserData = (data: UserDocument[]) =>
     name: data?.name.toUpperCase(),
     email: data?.email.toUpperCase(),
     phoneNumber: data?.noHp,
-    role: data?.role.toUpperCase(),
+    role: data?.role,
   }));
 
 export const useFetchUserData = () => {
   const searchParams = useSearchParams();
   const page = searchParams.get("page")?.toString() || "1";
-  // const limit = searchParams.get("pageSize")?.toString() || "5";
+  const limit = searchParams.get("pageSize")?.toString() || "5";
 
   return useQuery({
-    queryKey: ["users", page],
+    queryKey: ["users", page, limit],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/admin/user/list",
@@ -36,7 +36,7 @@ export const useFetchUserData = () => {
           // name: "",
           // status: "",
           page: page,
-          // limit: limit,
+          limit: limit,
         },
       });
       return response;
@@ -78,6 +78,38 @@ export const useAddUserData = (closeCreateAdminDialog: () => void) => {
       });
       queryClient.invalidateQueries({ queryKey: ["users"] });
       closeCreateAdminDialog();
+    },
+    onError: (error) => {
+      handleArrayError(error, toast);
+      console.error(error);
+    },
+  });
+};
+
+export const useUpdateUserData = (
+  userId: string | undefined,
+  closeUserDialog: () => void,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: any) => {
+      const response = await apiRequest({
+        path: "/admin/user/update",
+        method: HttpMethod.POST,
+        params: { userid: userId },
+        data,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      toast({
+        variant: "default",
+        title: "Berhasil mengubah data",
+        description: response.data.message,
+      });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      closeUserDialog();
     },
     onError: (error) => {
       handleArrayError(error, toast);

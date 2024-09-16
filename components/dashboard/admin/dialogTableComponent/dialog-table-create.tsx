@@ -43,24 +43,28 @@ import { useAddUserData } from "@/hooks/admin/useAdmin";
 
 export const LIST_ROLE = [
   {
-    value: "pekerja_design",
+    value: "desain",
     title: "PEKERJA DESIGN",
   },
   {
-    value: "pekerja_profing",
-    title: "PEKERJA PROFING",
+    value: "proofing",
+    title: "PEKERJA PROOFING",
   },
   {
-    value: "pekerja_mal",
+    value: "mal",
     title: "PEKERJA MAL",
   },
   {
-    value: "pekerja_printing",
+    value: "printing",
     title: "PEKERJA PRINTING",
   },
   {
-    value: "pekerja_potong",
+    value: "potong",
     title: "PEKERJA POTONG",
+  },
+  {
+    value: "jahit",
+    title: "PEKERJA JAHIT",
   },
 ];
 
@@ -104,7 +108,7 @@ const DialogTableCreateUser = () => {
     <Dialog open={isDialogOpen} onOpenChange={closeCreateAdminDialog}>
       <DialogContent className="max-w-[737px]">
         <DialogHeader className="bg-teal">
-          <DialogTitle>MENAMBAH DATA CUSTOMER</DialogTitle>
+          <DialogTitle>MENAMBAH DATA USER</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>

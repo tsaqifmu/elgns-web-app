@@ -44,6 +44,9 @@ export const getColumnsAdmin = (
     {
       accessorKey: "role",
       header: () => <ColumnHeader title={HEADER_TITLES.role} />,
+      cell: ({ row }) => (
+        <div className="uppercase">{row.getValue("role")}</div>
+      ),
     },
 
     {
