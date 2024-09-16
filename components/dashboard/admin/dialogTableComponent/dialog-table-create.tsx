@@ -204,8 +204,8 @@ const DialogTableCreateUser = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {LIST_ROLE.map((data) => (
-                            <SelectItem value={data.value}>
+                          {LIST_ROLE.map((data, index) => (
+                            <SelectItem key={index} value={data.value}>
                               {data.title}
                             </SelectItem>
                           ))}
