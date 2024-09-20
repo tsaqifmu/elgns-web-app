@@ -8,17 +8,16 @@ import IconDelete from "@/public/icons/table/delete.svg";
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
-import { DialogAction } from "@/stores/dialog-store";
 
 export type DataCustomer = {
   id: string;
   dateOfEntry: string;
   name: string;
+  brand: string;
   phoneNumber: string;
   regency: string;
   status: string;
   statusDescription: string;
-  address: string;
 };
 
 const HEADER_TITLES = {

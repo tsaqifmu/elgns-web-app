@@ -27,8 +27,7 @@ const DialogTableDelete = () => {
   );
   const isDialogOpen = deleteCustomerData !== undefined;
   const customer = deleteCustomerData;
-  console.log("render delete");
-
+  
   const { mutate: deleteCustomer, isPending } = useDeleteCustomerData(
     customer?.id,
     closeDeleteCustomerDialog,

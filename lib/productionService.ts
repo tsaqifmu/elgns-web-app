@@ -1,7 +1,7 @@
 import { DetailResponse } from "@/types/production/detail/detail-response";
 import { apiRequest, HttpMethod } from "./apiRequest";
 import { InvoiceResponse } from "@/types/production/invoice/invoice-response";
-import { OverviewResponse } from "@/types/production/overview/overview-response";
+import { ProductionOverviewResponse } from "@/types/production/overview/production-overview-response";
 import { AxiosResponse } from "axios";
 import {
   IDetail,
@@ -13,7 +13,7 @@ import {
 } from "@/types/production/invoice/invoice";
 import { z } from "zod";
 import { productionOverviewSchema } from "@/schemas/productionOverviewSchema";
-import { OverviewToSend } from "@/types/production/overview/overview-to-send";
+import { ProductionOverviewToSend } from "@/types/production/overview/production-overview-to-send";
 
 const wait = (duration: number) => {
   return new Promise((resolve) => setTimeout(resolve, duration));
@@ -46,10 +46,10 @@ export const deleteProduction = async (productionId: string | undefined) => {
 
 export const getProductionOverview = async (
   productionId: string | undefined,
-): Promise<OverviewResponse> => {
+): Promise<ProductionOverviewResponse> => {
   if (!productionId) return Promise.reject(new Error("production id kosong"));
 
-  const response: AxiosResponse<OverviewResponse> = await apiRequest({
+  const response: AxiosResponse<ProductionOverviewResponse> = await apiRequest({
     path: "/production/get-overview",
     method: HttpMethod.GET,
     params: {
@@ -79,15 +79,13 @@ export const updateProductionOverview = async (
     return response.data;
   };
 
-  const { invoice, name, notes, phoneNumber, type, imageFile, cdrFile } =
-    overview;
+  const { name, notes, phoneNumber, type, imageFile, cdrFile } = overview;
 
-  const overviewToSend: OverviewToSend = {
+  const overviewToSend: ProductionOverviewToSend = {
     custName: name,
     noHp: phoneNumber,
     catatan: notes,
     jenis: type,
-    noInvoice: invoice,
   };
 
   const updateOverview = await apiRequest({

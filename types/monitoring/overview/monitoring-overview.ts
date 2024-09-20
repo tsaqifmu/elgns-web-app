@@ -1,7 +1,7 @@
 export interface MonitoringOverview {
   id: string;
   customerName: string;
-  address: string;
+  password: string;
   phoneNumber: string;
   imgUrl: string;
   cdrUrl: string;

@@ -5,6 +5,7 @@ export interface InvoiceTableTotalResponse {
   depositAwal: number;
   uangMuka: number;
   potongan: number;
+  terbayar: number;
   totalDibayar: number;
 }
 
@@ -16,6 +17,7 @@ export const mapInvoiceTableTotalResponseToInvoiceTableTotal = (
     initialDeposit: invoiceTableTotal?.depositAwal ?? 0,
     downPayment: invoiceTableTotal?.uangMuka ?? 0,
     discount: invoiceTableTotal?.potongan ?? 0,
+    paid: invoiceTableTotal?.terbayar ?? 0,
     totalFinal: invoiceTableTotal?.totalDibayar ?? 0,
   };
 };

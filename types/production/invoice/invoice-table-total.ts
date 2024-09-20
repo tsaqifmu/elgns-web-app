@@ -3,5 +3,6 @@ export interface InvoiceTableTotal {
   initialDeposit: number;
   downPayment: number;
   discount: number;
+  paid: number;
   totalFinal: number;
 }
