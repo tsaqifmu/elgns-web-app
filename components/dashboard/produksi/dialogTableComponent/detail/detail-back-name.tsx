@@ -11,7 +11,7 @@ import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { Input } from "@/components/ui/input";
 import {
   BackName,
-  emptyBackNameData,
+  getEmptyBackNameData,
 } from "@/types/production/detail/back-name";
 import { cn } from "@/lib/utils";
 
@@ -129,7 +129,7 @@ export const DetailBackName = ({
               onClick={() => {
                 setBackNames((prevBackNames: BackName[]) => [
                   ...prevBackNames,
-                  emptyBackNameData,
+                  getEmptyBackNameData(),
                 ]);
               }}
             >

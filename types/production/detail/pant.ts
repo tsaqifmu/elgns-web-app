@@ -6,7 +6,6 @@ export interface Pant {
   material: string;
   pattern: string;
   color: string;
-  sleeve: string;
   sizeS: number;
   sizeM: number;
   sizeL: number;
@@ -20,13 +19,12 @@ export interface Pant {
   total: number;
 }
 
-export const emptyPantData = {
+export const getEmptyPantData = () => ({
   id: crypto.randomUUID(),
   printingPant: "",
   material: "",
   pattern: "",
   color: "",
-  sleeve: "",
   sizeS: 0,
   sizeM: 0,
   sizeL: 0,
@@ -38,7 +36,7 @@ export const emptyPantData = {
   size7XL: 0,
   custom: 0,
   total: 0,
-};
+});
 
 export const mapPantToPantResponse = (pants: Pant[]) => {
   return pants.map((pant) => {
@@ -47,7 +45,6 @@ export const mapPantToPantResponse = (pants: Pant[]) => {
       material,
       pattern,
       color,
-      sleeve,
       sizeS,
       sizeM,
       sizeL,
@@ -66,7 +63,6 @@ export const mapPantToPantResponse = (pants: Pant[]) => {
       Bahan: material,
       Pola: pattern,
       Warna: color,
-      Lengan: sleeve,
       S: sizeS,
       M: sizeM,
       L: sizeL,

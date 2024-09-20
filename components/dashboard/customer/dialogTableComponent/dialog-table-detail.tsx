@@ -63,7 +63,7 @@ const DialogTableDetail = () => {
     },
   });
 
-  const handleEdit = (e: any) => {
+  const onSubmit = (e: any) => {
     e.preventDefault();
     openEditCustomerDialog(customer!);
     closeDetailCustomerDialog();
@@ -76,7 +76,7 @@ const DialogTableDetail = () => {
           <DialogTitle>DETAIL INFORMASI CUSTOMER</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex w-full gap-5 px-5 pb-5">
               <div className="flex basis-1/2 flex-col gap-5">
                 <FormField
@@ -200,7 +200,7 @@ const DialogTableDetail = () => {
                 size={"modalTable"}
                 variant={"default"}
                 className="bg-gray-900"
-                onClick={handleEdit}
+                onClick={onSubmit}
               >
                 EDIT
               </Button>

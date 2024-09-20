@@ -8,17 +8,19 @@ import {
   getBoardName,
   updateMonitoringOverview,
 } from "@/lib/monitoringService";
+import { ColumnItem } from "@/types/monitoring/column-item";
 
 export const useUpdateMonitoringOverview = (
   productionId: string | undefined,
   cardId: string | undefined,
+  column: ColumnItem | undefined,
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (overview: z.infer<typeof monitoringOverviewSchema>) => {
-      const boardName = await getBoardName(cardId);
+      const boardName = column?.name ?? "";
       const response = await updateMonitoringOverview(
         productionId,
         overview,

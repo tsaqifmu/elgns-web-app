@@ -25,7 +25,6 @@ interface ColumnListProps {
 }
 
 const ColumnList = ({ columnList, tasksResponse }: ColumnListProps) => {
-  console.log("taskResponse: ", tasksResponse);
   const [tasks, setTasks] = useState<Task[]>(tasksResponse);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const columnsId = useMemo(
