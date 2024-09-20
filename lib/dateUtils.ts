@@ -27,11 +27,11 @@ export const formatToIndonesianDate = (dateString?: string | null) => {
   }
 };
 
-export const add7DaysToDate = (date: string | undefined): string => {
+export const add11DaysToDate = (date: string | undefined): string => {
   if (!date) return "-";
   const futureDate = new Date(date);
   const futureDatee = new Date(futureDate);
-  futureDatee.setDate(futureDatee.getDate() + 7);
+  futureDatee.setDate(futureDatee.getDate() + 11);
 
   return futureDatee.toISOString();
 };

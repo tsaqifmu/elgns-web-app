@@ -6,7 +6,6 @@ export interface PantResponse {
   Bahan: string;
   Pola: string;
   Warna: string;
-  Lengan: string;
   S: number;
   M: number;
   L: number;
@@ -30,7 +29,6 @@ export const mapPantResponseToPant = (
       Bahan,
       Pola,
       Warna,
-      Lengan,
       S,
       M,
       L,
@@ -50,7 +48,6 @@ export const mapPantResponseToPant = (
       material: Bahan,
       pattern: Pola,
       color: Warna,
-      sleeve: Lengan,
       sizeS: S,
       sizeM: M,
       sizeL: L,

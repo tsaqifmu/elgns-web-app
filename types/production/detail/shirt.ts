@@ -20,7 +20,7 @@ export interface Shirt {
   total: number;
 }
 
-export const emptyShirtData = {
+export const getEmptyShirtData = () => ({
   id: crypto.randomUUID(),
   printingShirt: "",
   material: "",
@@ -38,7 +38,7 @@ export const emptyShirtData = {
   size7XL: 0,
   custom: 0,
   total: 0,
-};
+});
 
 export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
   return shirts.map((pant) => {

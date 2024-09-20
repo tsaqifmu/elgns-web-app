@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { emptyShirtData, Shirt } from "@/types/production/detail/shirt";
+import { getEmptyShirtData, Shirt } from "@/types/production/detail/shirt";
 import { cn } from "@/lib/utils";
 
 interface DetailShirtProps {
@@ -61,7 +61,7 @@ export const DetailShirt = ({
   };
 
   const handleAddShirt = () => {
-    setShirts((prevData: Shirt[]) => [...prevData, emptyShirtData]);
+    setShirts((prevData: Shirt[]) => [...prevData, getEmptyShirtData()]);
   };
 
   useEffect(() => {

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const customerSchema = z.object({
   username: z.string().min(1, {
-    message: "Nama customer tidak boleh kosong ",
+    message: "Nama customer tidak boleh kosong",
   }),
   phoneNumber: z.string().min(10, {
     message: "Nomor hp minimal 10 angka",

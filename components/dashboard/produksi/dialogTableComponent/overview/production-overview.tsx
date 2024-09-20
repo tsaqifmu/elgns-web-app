@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { z } from "zod";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -32,16 +32,13 @@ import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import Link from "next/link";
 
-export const Overview = () => {
+export const ProductionOverview = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [editProductionData, closeEditProductionDialog] =
-    useDialogProductionStore(
-      useShallow((state: DialogProductionState & DialogProductionAction) => [
-        state.editProductionData,
-        state.closeEditProductionDialog,
-      ]),
-    );
+  const editProductionData = useDialogProductionStore(
+    useShallow((state: DialogProductionState) => state.editProductionData),
+  );
+
   const productionId = editProductionData?.id;
   const {
     data: production,
@@ -49,6 +46,7 @@ export const Overview = () => {
     isError,
     error,
   } = useFetchProductionOverview(productionId);
+
   const { mutate: updateOverview, isPending } = useUpdateProductionOverview(
     production?.id,
     setIsEditing,
@@ -100,8 +98,8 @@ export const Overview = () => {
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex gap-8 px-5 pb-5">
-            <div className="flex basis-1/2 flex-col gap-4">
+          <div className="flex gap-5 px-5 pb-5">
+            <div className="flex basis-1/2 flex-col gap-5">
               <FormField
                 control={form.control}
                 name="name"
@@ -113,7 +111,7 @@ export const Overview = () => {
                         readOnly
                         className="border border-gray-300 uppercase"
                         placeholder="Masukkan nama customer"
-                        value={field.value}
+                        {...field}
                       />
                     </FormControl>
 
@@ -133,7 +131,7 @@ export const Overview = () => {
                         className="border border-gray-300"
                         placeholder="62851XXXX"
                         type="tel"
-                        value={field.value}
+                        {...field}
                       />
                     </FormControl>
                   </FormItem>
@@ -149,12 +147,10 @@ export const Overview = () => {
                       <Textarea
                         readOnly
                         className="border border-gray-300"
-                        placeholder="Masukkan alamat anda"
-                        value={field.value}
-                        rows={4}
+                        placeholder="Masukkan alamat"
+                        {...field}
                       />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -179,7 +175,7 @@ export const Overview = () => {
                 )}
               />
             </div>
-            <div className="flex basis-1/2 flex-col gap-4">
+            <div className="flex basis-1/2 flex-col gap-5">
               <FormField
                 control={form.control}
                 name="invoice"
@@ -201,22 +197,24 @@ export const Overview = () => {
               />
 
               {/* JENIS */}
-              {isEditing === false && (
+              {!isEditing && (
                 <div>
                   <label className="text-sm font-medium">JENIS</label>
-                  <div className="mt-1 flex flex-wrap gap-2 rounded-md border border-gray-300 bg-gray-100 p-2">
-                    {typeValue?.split(",").map((item, index) => (
-                      <span
-                        key={index}
-                        className="min-h-6 rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white"
-                      >
-                        {item}
-                      </span>
-                    ))}
+                  <div className="mt-1 flex flex-wrap gap-2 rounded-md border border-gray-300 bg-gray-100 px-3 py-2">
+                    {typeValue.length > 0
+                      ? typeValue?.split(",").map((item, index) => (
+                          <span
+                            key={index}
+                            className="rounded-md bg-gray-900 px-3 py-1 text-sm font-light uppercase text-white"
+                          >
+                            {item}
+                          </span>
+                        ))
+                      : "-"}
                   </div>
                 </div>
               )}
-              {isEditing === true && (
+              {isEditing && (
                 <FormField
                   control={form.control}
                   name="type"
@@ -316,8 +314,11 @@ export const Overview = () => {
                 </div>
                 {/* INPUT CDR */}
                 <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
+                  <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 text-white">
                     <IconCdr width="24px" />
+                    {production?.cdrUrl && (
+                      <h5 className="text-xs">UPLOADED ✅</h5>
+                    )}
                   </div>
                   <div
                     className={cn(
