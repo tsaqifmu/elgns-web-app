@@ -10,6 +10,8 @@ import monitoringFill from "@/public/icons/navbarIcons/monitoring-fill.svg";
 import monitoringOutline from "@/public/icons/navbarIcons/monitoring-outline.svg";
 import timelineFill from "@/public/icons/navbarIcons/timeline-fill.svg";
 import timelineOutline from "@/public/icons/navbarIcons/timeline-outline.svg";
+import tshirtOutline from "@/public/icons/navbarIcons/tshirt-outline.svg";
+import tshirtFill from "@/public/icons/navbarIcons/tshirt-fill.svg";
 
 export const Icons = {
   Logo: logo,
@@ -24,4 +26,6 @@ export const Icons = {
   MonitoringOutline: monitoringOutline,
   TimelineFill: timelineFill,
   TimelineOutline: timelineOutline,
+  TshirtFill: tshirtFill,
+  TshirtOutline: tshirtOutline,
 };

@@ -33,13 +33,20 @@ export const navLinks = [
       outline: Icons.MonitoringOutline,
     },
   },
-
   {
     id: "timeline",
     title: "TIMELINE",
     icons: {
       fill: Icons.TimelineFill,
       outline: Icons.TimelineOutline,
+    },
+  },
+  {
+    id: "bahan",
+    title: "BAHAN",
+    icons: {
+      fill: Icons.TshirtFill,
+      outline: Icons.TshirtOutline,
     },
   },
 ];

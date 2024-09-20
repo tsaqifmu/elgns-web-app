@@ -41,9 +41,6 @@ import { adminSchema } from "@/schemas/adminSchema";
 import { LIST_ROLE } from "./dialog-table-create";
 import { useUpdateUserData } from "@/hooks/admin/useAdmin";
 
-//! tinggal connect ke API,
-//! password sama role masih belum keisi langsung
-
 const DialogTableEditUser = () => {
   const [editAdminData, closeEditAdminDialog] = useDialogAdminStore(
     useShallow((state: DialogAdminState & DialogAdminAction) => [
