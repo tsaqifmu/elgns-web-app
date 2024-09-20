@@ -6,11 +6,11 @@ export const productionOverviewSchema = z.object({
   address: z.string(),
   notes: z.string(),
   invoice: z.string().min(1, {
-    message: "Invoice harus diisi",
+    message: "Invoice tidak boleh kosong",
   }),
   imageFile: z.instanceof(File).nullable(),
   cdrFile: z.instanceof(File).nullable(),
   type: z.string().min(1, {
-    message: "Jenis harus diisi.",
+    message: "Jenis tidak boleh kosong.",
   }),
 });

@@ -89,8 +89,8 @@ export const updateMonitoringOverview = async (
   const { imageFile, cdrFile, proofFile } = overview;
 
   const overviewToSend = {
-    tglMasuk: overview.dateIn?.toISOString(),
-    tglKeluar: overview.dateOut?.toISOString(),
+    tglMasuk: overview.dateIn.toISOString(),
+    tglKeluar: overview.dateOut.toISOString(),
   };
 
   const updateOverview = await apiRequest({

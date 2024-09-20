@@ -20,15 +20,14 @@ import { BackName } from "@/types/production/detail/back-name";
 import { DetailPant } from "./detail-pant";
 import { IDetail } from "@/types/production/detail/detail";
 
-export const Detail = () => {
+export const ProductionDetail = () => {
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [editProductionData, closeEditProductionDialog] =
-    useDialogProductionStore(
-      useShallow((state: DialogProductionState & DialogProductionAction) => [
-        state.editProductionData,
-        state.closeEditProductionDialog,
-      ]),
-    );
+  const [editProductionData, _] = useDialogProductionStore(
+    useShallow((state: DialogProductionState & DialogProductionAction) => [
+      state.editProductionData,
+      state.closeEditProductionDialog,
+    ]),
+  );
   const production = editProductionData;
   const {
     data: productionDetailData,
@@ -40,7 +39,7 @@ export const Detail = () => {
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
   const { mutate: updateProductionDetail, isPending } =
-    useUpdateProductionDetail(production?.id, closeEditProductionDialog);
+    useUpdateProductionDetail(production?.id, () => {});
 
   useEffect(() => {
     if (!productionDetailData) return;

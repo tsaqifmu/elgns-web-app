@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { emptyPantData, Pant } from "@/types/production/detail/pant";
+import { getEmptyPantData, Pant } from "@/types/production/detail/pant";
 import { cn } from "@/lib/utils";
 
 interface DetailPantProps {
@@ -61,7 +61,7 @@ export const DetailPant = ({
   };
 
   const handleAddPant = () => {
-    setPants((prevData: Pant[]) => [...prevData, emptyPantData]);
+    setPants((prevData: Pant[]) => [...prevData, getEmptyPantData()]);
   };
 
   useEffect(() => {
@@ -90,9 +90,6 @@ export const DetailPant = ({
                 </TableHead>
                 <TableHead className="w-24 py-0 text-sm text-white">
                   WARNA
-                </TableHead>
-                <TableHead className="w-24 py-0 text-sm text-white">
-                  LENGAN
                 </TableHead>
                 <TableHead className="py-0 text-sm text-white">S</TableHead>
                 <TableHead className="py-0 text-sm text-white">M</TableHead>
@@ -162,19 +159,6 @@ export const DetailPant = ({
                       type="text"
                       name="color"
                       value={item.color}
-                      onChange={(e) => handleChange(e, item)}
-                    />
-                  </TableCell>
-                  <TableCell className="p-2 text-sm">
-                    <Input
-                      readOnly={isReadOnly}
-                      className={cn(
-                        "rounded-none bg-transparent p-1 uppercase",
-                        isReadOnly && "border-none",
-                      )}
-                      type="text"
-                      name="sleeve"
-                      value={item.sleeve}
                       onChange={(e) => handleChange(e, item)}
                     />
                   </TableCell>

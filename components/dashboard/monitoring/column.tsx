@@ -39,7 +39,7 @@ export const Column = ({ column, tasks }: ColumnProps) => {
           </h3>
         </header>
 
-        <TaskList tasks={tasks} />
+        <TaskList tasks={tasks} column={column} />
       </div>
     </div>
   );

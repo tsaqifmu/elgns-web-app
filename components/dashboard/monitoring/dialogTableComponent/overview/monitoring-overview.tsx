@@ -20,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
-import { useUpdateProductionOverview } from "@/hooks/production/useUpdateProductionOverview";
 import ButtonPending from "@/components/button-pending";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
@@ -35,8 +34,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { add7DaysToDate, formatToIndonesianDate } from "@/lib/dateUtils";
-import { CalendarIcon, CirclePlus } from "lucide-react";
+import { add11DaysToDate, formatToIndonesianDate } from "@/lib/dateUtils";
+import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import AddFill from "@/public/icons/table/add-fill.svg";
 import { useUpdateMonitoringOverview } from "@/hooks/monitoring/useUpdateMonitoringOverview";
@@ -49,12 +48,12 @@ export const MonitoringOverview = () => {
   const [previewImageProofing, setPreviewImageProofing] = useState<
     string | null
   >(null);
-  const [cardMonitoringId, editMonitoringData, closeEditMonitoringDialog] =
+  const [cardMonitoringId, editMonitoringData, column] =
     useDialogMonitoringStore(
       useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
         state.cardMonitoringId,
         state.editMonitoringData,
-        state.closeEditMonitoringDialog,
+        state.column,
       ]),
     );
   const productionId = editMonitoringData?._id;
@@ -68,6 +67,7 @@ export const MonitoringOverview = () => {
   const { mutate: updateOverview, isPending } = useUpdateMonitoringOverview(
     production?.id,
     cardMonitoringId,
+    column,
     setIsEditing,
   );
 
@@ -89,12 +89,22 @@ export const MonitoringOverview = () => {
       imageFile: null,
       cdrFile: null,
       proofFile: null,
+      pdfFile: null,
     },
   });
 
   const { setValue } = form;
   const [isDatePopOverOpen, setIsDatePopOverOpen] = useState(false);
   const dateInWatch = form.watch("dateIn");
+
+  useEffect(
+    () =>
+      form.setValue(
+        "dateOut",
+        new Date(add11DaysToDate(dateInWatch?.toISOString())),
+      ),
+    [dateInWatch, form],
+  );
 
   useEffect(() => {
     if (production) {
@@ -104,14 +114,14 @@ export const MonitoringOverview = () => {
       setValue("address", production?.address ?? "");
       setValue("notes", production?.notes ?? "");
       setValue("type", production?.type ?? "");
-      setValue(
-        "dateIn",
-        production?.dateIn ? new Date(production?.dateIn!) : null,
-      );
-      setValue(
-        "dateOut",
-        production?.dateOut ? new Date(production?.dateOut!) : null,
-      );
+      if (production?.dateIn) {
+        setValue("dateIn", new Date(production.dateIn));
+      }
+      if (production.dateOut) {
+        setValue("dateOut", new Date(production.dateOut));
+      } else {
+        setValue("dateOut", null);
+      }
     }
   }, [production, setValue]);
 
@@ -246,65 +256,22 @@ export const MonitoringOverview = () => {
                     <FormLabel className="mb-[2px] mt-2">
                       TANGGAL KELUAR
                     </FormLabel>
-                    {/* <Button
+                    <Button
                       variant={"outline"}
                       type="button"
                       className={cn(
-                        "border border-gray-300 font-normal uppercase text-gray-900",
+                        "border border-gray-300 font-normal uppercase",
+                        dateInWatch ? "text-gray-900" : "text-gray-500",
                       )}
                     >
-                      {formatToIndonesianDate(
-                        add7DaysToDate(dateInWatch?.toISOString()),
-                      )}
+                      {!dateInWatch && "-"}
+                      {dateInWatch &&
+                        formatToIndonesianDate(
+                          add11DaysToDate(dateInWatch.toISOString()),
+                        )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button> */}
-                    {!isEditing && (
-                      <Button
-                        variant={"outline"}
-                        type="button"
-                        className={cn(
-                          "border border-gray-300 font-normal uppercase text-gray-900",
-                        )}
-                      >
-                        {formatToIndonesianDate(
-                          form.getValues("dateOut")?.toISOString(),
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    )}
+                    </Button>
 
-                    {isEditing && (
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "border border-gray-300 font-normal uppercase text-gray-900",
-                                !field.value && "text-gray-400",
-                              )}
-                            >
-                              {field.value &&
-                                formatToIndonesianDate(
-                                  field.value.toISOString(),
-                                )}
-                              {!field.value && <span>Pilih Tanggal</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ?? undefined}
-                            onSelect={(e) => {
-                              field.onChange(e);
-                              setIsDatePopOverOpen(false);
-                            }}
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    )}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -334,6 +301,7 @@ export const MonitoringOverview = () => {
               {/* LAMPIRAN */}
               <div>
                 <h1 className="mt-1 text-sm font-medium">LAMPIRAN</h1>
+                {/* LAMPIRAN IMAGE & CDR */}
                 <div className="mt-2 flex h-24 gap-1">
                   {/* INPUT IMAGE */}
                   <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm border border-gray-900">
@@ -412,8 +380,11 @@ export const MonitoringOverview = () => {
                   </div>
                   {/* INPUT CDR */}
                   <div className="group relative h-full basis-1/2 overflow-hidden rounded-sm bg-[#6DB6CC]">
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white">
+                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-2 text-white">
                       <IconCdr width="24px" />
+                      {production?.cdrUrl && (
+                        <h5 className="text-xs">UPLOADED ✅</h5>
+                      )}
                     </div>
                     <div
                       className={cn(
@@ -467,6 +438,52 @@ export const MonitoringOverview = () => {
                     </div>
                   </div>
                 </div>
+                {/* LAMPIRAN PDF */}
+                {column?.name.toUpperCase() === "MAL" && (
+                  <FormField
+                    control={form.control}
+                    name="pdfFile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <div className="mt-4 flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-[10px]">
+                            <div className="pdf-file-name w-1/2 overflow-hidden text-ellipsis text-sm">
+                              HALOHALOHALOHALOHALOHALOHALO
+                            </div>
+                            <div className="pdf-buttons flex w-1/2 justify-end gap-2 text-xs">
+                              <div className="pdf-download font-semibold">
+                                <Link href={"#"} className="hover:underline">
+                                  DOWNLOAD
+                                </Link>
+                              </div>
+                              {isEditing && (
+                                <div className="pdf-upload group relative overflow-hidden font-semibold">
+                                  <Input
+                                    type="file"
+                                    className="absolute inset-0 cursor-pointer opacity-0"
+                                    accept=".pdf"
+                                    onChange={(e) => {
+                                      if (!e.target.files) return;
+                                      const file = e.target.files[0];
+                                      field.onChange(file);
+                                    }}
+                                  />
+                                  <button
+                                    type="button"
+                                    className="group-hover:underline"
+                                  >
+                                    UPLOAD
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
               <div>
                 <FormField
