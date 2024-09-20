@@ -80,8 +80,8 @@ export const MonitoringOverview = () => {
     defaultValues: {
       name: "",
       invoice: "",
+      password: "",
       phoneNumber: "",
-      address: "",
       notes: "",
       type: "",
       dateIn: undefined,
@@ -111,7 +111,7 @@ export const MonitoringOverview = () => {
       setValue("name", production?.customerName ?? "");
       setValue("invoice", production?.invoiceNumber ?? "");
       setValue("phoneNumber", production?.phoneNumber);
-      setValue("address", production?.address ?? "");
+      setValue("password", production?.password ?? "");
       setValue("notes", production?.notes ?? "");
       setValue("type", production?.type ?? "");
       if (production?.dateIn) {
@@ -182,7 +182,25 @@ export const MonitoringOverview = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PASSWORD</FormLabel>
+                    <FormControl>
+                      <Input
+                        readOnly
+                        className="border border-gray-300 uppercase"
+                        placeholder="-"
+                        {...field}
+                      />
+                    </FormControl>
 
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               {/* TANGGAL MASUK & KELUAR */}
               <FormField
                 control={form.control}

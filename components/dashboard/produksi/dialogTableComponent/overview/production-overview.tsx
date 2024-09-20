@@ -60,8 +60,8 @@ export const ProductionOverview = () => {
     defaultValues: {
       name: "",
       invoice: "",
+      password: "",
       phoneNumber: "",
-      address: "",
       notes: "",
       type: "",
       imageFile: null,
@@ -75,8 +75,8 @@ export const ProductionOverview = () => {
     if (production) {
       setValue("name", production?.customerName ?? "");
       setValue("invoice", production?.invoiceNumber ?? "");
+      setValue("password", production?.password ?? "");
       setValue("phoneNumber", production?.phoneNumber);
-      setValue("address", production?.address ?? "");
       setValue("notes", production?.notes ?? "");
       setValue("type", production?.type ?? "");
     }
@@ -119,6 +119,7 @@ export const ProductionOverview = () => {
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="phoneNumber"
@@ -134,24 +135,6 @@ export const ProductionOverview = () => {
                         {...field}
                       />
                     </FormControl>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ALAMAT LENGKAP</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        readOnly
-                        className="border border-gray-300"
-                        placeholder="Masukkan alamat"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -184,9 +167,28 @@ export const ProductionOverview = () => {
                     <FormLabel>INVOICE WORK ORDER</FormLabel>
                     <FormControl>
                       <Input
-                        readOnly={!isEditing}
+                        readOnly
                         className="border border-gray-300 uppercase"
                         placeholder="Masukkan invoice"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PASSWORD</FormLabel>
+                    <FormControl>
+                      <Input
+                        readOnly
+                        className="border border-gray-300 uppercase"
+                        placeholder="-"
                         {...field}
                       />
                     </FormControl>

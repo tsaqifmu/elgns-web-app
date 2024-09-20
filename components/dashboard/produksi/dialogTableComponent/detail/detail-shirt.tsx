@@ -90,6 +90,12 @@ export const DetailShirt = ({
               <TableHead className="w-24 py-0 text-sm text-white">
                 LENGAN
               </TableHead>
+              <TableHead className="w-24 py-0 text-sm text-white">
+                BAHAN KERAH
+              </TableHead>
+              <TableHead className="w-24 py-0 text-sm text-white">
+                POLA KERAH
+              </TableHead>
               <TableHead className="py-0 text-sm text-white">S</TableHead>
               <TableHead className="py-0 text-sm text-white">M</TableHead>
               <TableHead className="py-0 text-sm text-white">L</TableHead>
@@ -169,6 +175,32 @@ export const DetailShirt = ({
                     type="text"
                     name="sleeve"
                     value={item.sleeve}
+                    onChange={(e) => handleChange(e, item)}
+                  />
+                </TableCell>
+                <TableCell className="p-2 text-sm">
+                  <Input
+                    readOnly={isReadOnly}
+                    className={cn(
+                      "rounded-none bg-transparent p-1 uppercase",
+                      isReadOnly && "border-none",
+                    )}
+                    type="text"
+                    name="materialCollar"
+                    value={item.materialCollar}
+                    onChange={(e) => handleChange(e, item)}
+                  />
+                </TableCell>
+                <TableCell className="p-2 text-sm">
+                  <Input
+                    readOnly={isReadOnly}
+                    className={cn(
+                      "rounded-none bg-transparent p-1 uppercase",
+                      isReadOnly && "border-none",
+                    )}
+                    type="text"
+                    name="patternCollar"
+                    value={item.patternCollar}
                     onChange={(e) => handleChange(e, item)}
                   />
                 </TableCell>

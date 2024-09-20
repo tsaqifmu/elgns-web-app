@@ -5,7 +5,7 @@ export interface MonitoringOverviewResponse {
   message: {
     _id: string;
     custName: string;
-    alamat: string;
+    password: string;
     noHp: string;
     desainImgUrl: string;
     desainCdrUrl: string;
@@ -23,7 +23,7 @@ export const mapMonitoringOverviewResponse = (
   return {
     id: response.message._id,
     customerName: response.message.custName,
-    address: response.message.alamat,
+    password: response.message.password,
     phoneNumber: response.message.noHp,
     imgUrl: response.message.desainImgUrl,
     cdrUrl: response.message.desainCdrUrl,

@@ -16,8 +16,14 @@ export interface Invoice {
 }
 
 export const mapInvoiceToInvoiceToSend = (invoice: Invoice) => {
-  const { totalPrice, initialDeposit, downPayment, discount, totalFinal } =
-    invoice.total;
+  const {
+    totalPrice,
+    initialDeposit,
+    downPayment,
+    discount,
+    paid,
+    totalFinal,
+  } = invoice.total;
 
   return {
     tabelInvoice1: mapInvoiceTableItemToSend(invoice.invoices),
@@ -26,6 +32,7 @@ export const mapInvoiceToInvoiceToSend = (invoice: Invoice) => {
       depositAwal: initialDeposit,
       uangMuka: downPayment,
       potongan: discount,
+      terbayar: paid,
       totalDibayar: totalFinal,
     },
   };

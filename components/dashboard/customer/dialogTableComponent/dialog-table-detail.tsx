@@ -34,6 +34,7 @@ import {
   useDialogStore,
 } from "@/stores/dialog-store";
 import { useShallow } from "zustand/react/shallow";
+import { DataCustomer } from "../columns";
 
 const DialogTableDetail = () => {
   const [
@@ -48,14 +49,13 @@ const DialogTableDetail = () => {
     ]),
   );
   const isDialogOpen = detailCustomerData !== undefined;
-  const customer = detailCustomerData;
-  console.log("render detail");
+  const customer: DataCustomer = detailCustomerData!;
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     values: {
       username: customer?.name || "",
-      address: customer?.address || "",
+      brand: customer?.brand || "",
       phoneNumber: customer?.phoneNumber || "",
       regency: customer?.regency || "",
       status: customer?.status || "",
@@ -98,15 +98,15 @@ const DialogTableDetail = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="brand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NOMOR HP</FormLabel>
+                      <FormLabel>NAMA BRAND</FormLabel>
                       <FormControl>
                         <Input
                           readOnly
-                          placeholder="62851XXXX"
-                          type="tel"
+                          placeholder="-"
+                          className="uppercase"
                           {...field}
                         />
                       </FormControl>
@@ -116,14 +116,15 @@ const DialogTableDetail = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ALAMAT LENGKAP</FormLabel>
+                      <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
                           readOnly
-                          placeholder="Masukkan alamat lengkap"
+                          placeholder="62851XXXX"
+                          type="tel"
                           {...field}
                         />
                       </FormControl>

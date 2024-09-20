@@ -38,6 +38,7 @@ export const MonitoringInvoice = () => {
     initialDeposit: 0,
     downPayment: 0,
     discount: 0,
+    paid: 0,
     totalFinal: 0,
   });
 
@@ -68,18 +69,20 @@ export const MonitoringInvoice = () => {
     setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
   }, [tableInvoice]);
 
-  // CALCULATE TOTAL FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
+  // CALCULATE FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
   useEffect(() => {
     setTableTotal({
       ...tableTotal,
       totalFinal:
         tableTotal.totalPrice -
         tableTotal.discount -
+        tableTotal.paid -
         tableTotal.downPayment -
         tableTotal.initialDeposit,
     });
   }, [
     tableTotal.discount,
+    tableTotal.paid,
     tableTotal.downPayment,
     tableTotal.initialDeposit,
     tableTotal.totalPrice,
@@ -335,15 +338,13 @@ export const MonitoringInvoice = () => {
                           <Input
                             className="rounded-none bg-transparent p-1"
                             type="text"
-                            name="discount"
-                            value={formatNumberToRupiah(
-                              tableTotal?.discount ?? 0,
-                            )}
+                            name="paid"
+                            value={formatNumberToRupiah(tableTotal?.paid ?? 0)}
                             onChange={(e) => handleTotalChange(e)}
                           />
                         )}
                         {!isEditing &&
-                          formatNumberToRupiah(tableTotal?.discount ?? 0)}
+                          formatNumberToRupiah(tableTotal?.paid ?? 0)}
                       </TableCell>
                     </TableRow>
                     <TableRow className="bg-gray-900 text-white hover:bg-gray-900">

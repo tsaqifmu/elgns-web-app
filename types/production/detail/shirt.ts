@@ -5,6 +5,8 @@ export interface Shirt {
   printingShirt: string;
   material: string;
   pattern: string;
+  materialCollar: string;
+  patternCollar: string;
   color: string;
   sleeve: string;
   sizeS: number;
@@ -25,6 +27,8 @@ export const getEmptyShirtData = () => ({
   printingShirt: "",
   material: "",
   pattern: "",
+  materialCollar: "",
+  patternCollar: "",
   color: "",
   sleeve: "",
   sizeS: 0,
@@ -46,6 +50,8 @@ export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
       printingShirt,
       material,
       pattern,
+      materialCollar,
+      patternCollar,
       color,
       sleeve,
       sizeS,
@@ -65,6 +71,8 @@ export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
       sablonBaju: printingShirt,
       Bahan: material,
       Pola: pattern,
+      bahanKerah: materialCollar,
+      polaKerah: patternCollar,
       Warna: color,
       Lengan: sleeve,
       S: sizeS,

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const monitoringOverviewSchema = z.object({
   name: z.string(),
   phoneNumber: z.string(),
-  address: z.string(),
+  password: z.string(),
   notes: z.string(),
   invoice: z.string().min(1, {
     message: "Invoice  tidak boleh kosong",

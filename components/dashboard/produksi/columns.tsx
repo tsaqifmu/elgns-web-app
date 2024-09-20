@@ -49,7 +49,6 @@ export const getColumn = (
     header: () => <ColumnHeader title={HEADER_TITLES.quickActions} />,
     cell: ({ row }) => {
       const production: ProductionItem = row.original;
-      console.log(production);
       return (
         <div className="flex items-center">
           <Button className="group" variant={"ghost"} size={"icon"}>

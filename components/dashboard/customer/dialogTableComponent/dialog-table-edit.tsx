@@ -48,13 +48,12 @@ const DialogTableEdit = () => {
   );
   const isOpen = editCustomerData !== undefined;
   const customer = editCustomerData;
-  console.log("render edit");
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     values: {
       username: customer?.name || "",
-      address: customer?.address || "",
+      brand: customer?.brand || "",
       phoneNumber: customer?.phoneNumber || "",
       regency: customer?.regency || "",
       status: customer?.status || "",
@@ -72,11 +71,10 @@ const DialogTableEdit = () => {
       name: values.username,
       noHp: values.phoneNumber,
       status: values.status,
-      alamat: values.address,
+      brand: values.brand,
       alamatKabupaten: values.regency,
       info: values.statusDescription,
     };
-    console.log(payload);
     updateCustomerData(payload);
   }
 
@@ -109,15 +107,14 @@ const DialogTableEdit = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="brand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NOMOR HP</FormLabel>
+                      <FormLabel>NAMA BRAND</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-yellow-500"
-                          placeholder="62851XXXX"
-                          type="tel"
+                          className="uppercase focus-visible:ring-yellow-500"
+                          placeholder="Masukkan nama brand"
                           {...field}
                         />
                       </FormControl>
@@ -127,14 +124,15 @@ const DialogTableEdit = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ALAMAT LENGKAP</FormLabel>
+                      <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
                           className="focus-visible:ring-yellow-500"
-                          placeholder="Masukkan alamat lengkap"
+                          placeholder="62851XXXX"
+                          type="tel"
                           {...field}
                         />
                       </FormControl>
