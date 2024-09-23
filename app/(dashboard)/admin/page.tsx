@@ -19,7 +19,6 @@ import DialogTableEditUser from "@/components/dashboard/admin/dialogTableCompone
 import DialogTableCreateUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-create";
 import DialogTableDeleteUser from "@/components/dashboard/admin/dialogTableComponent/dialog-table-delete";
 
-//! tinggal bikin pagination nya, apakah pake limit juga?
 const AdminPage = () => {
   const { data, isError, isLoading, error } = useFetchUserData();
 

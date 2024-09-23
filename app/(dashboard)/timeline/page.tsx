@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import { useFetchTimelineData } from "@/hooks/timeline/useTimeline";
-import { DateData } from "@/types/timeline/timeline-response";
+import { TransformedData } from "@/types/timeline/timeline-response";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
@@ -24,7 +24,7 @@ const TimelinePage: React.FC = () => {
       return (
         <TooltipProvider delayDuration={500}>
           <div className="grid grid-cols-7 gap-1 text-white">
-            {timelineData.data?.map((dateData: DateData) => (
+            {timelineData.data?.map((dateData: TransformedData) => (
               <DateColumn key={dateData.date} dateData={dateData} />
             ))}
           </div>

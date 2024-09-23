@@ -11,3 +11,8 @@ export interface DateData {
   data: CustomerData[];
   date: string;
 }
+export interface TransformedData {
+  date: string;
+  total: number;
+  data: CustomerData[];
+}

@@ -1,6 +1,8 @@
-import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
+
+import { addTotalData } from "@/lib/timelineUtils";
 
 export const useFetchTimelineData = () => {
   const searchParams = useSearchParams();
@@ -12,13 +14,16 @@ export const useFetchTimelineData = () => {
       const payload: any = {
         path: "/production/calendar",
         method: HttpMethod.GET,
-        // params: { month: Number(month) ?? "", year: "2024" },
       };
       if (month) payload.params = { month: Number(month) ?? "", year: "2024" };
 
       const { data } = await apiRequest(payload);
       return data;
     },
-    select: (response) => response.message,
+    select: (response) => {
+      const transformedData = addTotalData(response.message.data);
+      response.message.data = transformedData;
+      return response.message;
+    },
   });
 };

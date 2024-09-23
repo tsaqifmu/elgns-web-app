@@ -6,13 +6,14 @@ import IconEdit from "@/public/icons/table/edit.svg";
 import IconDelete from "@/public/icons/table/delete.svg";
 
 import { Button } from "@/components/ui/button";
-import { UserDataColumns } from "@/types/admin/user-data-response";
+import { BahanDataColumns } from "@/types/bahan/bahan-data-response";
+import { cn } from "@/lib/utils";
 
 const HEADER_TITLES = {
-  name: "NAMA KAIN",
-  email: "EMAIL",
-  phoneNumber: "NOMOR HP",
-  role: "ROLE",
+  name: "NAMA ",
+  weight: "BERAT (KG)",
+  used: "TERPAKAI",
+  stock: "STOCK AKHIR",
   quickAccess: "AKSI CEPAT",
 };
 
@@ -24,29 +25,45 @@ const ColumnHeader = ({ title }: { title: string }) => {
   );
 };
 
-export const getColumnsAdmin = (
-  openEditDialog: (data: UserDataColumns) => void,
-  openDeleteDialog: (data: UserDataColumns) => void,
-): ColumnDef<UserDataColumns>[] => {
+export const getColumnsBahan = (
+  openEditDialog: (data: BahanDataColumns) => void,
+  openDeleteDialog: (data: BahanDataColumns) => void,
+): ColumnDef<BahanDataColumns>[] => {
   return [
+    {
+      id: "initial",
+      cell: ({ row }) => {
+        const customerName: string = row.getValue("name");
+        const status: string = row.getValue("status");
+        const firstCharName = customerName?.split("")[0];
+
+        return (
+          <div
+            className={cn(
+              "flexCenter h-6 w-6 rounded-full text-center uppercase text-white",
+              status === "NEGO" ? "bg-destructive" : "bg-gray-900",
+            )}
+          >
+            <p>{firstCharName}</p>
+          </div>
+        );
+      },
+    },
     {
       accessorKey: "name",
       header: () => <ColumnHeader title={HEADER_TITLES.name} />,
     },
     {
-      accessorKey: "email",
-      header: () => <ColumnHeader title={HEADER_TITLES.email} />,
+      accessorKey: "weight",
+      header: () => <ColumnHeader title={HEADER_TITLES.weight} />,
     },
     {
-      accessorKey: "phoneNumber",
-      header: () => <ColumnHeader title={HEADER_TITLES.phoneNumber} />,
+      accessorKey: "used",
+      header: () => <ColumnHeader title={HEADER_TITLES.used} />,
     },
     {
-      accessorKey: "role",
-      header: () => <ColumnHeader title={HEADER_TITLES.role} />,
-      cell: ({ row }) => (
-        <div className="uppercase">{row.getValue("role")}</div>
-      ),
+      accessorKey: "stock",
+      header: () => <ColumnHeader title={HEADER_TITLES.stock} />,
     },
 
     {

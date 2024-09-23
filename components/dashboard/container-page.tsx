@@ -6,8 +6,6 @@ interface ContainerProps {
   className?: string;
 }
 
-//! Nyoba langsung dikasih PY-35px
-
 const ContainerPage: FC<ContainerProps> = ({ children, className }) => {
   return (
     <div className="flexCenter w-full py-9">

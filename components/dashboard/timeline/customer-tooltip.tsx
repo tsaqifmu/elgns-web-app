@@ -1,7 +1,10 @@
 import { FC } from "react";
 import { cn } from "@/lib/utils";
 import { dateIdFormat } from "@/lib/dateUtils";
-import { CustomerData, DateData } from "@/types/timeline/timeline-response";
+import {
+  CustomerData,
+  TransformedData,
+} from "@/types/timeline/timeline-response";
 
 import {
   Tooltip,
@@ -20,9 +23,6 @@ const calculateWidth = (total: number): number => {
 };
 
 const CustomerTooltip: FC<CustomerTooltipProps> = ({ customer, color }) => {
-  // Tentukan warna background berdasarkan jumlah
-  const backgroundColor = customer.jumlah > 35 ? "bg-destructive" : color;
-
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -30,10 +30,10 @@ const CustomerTooltip: FC<CustomerTooltipProps> = ({ customer, color }) => {
           style={{ width: `${calculateWidth(customer.jumlah)}%` }}
           className={cn(
             "flex h-full flex-col justify-end px-[10px] py-[5px]",
-            backgroundColor,
+            color,
           )}
         >
-          <h4>{customer.jumlah}</h4>
+          {/* <h4>{customer.jumlah}</h4> */}
         </div>
       </TooltipTrigger>
       <TooltipContent side="right" align="start">
@@ -52,7 +52,7 @@ const CustomerTooltip: FC<CustomerTooltipProps> = ({ customer, color }) => {
   );
 };
 
-export const DateColumn = ({ dateData }: { dateData: DateData }) => {
+export const DateColumn = ({ dateData }: { dateData: TransformedData }) => {
   const COLORS = [
     "bg-teal",
     "bg-yellow-500",
@@ -60,9 +60,15 @@ export const DateColumn = ({ dateData }: { dateData: DateData }) => {
     "bg-emerald-500",
   ];
 
+  // warna text pada jumlah akan merah jika overload
+  const overloadColor = dateData.total > 35 && "text-destructive";
+
   return (
     <div className="relative flex h-[120px] w-full bg-gray-600">
       <h3 className="absolute px-[10px] py-[5px]">{dateData.date}</h3>
+      <h3 className={cn("absolute bottom-0 px-[10px] py-[5px]", overloadColor)}>
+        {dateData.total}
+      </h3>
       {dateData.data.length > 0 &&
         dateData.data.map((customer, index) => (
           <CustomerTooltip
