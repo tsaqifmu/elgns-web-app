@@ -5,20 +5,26 @@ import IconImage from "@/public/icons/table/image.svg";
 import IconDownload from "@/public/icons/table/download.svg";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
-import { useDialogMonitoringStore } from "@/stores/dialog-monitoring-store";
+import {
+  DialogMonitoringAction,
+  DialogMonitoringState,
+  useDialogMonitoringStore,
+} from "@/stores/dialog-monitoring-store";
 import { useShallow } from "zustand/react/shallow";
 import { formatToIndonesianDate } from "@/lib/dateUtils";
 import { Task } from "@/types/monitoring/task";
 import Link from "next/link";
+import { ColumnItem } from "@/types/monitoring/column-item";
 
 interface TaskCardProps {
   task: Task;
+  column?: ColumnItem;
 }
 
-export const TaskCard = ({ task }: TaskCardProps) => {
+export const TaskCard = ({ task, column }: TaskCardProps) => {
   const [openDetailMonitoringDialog, setCardMonitoringId] =
     useDialogMonitoringStore(
-      useShallow((state) => [
+      useShallow((state: DialogMonitoringState & DialogMonitoringAction) => [
         state.openEditMonitoringDialog,
         state.setCardMonitoringId,
       ]),
@@ -66,7 +72,7 @@ export const TaskCard = ({ task }: TaskCardProps) => {
       className="flex cursor-grab flex-col space-y-[5px] rounded-md border-2 border-gray-400 bg-gray-100 p-[10px]"
       onClick={() => {
         if (task.productionData) {
-          openDetailMonitoringDialog(task.productionData);
+          openDetailMonitoringDialog(task.productionData, column);
           setCardMonitoringId(task._id);
         } else {
           alert("Belum ada data produksi untuk card ini.");

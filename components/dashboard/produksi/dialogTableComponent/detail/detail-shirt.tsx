@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { emptyShirtData, Shirt } from "@/types/production/detail/shirt";
+import { getEmptyShirtData, Shirt } from "@/types/production/detail/shirt";
 import { cn } from "@/lib/utils";
 
 interface DetailShirtProps {
@@ -61,7 +61,7 @@ export const DetailShirt = ({
   };
 
   const handleAddShirt = () => {
-    setShirts((prevData: Shirt[]) => [...prevData, emptyShirtData]);
+    setShirts((prevData: Shirt[]) => [...prevData, getEmptyShirtData()]);
   };
 
   useEffect(() => {
@@ -89,6 +89,12 @@ export const DetailShirt = ({
               </TableHead>
               <TableHead className="w-24 py-0 text-sm text-white">
                 LENGAN
+              </TableHead>
+              <TableHead className="w-24 py-0 text-sm text-white">
+                BAHAN KERAH
+              </TableHead>
+              <TableHead className="w-24 py-0 text-sm text-white">
+                POLA KERAH
               </TableHead>
               <TableHead className="py-0 text-sm text-white">S</TableHead>
               <TableHead className="py-0 text-sm text-white">M</TableHead>
@@ -169,6 +175,32 @@ export const DetailShirt = ({
                     type="text"
                     name="sleeve"
                     value={item.sleeve}
+                    onChange={(e) => handleChange(e, item)}
+                  />
+                </TableCell>
+                <TableCell className="p-2 text-sm">
+                  <Input
+                    readOnly={isReadOnly}
+                    className={cn(
+                      "rounded-none bg-transparent p-1 uppercase",
+                      isReadOnly && "border-none",
+                    )}
+                    type="text"
+                    name="materialCollar"
+                    value={item.materialCollar}
+                    onChange={(e) => handleChange(e, item)}
+                  />
+                </TableCell>
+                <TableCell className="p-2 text-sm">
+                  <Input
+                    readOnly={isReadOnly}
+                    className={cn(
+                      "rounded-none bg-transparent p-1 uppercase",
+                      isReadOnly && "border-none",
+                    )}
+                    type="text"
+                    name="patternCollar"
+                    value={item.patternCollar}
                     onChange={(e) => handleChange(e, item)}
                   />
                 </TableCell>

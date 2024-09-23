@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import IconDownloadPdf from "@/public/icons/table/download-pdf.svg";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -39,10 +39,11 @@ export const ProductionInvoice = () => {
     initialDeposit: 0,
     downPayment: 0,
     discount: 0,
+    paid: 0,
     totalFinal: 0,
   });
 
-  const [production, closeEditProductionDialog] = useDialogProductionStore(
+  const [production, _] = useDialogProductionStore(
     useShallow((state: DialogProductionState & DialogProductionAction) => [
       state.editProductionData,
       state.closeEditProductionDialog,
@@ -54,7 +55,7 @@ export const ProductionInvoice = () => {
 
   const { mutate: updateInvoice, isPending } = useUpdateProductionInvoice(
     production?.id,
-    closeEditProductionDialog,
+    () => {},
   );
 
   // SET INVOICE AND TOTAL STATE AFTER FETCHING
@@ -72,18 +73,20 @@ export const ProductionInvoice = () => {
     setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
   }, [tableInvoice]);
 
-  // CALCULATE TOTAL FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
+  // CALCULATE FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
   useEffect(() => {
     setTableTotal({
       ...tableTotal,
       totalFinal:
         tableTotal.totalPrice -
         tableTotal.discount -
+        tableTotal.paid -
         tableTotal.downPayment -
         tableTotal.initialDeposit,
     });
   }, [
     tableTotal.discount,
+    tableTotal.paid,
     tableTotal.downPayment,
     tableTotal.initialDeposit,
     tableTotal.totalPrice,
@@ -213,7 +216,9 @@ export const ProductionInvoice = () => {
                   <TableRow>
                     <TableHead className="text-sm text-white">NO</TableHead>
                     <TableHead className="text-sm text-white">JENIS</TableHead>
-                    <TableHead className="text-sm text-white">JUMLAH</TableHead>
+                    <TableHead className="w-32 text-sm text-white">
+                      JUMLAH
+                    </TableHead>
                     <TableHead className="w-40 text-sm text-white">
                       HARGA
                     </TableHead>
@@ -229,18 +234,7 @@ export const ProductionInvoice = () => {
                       <TableCell className="text-sm uppercase">
                         {item.type}
                       </TableCell>
-                      <TableCell className="text-sm">
-                        {isEditing && (
-                          <Input
-                            className="rounded-none bg-transparent p-1 uppercase"
-                            type="number"
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(e) => handleInvoiceChange(e, item)}
-                          />
-                        )}
-                        {!isEditing && item.quantity}
-                      </TableCell>
+                      <TableCell className="text-sm">{item.quantity}</TableCell>
                       <TableCell className="text-sm">
                         {isEditing && (
                           <Input
@@ -330,6 +324,22 @@ export const ProductionInvoice = () => {
                           formatNumberToRupiah(tableTotal?.discount ?? 0)}
                       </TableCell>
                     </TableRow>
+                    <TableRow>
+                      <TableCell className="text-sm">TERBAYAR</TableCell>
+                      <TableCell className="text-sm">
+                        {isEditing && (
+                          <Input
+                            className="rounded-none bg-transparent p-1"
+                            type="text"
+                            name="paid"
+                            value={formatNumberToRupiah(tableTotal?.paid ?? 0)}
+                            onChange={(e) => handleTotalChange(e)}
+                          />
+                        )}
+                        {!isEditing &&
+                          formatNumberToRupiah(tableTotal?.paid ?? 0)}
+                      </TableCell>
+                    </TableRow>
                     <TableRow className="bg-gray-900 text-white hover:bg-gray-900">
                       <TableCell className="text-sm">TOTAL</TableCell>
                       <TableCell className="text-sm">
@@ -341,6 +351,7 @@ export const ProductionInvoice = () => {
               </div>
             </div>
           </div>
+
           {/* FOOTER */}
           <DialogFooter className="flex gap-1">
             <Button

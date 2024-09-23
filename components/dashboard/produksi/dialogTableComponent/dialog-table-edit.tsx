@@ -8,15 +8,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { Overview } from "./overview/overview";
-import { Detail } from "./detail/detail";
-import { ProductionInvoice } from "./invoice/invoice";
+import { ProductionOverview } from "./overview/production-overview";
+import { ProductionDetail } from "./detail/production-detail";
+import { ProductionInvoice } from "./invoice/production-invoice";
 import { useShallow } from "zustand/react/shallow";
 import {
   DialogProductionAction,
   DialogProductionState,
   useDialogProductionStore,
 } from "@/stores/dialog-production-store";
+import { DialogTableMenusProduction } from "./dialog-table-menus";
 
 const DialogTableEdit = () => {
   const menus = ["OVERVIEW", "DETAIL", "INVOICE"];
@@ -33,9 +34,9 @@ const DialogTableEdit = () => {
   const getContentComponent = () => {
     switch (activeMenu) {
       case "OVERVIEW":
-        return <Overview />;
+        return <ProductionOverview />;
       case "DETAIL":
-        return <Detail />;
+        return <ProductionDetail />;
       default:
         return <ProductionInvoice />;
     }
@@ -54,26 +55,17 @@ const DialogTableEdit = () => {
     <Dialog open={isOpen} onOpenChange={closeEditProductionDialog}>
       <DialogContent
         className={cn(
-          "max-w-screen max-h-screen overflow-scroll font-oswald",
+          "scrollbar-hide max-h-screen overflow-scroll font-oswald",
           getContentWidth(),
         )}
       >
-        <DialogHeader className="border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
+        <DialogHeader className="box-border border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
           <DialogTitle className="flex h-full w-full gap-4">
-            {menus.map((menu) => (
-              <button
-                key={menu}
-                onClick={() => {
-                  setActiveMenu(menu);
-                }}
-                className={cn(
-                  "h-full border-gray-900 py-3 text-gray-400 transition-all hover:border-b-2 hover:text-gray-900",
-                  activeMenu === menu ? "border-b-2 text-gray-900" : "",
-                )}
-              >
-                {menu}
-              </button>
-            ))}
+            <DialogTableMenusProduction
+              menus={menus}
+              activeMenu={activeMenu}
+              setActiveMenu={setActiveMenu}
+            />
           </DialogTitle>
         </DialogHeader>
         {getContentComponent()}

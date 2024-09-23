@@ -48,14 +48,13 @@ const DialogTableCreate = () => {
     ]),
   );
   const isDialogOpen = createCustomerData;
-  console.log("render create");
 
   const form = useForm<z.infer<typeof customerSchema>>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
       username: "",
       phoneNumber: "62",
-      address: "",
+      brand: "",
       regency: "",
       status: "",
       statusDescription: "",
@@ -71,7 +70,7 @@ const DialogTableCreate = () => {
       name: values.username,
       noHp: values.phoneNumber,
       status: values.status,
-      alamat: values.address,
+      brand: values.brand,
       alamatKabupaten: values.regency,
       info: values.statusDescription,
     };
@@ -109,15 +108,14 @@ const DialogTableCreate = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="brand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>NOMOR HP</FormLabel>
+                      <FormLabel>NAMA BRAND</FormLabel>
                       <FormControl>
                         <Input
-                          className="focus-visible:ring-teal"
-                          placeholder="62851XXXX"
-                          type="tel"
+                          className="uppercase focus-visible:ring-teal"
+                          placeholder="Masukkan nama brand"
                           {...field}
                         />
                       </FormControl>
@@ -127,14 +125,15 @@ const DialogTableCreate = () => {
                 />
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="phoneNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>ALAMAT LENGKAP</FormLabel>
+                      <FormLabel>NOMOR HP</FormLabel>
                       <FormControl>
                         <Input
                           className="focus-visible:ring-teal"
-                          placeholder="Masukkan alamat lengkap"
+                          placeholder="62851XXXX"
+                          type="tel"
                           {...field}
                         />
                       </FormControl>

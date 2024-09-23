@@ -5,6 +5,8 @@ export interface ShirtResponse {
   sablonBaju: string;
   Bahan: string;
   Pola: string;
+  bahanKerah: string;
+  polaKerah: string;
   Warna: string;
   Lengan: string;
   S: number;
@@ -29,6 +31,8 @@ export const mapShirtResponseToShirt = (
       sablonBaju,
       Bahan,
       Pola,
+      bahanKerah,
+      polaKerah,
       Warna,
       Lengan,
       S,
@@ -49,6 +53,8 @@ export const mapShirtResponseToShirt = (
       printingShirt: sablonBaju,
       material: Bahan,
       pattern: Pola,
+      materialCollar: bahanKerah,
+      patternCollar: polaKerah,
       color: Warna,
       sleeve: Lengan,
       sizeS: S,

@@ -17,9 +17,10 @@ import {
   DialogMonitoringState,
   useDialogMonitoringStore,
 } from "@/stores/dialog-monitoring-store";
+import { MonitoringInvoice } from "./invoice/monitoring-invoice";
 
 const DialogTableMonitoringDetail = () => {
-  const menus = ["OVERVIEW", "DETAIL", "TIMELINE"];
+  const menus = ["OVERVIEW", "DETAIL", "TIMELINE", "INVOICE"];
   const [activeMenu, setActiveMenu] = useState("OVERVIEW");
   const [detailMonitoringData, closeDetailMonitoringDialog] =
     useDialogMonitoringStore(
@@ -36,8 +37,10 @@ const DialogTableMonitoringDetail = () => {
         return <MonitoringOverview />;
       case "DETAIL":
         return <MonitoringDetail />;
-      default:
+      case "TIMELINE":
         return <MonitoringTimeline />;
+      default:
+        return <MonitoringInvoice />;
     }
   };
 
@@ -54,11 +57,11 @@ const DialogTableMonitoringDetail = () => {
     <Dialog open={isOpen} onOpenChange={closeDetailMonitoringDialog}>
       <DialogContent
         className={cn(
-          "max-w-screen max-h-screen overflow-scroll font-oswald",
+          "max-w-screen scrollbar-hide max-h-screen overflow-scroll font-oswald",
           getContentWidth(),
         )}
       >
-        <DialogHeader className="border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
+        <DialogHeader className="box-border border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
           <DialogTitle className="flex h-full w-full gap-4">
             {menus.map((menu) => (
               <button

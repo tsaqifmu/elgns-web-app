@@ -28,7 +28,7 @@ interface CustomerData {
   date: string;
   name: string;
   noHp: string;
-  alamat: string;
+  brand: string;
   alamatKabupaten: string;
   status: string;
   info: string;
@@ -52,7 +52,7 @@ const mapCustomerData = (data: CustomerData[]): DataCustomer[] =>
     dateOfEntry: dateIdFormat(data?.date),
     name: data?.name?.toUpperCase(),
     phoneNumber: data.noHp,
-    address: data.alamat,
+    brand: data.brand,
     regency: data?.alamatKabupaten?.toUpperCase(),
     status: data?.status?.toUpperCase(),
     statusDescription: data?.info,

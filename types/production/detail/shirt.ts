@@ -5,6 +5,8 @@ export interface Shirt {
   printingShirt: string;
   material: string;
   pattern: string;
+  materialCollar: string;
+  patternCollar: string;
   color: string;
   sleeve: string;
   sizeS: number;
@@ -20,11 +22,13 @@ export interface Shirt {
   total: number;
 }
 
-export const emptyShirtData = {
+export const getEmptyShirtData = () => ({
   id: crypto.randomUUID(),
   printingShirt: "",
   material: "",
   pattern: "",
+  materialCollar: "",
+  patternCollar: "",
   color: "",
   sleeve: "",
   sizeS: 0,
@@ -38,7 +42,7 @@ export const emptyShirtData = {
   size7XL: 0,
   custom: 0,
   total: 0,
-};
+});
 
 export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
   return shirts.map((pant) => {
@@ -46,6 +50,8 @@ export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
       printingShirt,
       material,
       pattern,
+      materialCollar,
+      patternCollar,
       color,
       sleeve,
       sizeS,
@@ -65,6 +71,8 @@ export const mapShirtToShirtResponse = (shirts: Shirt[]) => {
       sablonBaju: printingShirt,
       Bahan: material,
       Pola: pattern,
+      bahanKerah: materialCollar,
+      polaKerah: patternCollar,
       Warna: color,
       Lengan: sleeve,
       S: sizeS,
