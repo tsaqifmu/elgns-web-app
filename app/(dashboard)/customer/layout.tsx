@@ -1,8 +1,14 @@
 import { ReactNode } from "react";
 import ContainerPage from "@/components/dashboard/container-page";
+import NavBar from "@/components/dashboard/navbar";
 
 const layout = ({ children }: { children: ReactNode }) => {
-  return <ContainerPage>{children}</ContainerPage>;
+  return (
+    <>
+      <NavBar />
+      <ContainerPage className="font-oswald">{children}</ContainerPage>;
+    </>
+  );
 };
 
 export default layout;

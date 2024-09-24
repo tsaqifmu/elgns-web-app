@@ -33,6 +33,7 @@ export const useLogin = (
       Cookies.set("accessToken", response.data.data.accessToken, {
         expires: 0.9583, // 23 jam
         secure: true,
+        sameSite: "None",
       });
       router.push("/dashboard");
     },

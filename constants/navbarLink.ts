@@ -50,3 +50,14 @@ export const navLinks = [
     },
   },
 ];
+
+export const navLinksUser = [
+  {
+    id: "monitoring",
+    title: "MONITORING",
+    icons: {
+      fill: Icons.MonitoringFill,
+      outline: Icons.MonitoringOutline,
+    },
+  },
+];
