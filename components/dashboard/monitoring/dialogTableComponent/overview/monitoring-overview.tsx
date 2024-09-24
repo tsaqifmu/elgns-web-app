@@ -43,9 +43,9 @@ import Link from "next/link";
 
 export const MonitoringOverview = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-
-  const [previewImageProofing, setPreviewImageProofing] = useState<
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [pdfFileName, setPdfFileName] = useState<string | null>(null);
+  const [previewImageProofingUrl, setPreviewImageProofingUrl] = useState<
     string | null
   >(null);
   const [cardMonitoringId, editMonitoringData, column] =
@@ -329,8 +329,8 @@ export const MonitoringOverview = () => {
                       width={1000}
                       height={500}
                       src={
-                        previewImage !== null
-                          ? previewImage
+                        previewImageUrl !== null
+                          ? previewImageUrl
                           : production?.imgUrl !== undefined
                             ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
                                 production?.imgUrl
@@ -377,7 +377,7 @@ export const MonitoringOverview = () => {
                                       field.onChange(file);
                                       const previewUrl =
                                         URL.createObjectURL(file);
-                                      setPreviewImage(previewUrl);
+                                      setPreviewImageUrl(previewUrl);
                                     }}
                                     className="absolute inset-0 cursor-pointer opacity-0"
                                   />
@@ -464,16 +464,33 @@ export const MonitoringOverview = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <div className="mt-4 flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-[10px]">
+                          <div className="mt-4 flex max-w-[21rem] items-center justify-between gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-[10px]">
                             <div className="pdf-file-name w-1/2 overflow-hidden text-ellipsis text-sm">
-                              HALOHALOHALOHALOHALOHALOHALO
+                              {pdfFileName
+                                ? pdfFileName
+                                : production?.pdfUrl
+                                  ? "PDF TERSEDIA ✅"
+                                  : "PDF KOSONG"}
                             </div>
                             <div className="pdf-buttons flex w-1/2 justify-end gap-2 text-xs">
-                              <div className="pdf-download font-semibold">
-                                <Link href={"#"} className="hover:underline">
-                                  DOWNLOAD
-                                </Link>
-                              </div>
+                              {production?.pdfUrl && (
+                                <div className="pdf-download font-semibold">
+                                  <a
+                                    className="hover:underline"
+                                    target="_blank"
+                                    href={
+                                      production?.pdfUrl
+                                        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                                            production?.pdfUrl
+                                          }`
+                                        : "#"
+                                    }
+                                    download={true}
+                                  >
+                                    DOWNLOAD
+                                  </a>
+                                </div>
+                              )}
                               {isEditing && (
                                 <div className="pdf-upload group relative overflow-hidden font-semibold">
                                   <Input
@@ -484,6 +501,10 @@ export const MonitoringOverview = () => {
                                       if (!e.target.files) return;
                                       const file = e.target.files[0];
                                       field.onChange(file);
+                                      setPdfFileName(
+                                        e.target.files?.[0]?.name ||
+                                          "No file selected",
+                                      );
                                     }}
                                   />
                                   <button
@@ -512,19 +533,19 @@ export const MonitoringOverview = () => {
                       <FormLabel>BUKTI PEKERJAAN</FormLabel>
                       <FormControl>
                         <div className="relative mt-2 h-40 w-full overflow-hidden rounded-md border border-gray-400 bg-gray-200">
-                          {!previewImageProofing && (
+                          {!previewImageProofingUrl && (
                             <AddFill
                               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-gray-400"
                               width="24px"
                             />
                           )}
-                          {previewImageProofing && (
+                          {previewImageProofingUrl && (
                             <Image
                               className="absolute inset-0 h-full object-cover"
                               width={600}
                               height={400}
                               alt=""
-                              src={previewImageProofing}
+                              src={previewImageProofingUrl}
                             />
                           )}
                           <Input
@@ -539,7 +560,7 @@ export const MonitoringOverview = () => {
                               const file = e.target.files[0];
                               field.onChange(file);
                               const previewUrl = URL.createObjectURL(file);
-                              setPreviewImageProofing(previewUrl);
+                              setPreviewImageProofingUrl(previewUrl);
                             }}
                           />
                         </div>

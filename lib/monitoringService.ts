@@ -58,7 +58,10 @@ export const updateMonitoringOverview = async (
 ) => {
   if (!productionId) return Promise.reject(new Error("production id kosong"));
 
-  const uploadFile = async (file: File, resourceType: "img" | "cdr") => {
+  const uploadFile = async (
+    file: File,
+    resourceType: "img" | "cdr" | "pdf",
+  ) => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -86,7 +89,7 @@ export const updateMonitoringOverview = async (
     return response.data;
   };
 
-  const { imageFile, cdrFile, proofFile } = overview;
+  const { imageFile, cdrFile, pdfFile, proofFile } = overview;
 
   const overviewToSend = {
     tglMasuk: overview.dateIn.toISOString(),
@@ -106,6 +109,7 @@ export const updateMonitoringOverview = async (
     updateOverview,
     imageFile && uploadFile(imageFile, "img"),
     cdrFile && uploadFile(cdrFile, "cdr"),
+    pdfFile && uploadFile(pdfFile, "pdf"),
     proofFile && uploadProof(proofFile),
   ]);
 };

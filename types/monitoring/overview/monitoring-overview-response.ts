@@ -9,6 +9,7 @@ export interface MonitoringOverviewResponse {
     noHp: string;
     desainImgUrl: string;
     desainCdrUrl: string;
+    desainPdfUrl: string;
     catatan: string;
     jenis: string;
     noInvoice: string;
@@ -27,6 +28,7 @@ export const mapMonitoringOverviewResponse = (
     phoneNumber: response.message.noHp,
     imgUrl: response.message.desainImgUrl,
     cdrUrl: response.message.desainCdrUrl,
+    pdfUrl: response.message.desainPdfUrl,
     notes: response.message.catatan,
     type: response.message.jenis,
     invoiceNumber: response.message.noInvoice,
