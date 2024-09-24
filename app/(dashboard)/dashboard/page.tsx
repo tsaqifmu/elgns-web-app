@@ -13,12 +13,6 @@ const DashboardPage = () => {
   const role = data?.role.toLowerCase() ?? undefined;
   const isAdmin = role === "admin";
 
-  useEffect(() => {
-    if (role && !isAdmin) {
-      router.push("/monitoring");
-    }
-  }, [role, isAdmin, router]);
-
   if (isLoading)
     return (
       <ContainerPage>
@@ -28,7 +22,7 @@ const DashboardPage = () => {
 
   if (isError) <ErrorLoadData error={error} />;
 
-  if (isAdmin) return <AdminDashboard />;
+  // if (isAdmin) return <AdminDashboard />;
 };
 
 export default DashboardPage;

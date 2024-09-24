@@ -10,7 +10,7 @@ const adminRoutes = [
   "/timeline",
   "/admin",
 ];
-const userRoutes = ["/dashboard", "/monitoring"];
+const userRoutes = ["/monitoring"];
 const publicRoutes = ["/login", "/"];
 
 // Middleware function
@@ -50,8 +50,12 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (isPublicRoute && (isAdmin || isUser)) {
+  if (isPublicRoute && isAdmin) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
+  }
+
+  if (isPublicRoute && isUser) {
+    return NextResponse.redirect(new URL("/monitoring", req.nextUrl));
   }
 
   return NextResponse.next();

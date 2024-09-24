@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+
+import { useFetchMonitoringDetail } from "@/hooks/monitoring/useFetchMonitoringDetail";
 import { DialogFooter } from "@/components/ui/dialog";
-import { useFetchProductionDetail } from "@/hooks/production/useFetchProductionDetail";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
-import { useShallow } from "zustand/react/shallow";
 import { Shirt } from "@/types/production/detail/shirt";
 import { Pant } from "@/types/production/detail/pant";
 import { BackName } from "@/types/production/detail/back-name";
@@ -31,7 +32,7 @@ export const MonitoringDetail = () => {
     isLoading,
     isError,
     error,
-  } = useFetchProductionDetail(productionId);
+  } = useFetchMonitoringDetail(productionId);
   const [shirts, setShirts] = useState<Shirt[]>([]);
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
