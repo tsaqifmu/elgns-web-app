@@ -5,6 +5,7 @@ export interface MonitoringOverview {
   phoneNumber: string;
   imgUrl: string;
   cdrUrl: string;
+  pdfUrl: string;
   notes: string;
   type: string;
   invoiceNumber: string;
