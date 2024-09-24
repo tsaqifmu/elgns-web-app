@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getProductionDetailMenu } from "@/lib/productionService";
+import { getMonitoringDetailMenu } from "@/lib/monitoringService";
 import { IDetail } from "@/types/production/detail/detail";
 
 import {
@@ -8,11 +8,11 @@ import {
   mapProductionDetailResponse,
 } from "@/types/production/detail/detail-response";
 
-export const useFetchProductionDetail = (productionId: string | undefined) => {
+export const useFetchMonitoringDetail = (productionId: string | undefined) => {
   return useQuery({
-    queryKey: ["productionDetail", productionId],
+    queryKey: ["monitoringDetail", productionId],
     queryFn: async (): Promise<DetailResponse> => {
-      const response = await getProductionDetailMenu(productionId);
+      const response = await getMonitoringDetailMenu(productionId);
       return response;
     },
     select: (response): IDetail => mapProductionDetailResponse(response),

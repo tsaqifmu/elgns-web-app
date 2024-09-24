@@ -6,6 +6,8 @@ import { MonitoringTimelineResponse } from "@/types/monitoring/timeline/monitori
 import { z } from "zod";
 import { Task } from "@/types/monitoring/task";
 import { ColumnItem } from "@/types/monitoring/column-item";
+import { DetailResponse } from "@/types/production/detail/detail-response";
+import { InvoiceResponse } from "@/types/production/invoice/invoice-response";
 
 export const updateTaskPosition = async (
   taskId: string | undefined,
@@ -22,6 +24,22 @@ export const updateTaskPosition = async (
 
 // ------------------------------ MONITORING OVERVIEW ------------------------------
 
+export const getMonitoringDetailMenu = async (
+  productionId: string | undefined,
+): Promise<DetailResponse> => {
+  if (!productionId) return Promise.reject(new Error("id ga ada bro"));
+
+  const response: AxiosResponse<DetailResponse> = await apiRequest({
+    path: "/monitoring/get-card-detail",
+    method: HttpMethod.GET,
+    params: {
+      productionid: productionId,
+    },
+  });
+
+  return response.data;
+};
+
 export const getMonitoringOverview = async (
   productionId: string | undefined,
 ): Promise<MonitoringOverviewResponse> => {
@@ -34,6 +52,22 @@ export const getMonitoringOverview = async (
       productionid: productionId,
     },
   });
+  return response.data;
+};
+
+export const getMonitoringInvoiceMenu = async (
+  productionId: string | undefined,
+): Promise<InvoiceResponse> => {
+  if (!productionId) return Promise.reject(new Error("production id kosong"));
+
+  const response: AxiosResponse<InvoiceResponse> = await apiRequest({
+    path: "/monitoring/get-card-invoice",
+    method: HttpMethod.GET,
+    params: {
+      productionid: productionId,
+    },
+  });
+
   return response.data;
 };
 

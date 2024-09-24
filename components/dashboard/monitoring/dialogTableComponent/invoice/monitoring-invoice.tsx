@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useFetchProductionInvoice } from "@/hooks/production/useFetchProductionInvoice";
+import { useFetchMonitoringInvoice } from "@/hooks/monitoring/useFetchMonitoringInvoice";
 import SkeletonTable from "@/components/dashboard/skeleton-table";
 import ErrorLoadData from "@/components/dashboard/error-load-data";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ export const MonitoringInvoice = () => {
     useShallow((state: DialogMonitoringState) => state.editMonitoringData),
   );
 
-  const fetchQuery = useFetchProductionInvoice(production?._id);
+  const fetchQuery = useFetchMonitoringInvoice(production?._id);
   const { data: invoice, isLoading, isError, error } = fetchQuery;
 
   const { mutate: updateInvoice, isPending } = useUpdateProductionInvoice(

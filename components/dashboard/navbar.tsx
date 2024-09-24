@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Icons } from "@/public/icons";
-import { navLinks } from "@/constants/navbarLink";
+import { navLinks, navLinksUser } from "@/constants/navbarLink";
 import MobileSidebar from "./mobile-nav";
 
 import {
@@ -72,7 +72,7 @@ const Logo: FC = () => (
   </Link>
 );
 
-const UserInfo: FC = () => {
+const UserInfo: FC<any> = ({ role }: any) => {
   const router = useRouter();
   const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
@@ -96,15 +96,17 @@ const UserInfo: FC = () => {
         <DropdownMenuTrigger>
           <div className="flex h-[2.4rem] items-center justify-between gap-x-[0.625rem] rounded-full bg-gray-100 px-[0.625rem] py-2">
             <div className="h-6 w-6 rounded-full bg-gray-900"></div>
-            <h4 className="text-base font-normal lg:text-lg">Admin</h4>
+            <h4 className="text-base font-normal lg:text-lg">{role}</h4>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <Link href={"/admin"}>Menu Admin</Link>
-          </DropdownMenuItem>
+          {role === "Admin" && (
+            <DropdownMenuItem>
+              <Link href={"/admin"}>Menu Admin</Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => setIsAlertOpen((prev) => !prev)}>
             <h4 className="text-destructive">Logout</h4>
           </DropdownMenuItem>
@@ -127,35 +129,45 @@ const UserInfo: FC = () => {
   );
 };
 
-const DesktopMenu: FC = () => (
+const DesktopMenu: FC<any> = ({ isAdmin = true, role }: any) => (
   <div className="hidden w-full items-center lg:flex">
     <nav className="w-full">
       <ul className="flexCenter w-full gap-x-7">
-        {navLinks.map((nav) => (
-          <NavItem
-            href={nav.id}
-            label={nav.title}
-            key={nav.id}
-            icons={nav.icons}
-          />
-        ))}
+        {isAdmin &&
+          navLinks.map((nav) => (
+            <NavItem
+              href={nav.id}
+              label={nav.title}
+              key={nav.id}
+              icons={nav.icons}
+            />
+          ))}
+        {!isAdmin &&
+          navLinksUser.map((nav) => (
+            <NavItem
+              href={nav.id}
+              label={nav.title}
+              key={nav.id}
+              icons={nav.icons}
+            />
+          ))}
       </ul>
     </nav>
-    <UserInfo />
+    <UserInfo role={role} />
   </div>
 );
 
-const NavBar: FC = () => {
+const NavBar: FC<any> = ({ isAdmin = true, role = "Admin" }: any) => {
   return (
     <header className="flexCenter h-14 w-full bg-white text-gray-900">
       <Container className="flex w-full items-center justify-between">
         <Logo />
 
         {/* FOR DESKTOP LAYOUT*/}
-        <DesktopMenu />
+        <DesktopMenu isAdmin={isAdmin} role={role} />
 
         {/* FOR MOBILE LAYOUT */}
-        <MobileSidebar />
+        <MobileSidebar isAdmin={isAdmin} />
       </Container>
     </header>
   );

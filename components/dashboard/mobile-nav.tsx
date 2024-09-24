@@ -1,13 +1,13 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import Sidebar from "./mobile-sidebar-menu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const MobileSidebar = () => {
+const MobileSidebar: FC<any> = ({ isAdmin = true }: { isAdmin: boolean }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const MobileSidebar = () => {
         </Button>
       </SheetTrigger>
       <SheetContent side={"right"} className="w-[230px] p-0">
-        <Sidebar />
+        <Sidebar isAdmin={isAdmin} />
       </SheetContent>
     </Sheet>
   );

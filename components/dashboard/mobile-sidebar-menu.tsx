@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { Icons } from "@/public/icons";
-import { navLinks } from "@/constants/navbarLink";
+import { navLinks, navLinksUser } from "@/constants/navbarLink";
 
 interface ListMenuProps {
   href: string;
@@ -49,20 +49,30 @@ const ListMenu: FC<ListMenuProps> = ({ href, icons, label }) => {
   );
 };
 
-const SidebarMenu = () => {
+const SidebarMenu: FC<any> = ({ isAdmin = true }: { isAdmin: boolean }) => {
   return (
     <>
       <Logo />
       <div className="flex h-full flex-col justify-center p-4">
         <div className="space-y-3">
-          {navLinks.map((navlink) => (
-            <ListMenu
-              key={navlink.id}
-              href={navlink.id}
-              icons={navlink.icons}
-              label={navlink.title}
-            />
-          ))}
+          {isAdmin &&
+            navLinks.map((navlink) => (
+              <ListMenu
+                key={navlink.id}
+                href={navlink.id}
+                icons={navlink.icons}
+                label={navlink.title}
+              />
+            ))}{" "}
+          {!isAdmin &&
+            navLinksUser.map((navlink) => (
+              <ListMenu
+                key={navlink.id}
+                href={navlink.id}
+                icons={navlink.icons}
+                label={navlink.title}
+              />
+            ))}
           <div className="pt-10">{/* <LogoutButton /> */}</div>
         </div>
       </div>
