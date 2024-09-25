@@ -11,12 +11,15 @@ import {
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { getEmptyShirtData, Shirt } from "@/types/production/detail/shirt";
 import { cn } from "@/lib/utils";
+import { MyCombobox } from "./my-combobox";
+import { MaterialAndColor } from "@/types/production/detail/material-and-color";
 
 interface DetailShirtProps {
   shirts: Shirt[];
   setShirts: Dispatch<SetStateAction<Shirt[]>>;
   setTotalItems: () => void;
   isReadOnly?: boolean;
+  materialsAndColors?: MaterialAndColor[];
 }
 
 export const DetailShirt = ({
@@ -24,6 +27,7 @@ export const DetailShirt = ({
   setShirts,
   setTotalItems,
   isReadOnly = false,
+  materialsAndColors = [],
 }: DetailShirtProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>, curShirt: Shirt) => {
     const { name, value } = e.target;
@@ -55,6 +59,38 @@ export const DetailShirt = ({
     setShirts((prevShirts: Shirt[]) => {
       const updatedShirts = prevShirts.map((prevShirt: Shirt) =>
         prevShirt.id === curShirt.id ? updatedCurrentShirt : { ...prevShirt },
+      );
+      return [...updatedShirts];
+    });
+  };
+
+  const handleComboboxMaterialChange = ({ curItem, selectedValue }: any) => {
+    let updatedCurrentShirt = curItem;
+    updatedCurrentShirt = {
+      ...curItem,
+      material: selectedValue,
+      color: "",
+    };
+
+    setShirts((prevShirts: Shirt[]) => {
+      const updatedShirts = prevShirts.map((prevShirt: Shirt) =>
+        prevShirt.id === curItem.id ? updatedCurrentShirt : { ...prevShirt },
+      );
+      return [...updatedShirts];
+    });
+  };
+
+  const handleComboboxColorChange = ({ curItem, selectedValue }: any) => {
+    let updatedCurrentShirt = curItem;
+
+    updatedCurrentShirt = {
+      ...curItem,
+      color: selectedValue,
+    };
+
+    setShirts((prevShirts: Shirt[]) => {
+      const updatedShirts = prevShirts.map((prevShirt: Shirt) =>
+        prevShirt.id === curItem.id ? updatedCurrentShirt : { ...prevShirt },
       );
       return [...updatedShirts];
     });
@@ -126,18 +162,33 @@ export const DetailShirt = ({
                     onChange={(e) => handleChange(e, item)}
                   />
                 </TableCell>
+
                 <TableCell className="p-2 text-sm">
-                  <Input
-                    readOnly={isReadOnly}
-                    className={cn(
-                      "rounded-none bg-transparent p-1 uppercase",
-                      isReadOnly && "border-none",
-                    )}
-                    type="text"
-                    name="material"
-                    value={item.material}
-                    onChange={(e) => handleChange(e, item)}
-                  />
+                  {isReadOnly && (
+                    <Input
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1",
+                        isReadOnly && "border-none",
+                      )}
+                      type="text"
+                      name="material"
+                      value={item.material}
+                      onChange={(e) => handleChange(e, item)}
+                    />
+                  )}
+
+                  {!isReadOnly && (
+                    <MyCombobox
+                      value={item.material}
+                      setValue={handleComboboxMaterialChange}
+                      options={materialsAndColors?.map(
+                        (item: MaterialAndColor) => item.materialName,
+                      )}
+                      placeholder={"Pilih Bahan..."}
+                      item={item}
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="p-2 text-sm">
                   <Input
@@ -153,17 +204,33 @@ export const DetailShirt = ({
                   />
                 </TableCell>
                 <TableCell className="p-2 text-sm">
-                  <Input
-                    readOnly={isReadOnly}
-                    className={cn(
-                      "rounded-none bg-transparent p-1 uppercase",
-                      isReadOnly && "border-none",
-                    )}
-                    type="text"
-                    name="color"
-                    value={item.color}
-                    onChange={(e) => handleChange(e, item)}
-                  />
+                  {isReadOnly && (
+                    <Input
+                      readOnly={isReadOnly}
+                      className={cn(
+                        "rounded-none bg-transparent p-1",
+                        isReadOnly && "border-none",
+                      )}
+                      type="text"
+                      name="color"
+                      value={item.color}
+                      onChange={(e) => handleChange(e, item)}
+                    />
+                  )}
+                  {!isReadOnly && (
+                    <MyCombobox
+                      value={item.color}
+                      setValue={handleComboboxColorChange}
+                      options={
+                        materialsAndColors.find(
+                          (i: MaterialAndColor) =>
+                            i.materialName === item.material,
+                        )?.colors ?? []
+                      }
+                      placeholder={"Pilih Warna..."}
+                      item={item}
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="p-2 text-sm">
                   <Input

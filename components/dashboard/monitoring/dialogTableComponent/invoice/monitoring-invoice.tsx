@@ -65,7 +65,7 @@ export const MonitoringInvoice = () => {
   // CALCULATE TOTAL PRICE AFTER ANY CHANGES IN INVOICE
   useEffect(() => {
     let totalPrice = 0;
-    tableInvoice.forEach((item) => (totalPrice += item.total));
+    tableInvoice.forEach((item) => (totalPrice += item.total ?? 0));
     setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
   }, [tableInvoice]);
 
@@ -100,11 +100,11 @@ export const MonitoringInvoice = () => {
     if (name === "quantity") {
       valueInNumber = parseInt(value);
       if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * prevData!.price;
+      totalPrice = valueInNumber * (prevData!.price ?? 0);
     } else {
       valueInNumber = formatRupiahToNumber(value);
       if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * prevData!.quantity;
+      totalPrice = valueInNumber * (prevData!.quantity ?? 0);
     }
 
     setTableInvoice((prevInvoices: InvoiceTableItem[]) =>
@@ -183,7 +183,7 @@ export const MonitoringInvoice = () => {
               <div className="flex basis-1/2 flex-col gap-2">
                 <h1>
                   <span className="font-medium text-gray-500">NO INVOICE:</span>
-                  <span className="ms-2 font-light uppercase text-gray-500">
+                  <span className="ms-2 font-light text-gray-500">
                     {invoice.invoiceNumber}
                   </span>
                 </h1>
@@ -228,19 +228,10 @@ export const MonitoringInvoice = () => {
                     <TableRow key={item.id}>
                       <TableCell className="text-sm">{index + 1}</TableCell>
                       <TableCell className="text-sm uppercase">
-                        {item.type}
+                        {item.type ?? "-"}
                       </TableCell>
                       <TableCell className="text-sm">
-                        {/* {isEditing && (
-                          <Input
-                            className="rounded-none bg-transparent p-1 uppercase"
-                            type="number"
-                            name="quantity"
-                            value={item.quantity}
-                            onChange={(e) => handleInvoiceChange(e, item)}
-                          />
-                        )} */}
-                        {item.quantity}
+                        {item.quantity ?? 0}
                       </TableCell>
                       <TableCell className="text-sm">
                         {isEditing && (

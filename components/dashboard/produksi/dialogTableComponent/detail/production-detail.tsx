@@ -19,8 +19,12 @@ import { Pant } from "@/types/production/detail/pant";
 import { BackName } from "@/types/production/detail/back-name";
 import { DetailPant } from "./detail-pant";
 import { IDetail } from "@/types/production/detail/detail";
+import { useFetchMaterialsAndColors } from "@/hooks/production/useFetchMaterialsAndColors";
 
 export const ProductionDetail = () => {
+  const [shirts, setShirts] = useState<Shirt[]>([]);
+  const [pants, setPants] = useState<Pant[]>([]);
+  const [backNames, setBackNames] = useState<BackName[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [editProductionData, _] = useDialogProductionStore(
     useShallow((state: DialogProductionState & DialogProductionAction) => [
@@ -28,26 +32,26 @@ export const ProductionDetail = () => {
       state.closeEditProductionDialog,
     ]),
   );
-  const production = editProductionData;
   const {
-    data: productionDetailData,
+    data: productionDetailApiResponse,
     isLoading,
     isError,
     error,
-  } = useFetchProductionDetail(production?.id);
-  const [shirts, setShirts] = useState<Shirt[]>([]);
-  const [pants, setPants] = useState<Pant[]>([]);
-  const [backNames, setBackNames] = useState<BackName[]>([]);
+  } = useFetchProductionDetail(editProductionData?.id);
+
+  const { data: materialsAndColors, isLoading: isFetchingMaterialsAndColors } =
+    useFetchMaterialsAndColors();
+
   const { mutate: updateProductionDetail, isPending } =
-    useUpdateProductionDetail(production?.id, () => {});
+    useUpdateProductionDetail(editProductionData?.id, () => {});
 
   useEffect(() => {
-    if (!productionDetailData) return;
+    if (!productionDetailApiResponse) return;
 
-    setShirts(productionDetailData.data.shirts);
-    setPants(productionDetailData.data.pants);
-    setBackNames(productionDetailData.data.backNames);
-  }, [productionDetailData]);
+    setShirts(productionDetailApiResponse.data.shirts);
+    setPants(productionDetailApiResponse.data.pants);
+    setBackNames(productionDetailApiResponse.data.backNames);
+  }, [productionDetailApiResponse]);
 
   const handleSubmit = () => {
     const payload: IDetail = {
@@ -58,6 +62,7 @@ export const ProductionDetail = () => {
         backNames: backNames,
       },
     };
+
     updateProductionDetail(payload);
   };
 
@@ -69,30 +74,33 @@ export const ProductionDetail = () => {
   };
 
   const renderContent = () => {
-    if (isLoading)
+    if (isLoading || isFetchingMaterialsAndColors)
       return (
         <div className="p-4">
           <SkeletonTable />
         </div>
       );
     if (isError) return <ErrorLoadData error={error} />;
-    if (productionDetailData) {
+    if (productionDetailApiResponse) {
       return (
         <div>
           <div className="flex flex-col gap-4 px-5 pb-5">
             <div className="flex justify-between font-medium">
               <h1>BAJU</h1>
               <h1>TOTAL: {totalItems}</h1>
-            </div>{" "}
+            </div>
             <DetailShirt
               shirts={shirts}
               setShirts={setShirts}
               setTotalItems={setTotalItemsValue}
+              materialsAndColors={materialsAndColors}
             />
+
             <DetailPant
               pants={pants}
               setPants={setPants}
               setTotalItems={setTotalItemsValue}
+              materialsAndColors={materialsAndColors}
             />
             <DetailBackName backNames={backNames} setBackNames={setBackNames} />
           </div>

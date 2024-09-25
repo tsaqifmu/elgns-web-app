@@ -11,12 +11,15 @@ import {
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import { getEmptyPantData, Pant } from "@/types/production/detail/pant";
 import { cn } from "@/lib/utils";
+import { MyCombobox } from "./my-combobox";
+import { MaterialAndColor } from "@/types/production/detail/material-and-color";
 
 interface DetailPantProps {
   pants: Pant[];
   setPants: Dispatch<SetStateAction<Pant[]>>;
   setTotalItems: () => void;
   isReadOnly?: boolean;
+  materialsAndColors?: MaterialAndColor[];
 }
 
 export const DetailPant = ({
@@ -24,6 +27,7 @@ export const DetailPant = ({
   setPants,
   setTotalItems,
   isReadOnly = false,
+  materialsAndColors = [],
 }: DetailPantProps) => {
   const handleChange = (e: ChangeEvent<HTMLInputElement>, curPant: Pant) => {
     const { name, value } = e.target;
@@ -55,6 +59,38 @@ export const DetailPant = ({
     setPants((prevPants: Pant[]) => {
       const updatedPants = prevPants.map((prevPant: Pant) =>
         prevPant.id === curPant.id ? updatedCurrentPant : { ...prevPant },
+      );
+      return [...updatedPants];
+    });
+  };
+
+  const handleComboboxMaterialChange = ({ curItem, selectedValue }: any) => {
+    let updatedCurrentPant = curItem;
+    updatedCurrentPant = {
+      ...curItem,
+      material: selectedValue,
+      color: "",
+    };
+
+    setPants((prevPants: Pant[]) => {
+      const updatedPants = prevPants.map((prevPant: Pant) =>
+        prevPant.id === curItem.id ? updatedCurrentPant : { ...prevPant },
+      );
+      return [...updatedPants];
+    });
+  };
+
+  const handleComboboxColorChange = ({ curItem, selectedValue }: any) => {
+    let updatedCurrentPant = curItem;
+
+    updatedCurrentPant = {
+      ...curItem,
+      color: selectedValue,
+    };
+
+    setPants((prevPants: Pant[]) => {
+      const updatedPants = prevPants.map((prevPant: Pant) =>
+        prevPant.id === curItem.id ? updatedCurrentPant : { ...prevPant },
       );
       return [...updatedPants];
     });
@@ -124,17 +160,31 @@ export const DetailPant = ({
                     />
                   </TableCell>
                   <TableCell className="p-2 text-sm">
-                    <Input
-                      readOnly={isReadOnly}
-                      className={cn(
-                        "rounded-none bg-transparent p-1 uppercase",
-                        isReadOnly && "border-none",
-                      )}
-                      type="text"
-                      name="material"
-                      value={item.material}
-                      onChange={(e) => handleChange(e, item)}
-                    />
+                    {isReadOnly && (
+                      <Input
+                        readOnly={isReadOnly}
+                        className={cn(
+                          "rounded-none bg-transparent p-1",
+                          isReadOnly && "border-none",
+                        )}
+                        type="text"
+                        name="material"
+                        value={item.material}
+                        onChange={(e) => handleChange(e, item)}
+                      />
+                    )}
+
+                    {!isReadOnly && (
+                      <MyCombobox
+                        value={item.material}
+                        setValue={handleComboboxMaterialChange}
+                        options={materialsAndColors?.map(
+                          (item: MaterialAndColor) => item.materialName,
+                        )}
+                        placeholder={"Pilih Bahan..."}
+                        item={item}
+                      />
+                    )}
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input
@@ -150,17 +200,33 @@ export const DetailPant = ({
                     />
                   </TableCell>
                   <TableCell className="p-2 text-sm">
-                    <Input
-                      readOnly={isReadOnly}
-                      className={cn(
-                        "rounded-none bg-transparent p-1 uppercase",
-                        isReadOnly && "border-none",
-                      )}
-                      type="text"
-                      name="color"
-                      value={item.color}
-                      onChange={(e) => handleChange(e, item)}
-                    />
+                    {isReadOnly && (
+                      <Input
+                        readOnly={isReadOnly}
+                        className={cn(
+                          "rounded-none bg-transparent p-1",
+                          isReadOnly && "border-none",
+                        )}
+                        type="text"
+                        name="color"
+                        value={item.color}
+                        onChange={(e) => handleChange(e, item)}
+                      />
+                    )}
+                    {!isReadOnly && (
+                      <MyCombobox
+                        value={item.color}
+                        setValue={handleComboboxColorChange}
+                        options={
+                          materialsAndColors.find(
+                            (i: MaterialAndColor) =>
+                              item.material === i.materialName,
+                          )?.colors ?? []
+                        }
+                        placeholder={"Pilih Warna..."}
+                        item={item}
+                      />
+                    )}
                   </TableCell>
                   <TableCell className="p-2 text-sm">
                     <Input

@@ -47,7 +47,7 @@ const DialogTableMonitoringDetail = () => {
   const getContentWidth = () => {
     switch (activeMenu) {
       case "DETAIL":
-        return "max-w-7xl";
+        return "max-w-[86rem]";
       default:
         return "max-w-[737px]";
     }
@@ -57,7 +57,7 @@ const DialogTableMonitoringDetail = () => {
     <Dialog open={isOpen} onOpenChange={closeDetailMonitoringDialog}>
       <DialogContent
         className={cn(
-          "max-w-screen scrollbar-hide max-h-screen overflow-scroll font-oswald",
+          "scrollbar-hide max-h-screen overflow-scroll font-oswald",
           getContentWidth(),
         )}
       >
