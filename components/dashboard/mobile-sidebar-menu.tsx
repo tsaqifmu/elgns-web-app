@@ -1,12 +1,28 @@
 "use client";
 
-import { FC } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { FC, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { cn } from "@/lib/utils";
+
 import { Icons } from "@/public/icons";
 import { navLinks, navLinksUser } from "@/constants/navbarLink";
+
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ListMenuProps {
   href: string;
@@ -24,6 +40,44 @@ const Logo = () => (
     </Link>
   </div>
 );
+
+const LogoutButton = () => {
+  const router = useRouter();
+
+  const { mutate: logOut, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest({
+        path: "/auth/signout",
+        method: HttpMethod.GET,
+      });
+      return response;
+    },
+    onSuccess: () => {
+      Cookies.remove("accessToken");
+      router.push("/");
+    },
+  });
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline">
+          <h4 className="text-destructive">Logout</h4>
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Apakah anda yakin ingin keluar?</AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Batal</AlertDialogCancel>
+          <AlertDialogAction disabled={isPending} onClick={() => logOut()}>
+            Gasss!
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
 const ListMenu: FC<ListMenuProps> = ({ href, icons, label }) => {
   const pathname = usePathname();
@@ -73,7 +127,9 @@ const SidebarMenu: FC<any> = ({ isAdmin = true }: { isAdmin: boolean }) => {
                 label={navlink.title}
               />
             ))}
-          <div className="pt-10">{/* <LogoutButton /> */}</div>
+          <div className="pt-10">
+            <LogoutButton />
+          </div>
         </div>
       </div>
     </>
