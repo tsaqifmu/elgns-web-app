@@ -43,7 +43,6 @@ const ProductionPage: FC = () => {
             data={dataSource as any}
           />
           <DataTablePagination dataInfo={dataInfo} />
-
           <DialogTableEdit />
           <DialogTableDelete />
         </>

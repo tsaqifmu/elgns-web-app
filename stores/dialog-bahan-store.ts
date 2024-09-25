@@ -1,35 +1,35 @@
 import { create } from "zustand";
-import { BahanDataColumns } from "@/types/bahan/bahan-data-response";
+import { FabricDataColumns } from "@/types/bahan/bahan-data-response";
 
-export interface DialogBahanState {
-  createBahanData?: boolean;
-  detailCustomerData?: BahanDataColumns;
-  editBahanData?: BahanDataColumns;
-  deleteBahanData?: BahanDataColumns;
+export interface DialogFabricState {
+  createFabricData?: boolean;
+  detailCustomerData?: FabricDataColumns;
+  editFabricData?: FabricDataColumns;
+  deleteFabricData?: FabricDataColumns;
 }
 
-export interface DialogBahanAction {
-  openCreateBahanDialog: () => void;
-  closeCreateBahanDialog: () => void;
-  openEditBahanDialog: (data: BahanDataColumns) => void;
-  closeEditBahanDialog: () => void;
-  openDeleteBahanDialog: (data: BahanDataColumns) => void;
-  closeDeleteBahanDialog: () => void;
+export interface DialogFabricAction {
+  openCreateFabricDialog: () => void;
+  closeCreateFabricDialog: () => void;
+  openEditFabricDialog: (data: FabricDataColumns) => void;
+  closeEditFabricDialog: () => void;
+  openDeleteFabricDialog: (data: FabricDataColumns) => void;
+  closeDeleteFabricDialog: () => void;
 }
 
-export const useDialogBahanStore = create<DialogBahanState & DialogBahanAction>(
-  (set) => ({
-    createBahanData: undefined,
-    detailCustomerData: undefined,
-    editBahanData: undefined,
-    deleteBahanData: undefined,
-    openCreateBahanDialog: () => set({ createBahanData: true }),
-    closeCreateBahanDialog: () => set({ createBahanData: undefined }),
-    openEditBahanDialog: (data: BahanDataColumns) =>
-      set({ editBahanData: data }),
-    closeEditBahanDialog: () => set({ editBahanData: undefined }),
-    openDeleteBahanDialog: (data: BahanDataColumns) =>
-      set({ deleteBahanData: data }),
-    closeDeleteBahanDialog: () => set({ deleteBahanData: undefined }),
-  }),
-);
+export const useDialogBahanStore = create<
+  DialogFabricState & DialogFabricAction
+>((set) => ({
+  createFabricData: undefined,
+  detailCustomerData: undefined,
+  editFabricData: undefined,
+  deleteFabricData: undefined,
+  openCreateFabricDialog: () => set({ createFabricData: true }),
+  closeCreateFabricDialog: () => set({ createFabricData: undefined }),
+  openEditFabricDialog: (data: FabricDataColumns) =>
+    set({ editFabricData: data }),
+  closeEditFabricDialog: () => set({ editFabricData: undefined }),
+  openDeleteFabricDialog: (data: FabricDataColumns) =>
+    set({ deleteFabricData: data }),
+  closeDeleteFabricDialog: () => set({ deleteFabricData: undefined }),
+}));
