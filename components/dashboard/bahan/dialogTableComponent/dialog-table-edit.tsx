@@ -40,47 +40,46 @@ import {
 import { adminSchema } from "@/schemas/adminSchema";
 import { useUpdateUserData } from "@/hooks/admin/useAdmin";
 import {
-  DialogBahanAction,
-  DialogBahanState,
+  DialogFabricAction,
+  DialogFabricState,
   useDialogBahanStore,
 } from "@/stores/dialog-bahan-store";
-import { clothSchema } from "@/schemas/bahanSchema";
+import { fabricUpdateStockSchema } from "@/schemas/bahanSchema";
+import { useUpdateFabricData } from "@/hooks/bahan/useBahan";
 
 const DialogTableEditBahan = () => {
-  const [editBahanData, closeEditBahanDialog] = useDialogBahanStore(
-    useShallow((state: DialogBahanState & DialogBahanAction) => [
-      state.editBahanData,
-      state.closeEditBahanDialog,
+  const [editFabricData, closeEditFabricDialog] = useDialogBahanStore(
+    useShallow((state: DialogFabricState & DialogFabricAction) => [
+      state.editFabricData,
+      state.closeEditFabricDialog,
     ]),
   );
-  const isOpen = editBahanData !== undefined;
-  const user = editBahanData;
+  const isOpen = editFabricData !== undefined;
+  const fabric = editFabricData;
 
-  const form = useForm<z.infer<typeof clothSchema>>({
-    resolver: zodResolver(clothSchema),
+  const form = useForm<z.infer<typeof fabricUpdateStockSchema>>({
+    resolver: zodResolver(fabricUpdateStockSchema),
     values: {
-      clothName: user?.name || "",
-      color: user?.color || "",
-      stock: user?.color || "",
+      // fabricName: user?.name || "",
+      // color: user?.color || "",
+      stock: fabric?.stock || 0,
     },
   });
 
-  // const { mutate: updateCustomerData, isPending } = useUpdateUserData(
-  //   user?.id,
-  //   closeEditAdminDialog,
-  // );
+  const { mutate: updateFabricData, isPending } = useUpdateFabricData(
+    fabric?.id,
+    closeEditFabricDialog,
+  );
 
-  function onSubmit(values: z.infer<typeof clothSchema>) {
+  function onSubmit(values: z.infer<typeof fabricUpdateStockSchema>) {
     const payload = {
-      clothName: values.clothName,
-      color: values.color,
-      email: values.stock,
+      stock: values.stock,
     };
-    // updateCustomerData(payload);
+    updateFabricData(payload);
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={closeEditBahanDialog}>
+    <Dialog open={isOpen} onOpenChange={closeEditFabricDialog}>
       <DialogContent>
         <DialogHeader className="bg-yellow-500">
           <DialogTitle>EDIT DATA BAHAN</DialogTitle>
@@ -89,9 +88,9 @@ const DialogTableEditBahan = () => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex w-full gap-5 px-5 pb-5">
               <div className="flex basis-full flex-col gap-5">
-                <FormField
+                {/* <FormField
                   control={form.control}
-                  name="clothName"
+                  name="fabricName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>NAMA KAIN</FormLabel>
@@ -105,18 +104,18 @@ const DialogTableEditBahan = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <FormField
                   control={form.control}
                   name="stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stock Awal (KG)</FormLabel>
+                      <FormLabel>Stock (KG)</FormLabel>
                       <FormControl>
                         <Input
                           className="focus-visible:ring-yellow-500"
                           placeholder="Masukkan stock"
-                          type="tel"
+                          type="number"
                           {...field}
                         />
                       </FormControl>
@@ -124,7 +123,7 @@ const DialogTableEditBahan = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="color"
                   render={({ field }) => (
@@ -140,7 +139,7 @@ const DialogTableEditBahan = () => {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
               </div>
             </div>
 
@@ -155,12 +154,12 @@ const DialogTableEditBahan = () => {
                   Batal
                 </Button>
               </DialogClose>
-              {/* <ButtonPending
+              <ButtonPending
                 isPending={isPending}
                 variant={"yellow"}
                 size={"modalTable"}
                 title="Simpan"
-              /> */}
+              />
             </DialogFooter>
           </form>
         </Form>

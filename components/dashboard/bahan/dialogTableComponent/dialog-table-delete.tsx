@@ -1,9 +1,9 @@
 import { useShallow } from "zustand/react/shallow";
-import { useDeleteUserData } from "@/hooks/admin/useAdmin";
+import { useDeleteFabricData } from "@/hooks/bahan/useBahan";
 
 import {
-  DialogBahanAction,
-  DialogBahanState,
+  DialogFabricAction,
+  DialogFabricState,
   useDialogBahanStore,
 } from "@/stores/dialog-bahan-store";
 
@@ -19,23 +19,24 @@ import {
 
 const DialogTableDeleteBahan = () => {
   // Zustand store
-  const [deleteBahanData, closeDeleteBahanDialog] = useDialogBahanStore(
-    useShallow((state: DialogBahanState & DialogBahanAction) => [
-      state.deleteBahanData,
-      state.closeDeleteBahanDialog,
+  const [deleteFabricData, closeDeleteFabricDialog] = useDialogBahanStore(
+    useShallow((state: DialogFabricState & DialogFabricAction) => [
+      state.deleteFabricData,
+      state.closeDeleteFabricDialog,
     ]),
   );
-  const isDialogOpen = deleteBahanData !== undefined;
-  const user = deleteBahanData;
 
-  // const { mutate: deleteUser, isPending } = useDeleteUserData(
-  //   user?.id,
-  //   closeDeleteBahanDialog,
-  // );
+  const isDialogOpen = deleteFabricData !== undefined;
+  const fabric = deleteFabricData;
+
+  const { mutate: deleteFabric, isPending } = useDeleteFabricData(
+    fabric?.id,
+    closeDeleteFabricDialog,
+  );
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={closeDeleteBahanDialog}>
+      <Dialog open={isDialogOpen} onOpenChange={closeDeleteFabricDialog}>
         <DialogContent className="max-w-[737px]">
           <DialogHeader className="bg-destructive">
             <DialogTitle>HAPUS DATA BAHAN</DialogTitle>
@@ -43,8 +44,8 @@ const DialogTableDeleteBahan = () => {
 
           <div className="h-80 px-5 pb-5">
             <p className="text-base font-normal">
-              Data Customer <span className="font-bold">{user?.name}</span> akan
-              dihapus, Anda Yakin?
+              Data Customer <span className="font-bold">{fabric?.name}</span>{" "}
+              akan dihapus, Anda Yakin?
             </p>
           </div>
 
@@ -59,18 +60,18 @@ const DialogTableDeleteBahan = () => {
                 Batal
               </Button>
             </DialogClose>
-            {/* <Button
+            <Button
               size={"modalTable"}
               variant={"destructive"}
               type="submit"
               className="uppercase"
               disabled={isPending}
               onClick={() => {
-                deleteUser();
+                deleteFabric();
               }}
             >
               Hapus
-            </Button> */}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

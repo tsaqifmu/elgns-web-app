@@ -22,7 +22,7 @@ const DashboardPage = () => {
 
   if (isError) <ErrorLoadData error={error} />;
 
-  // if (isAdmin) return <AdminDashboard />;
+  if (isAdmin) return <AdminDashboard />;
 };
 
 export default DashboardPage;

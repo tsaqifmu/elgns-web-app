@@ -5,7 +5,7 @@ import { CirclePlus } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
 import {
-  DialogBahanAction,
+  DialogFabricAction,
   useDialogBahanStore,
 } from "@/stores/dialog-bahan-store";
 
@@ -15,6 +15,11 @@ import { getColumnsBahan } from "@/components/dashboard/bahan/columns";
 import DialogTableCreateBahan from "@/components/dashboard/bahan/dialogTableComponent/dialog-table-create";
 import DialogTableDeleteBahan from "@/components/dashboard/bahan/dialogTableComponent/dialog-table-delete";
 import DialogTableEditBahan from "@/components/dashboard/bahan/dialogTableComponent/dialog-table-edit";
+import { useFetchFabricData } from "@/hooks/bahan/useBahan";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
+import ToggleFabricColor from "@/components/dashboard/bahan/toggle-fabric-color";
 
 export type BahanDataColumns = {
   id: string;
@@ -24,97 +29,60 @@ export type BahanDataColumns = {
   stock: string;
 };
 
-const dataSource: BahanDataColumns[] = [
-  {
-    id: "1",
-    name: "jaka",
-    stock: "12",
-    used: "10",
-    weight: "10",
-  },
-  {
-    id: "1",
-    name: "jaka",
-    stock: "12",
-    used: "10",
-    weight: "10",
-  },
-  {
-    id: "1",
-    name: "jaka",
-    stock: "12",
-    used: "10",
-    weight: "10",
-  },
-  {
-    id: "1",
-    name: "jaka",
-    stock: "12",
-    used: "10",
-    weight: "10",
-  },
-  {
-    id: "1",
-    name: "jaka",
-    stock: "12",
-    used: "10",
-    weight: "10",
-  },
-];
-
-const BahanPage = () => {
+const FabricPage = () => {
   const [cloth, setCloth] = useState<string>("white");
 
+  const { data, isError, isLoading, error } = useFetchFabricData();
+
+  const dataSource = data?.docs;
+  const dataInfo = data?.dataInfo;
+
+  console.log(data);
+
   // Zustand store
-  const [openCreateBahanDialog, openEditBahanDialog, openDeleteBahanDialog] =
+  const [openCreateFabricDialog, openEditFabricDialog, openDeleteFabricDialog] =
     useDialogBahanStore(
-      useShallow((state: DialogBahanAction) => [
-        state.openCreateBahanDialog,
-        state.openEditBahanDialog,
-        state.openDeleteBahanDialog,
+      useShallow((state: DialogFabricAction) => [
+        state.openCreateFabricDialog,
+        state.openEditFabricDialog,
+        state.openDeleteFabricDialog,
       ]),
     );
 
-  console.log(openCreateBahanDialog);
+  const columns = getColumnsBahan(openEditFabricDialog, openDeleteFabricDialog);
 
-  const columns = getColumnsBahan(openEditBahanDialog, openDeleteBahanDialog);
+  const renderContent = () => {
+    if (isLoading) return <SkeletonTable />;
+    if (isError) return <ErrorLoadData error={error} />;
+    if (dataSource)
+      return (
+        <>
+          <DataTable columns={columns} data={dataSource as any} />
+          <DataTablePagination dataInfo={dataInfo} />
+          <DialogTableCreateBahan />
+          <DialogTableEditBahan />
+          <DialogTableDeleteBahan />
+        </>
+      );
+    return null;
+  };
 
   return (
     <>
       <header className="flex items-center justify-between">
-        <div className="w-full space-x-2">
-          <Button
-            variant={"outline"}
-            className="border-teal bg-teal/20 text-xs font-bold uppercase text-teal lg:text-lg"
-            // onClick={openCreateAdminDialog}
-          >
-            <p>KAIN PUTIH</p>
-          </Button>
-          <Button
-            variant={"outline"}
-            className="space-x-1 text-xs uppercase lg:space-x-3 lg:text-base"
-            // onClick={openCreateAdminDialog}
-          >
-            <p>KAIN WARNA</p>
-          </Button>
-        </div>
+        <ToggleFabricColor />
         <Button
           variant={"teal"}
           className="space-x-1 text-xs lg:space-x-3 lg:text-base"
-          onClick={openCreateBahanDialog}
+          onClick={openCreateFabricDialog}
         >
           <p>TAMBAH KAIN</p>
           <CirclePlus className="w-4 lg:w-6" />
         </Button>
       </header>
-      <main className="mt-9">
-        <DataTable columns={columns} data={dataSource as any} />
-        <DialogTableCreateBahan />
-        <DialogTableEditBahan />
-        <DialogTableDeleteBahan />
-      </main>
+      <main className="mt-9">{renderContent()}</main>
     </>
   );
 };
 
-export default BahanPage;
+export default FabricPage;

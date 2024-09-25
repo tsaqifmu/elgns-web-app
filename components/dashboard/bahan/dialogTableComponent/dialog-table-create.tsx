@@ -3,15 +3,9 @@ import { useForm } from "react-hook-form";
 import { useShallow } from "zustand/react/shallow";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAddCustomerData } from "@/hooks/customer/useCustomers";
+import { useAddFabricData } from "@/hooks/bahan/useBahan";
 
-import {
-  DialogAdminAction,
-  DialogAdminState,
-  useDialogAdminStore,
-} from "@/stores/dialog-admin-store";
-
-import { clothSchema } from "@/schemas/bahanSchema";
+import { fabricSchema } from "@/schemas/bahanSchema";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,13 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Dialog,
   DialogClose,
@@ -40,47 +28,41 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  DialogBahanAction,
-  DialogBahanState,
+  DialogFabricAction,
+  DialogFabricState,
   useDialogBahanStore,
 } from "@/stores/dialog-bahan-store";
 
-const DialogTableCreateBahan = () => {
-  const [createBahanData, closeCreateBahanDialog] = useDialogBahanStore(
-    useShallow((state: DialogBahanState & DialogBahanAction) => [
-      state.createBahanData,
-      state.closeCreateBahanDialog,
+const DialogTableCreateFabric = () => {
+  const [createFabricData, closeCreateFabricDialog] = useDialogBahanStore(
+    useShallow((state: DialogFabricState & DialogFabricAction) => [
+      state.createFabricData,
+      state.closeCreateFabricDialog,
     ]),
   );
-  const isDialogOpen = createBahanData;
+  const isDialogOpen = createFabricData;
 
-  console.log(isDialogOpen);
-
-  const form = useForm<z.infer<typeof clothSchema>>({
-    resolver: zodResolver(clothSchema),
-    defaultValues: {
-      clothName: "",
-      color: "",
-      stock: "",
-    },
+  const form = useForm<z.infer<typeof fabricSchema>>({
+    resolver: zodResolver(fabricSchema),
   });
 
-  // const { mutate: sendUserData, isPending } = useAddUserData(
-  //   closeCreateAdminDialog,
-  // );
+  const { mutate: sendFabricData, isPending } = useAddFabricData(
+    closeCreateFabricDialog,
+  );
 
-  function onSubmit(values: z.infer<typeof clothSchema>) {
+  function onSubmit(values: z.infer<typeof fabricSchema>) {
+    console.log(values.stock);
     const payload = {
-      clothName: values.clothName,
+      name: values.fabricName,
       color: values.color,
-      email: values.stock,
+      stock: values.stock,
     };
 
-    // sendUserData(payload);
+    sendFabricData(payload);
   }
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={closeCreateBahanDialog}>
+    <Dialog open={isDialogOpen} onOpenChange={closeCreateFabricDialog}>
       <DialogContent>
         <DialogHeader className="bg-teal">
           <DialogTitle>MENAMBAH DATA BAHAN</DialogTitle>
@@ -92,7 +74,7 @@ const DialogTableCreateBahan = () => {
               <div className="flex basis-full flex-col gap-5">
                 <FormField
                   control={form.control}
-                  name="clothName"
+                  name="fabricName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>NAMA KAIN</FormLabel>
@@ -116,6 +98,7 @@ const DialogTableCreateBahan = () => {
                       <FormLabel>STOCK AWAL (KG)</FormLabel>
                       <FormControl>
                         <Input
+                          type="number"
                           className="focus-visible:ring-teal"
                           placeholder="Masukkan stock"
                           {...field}
@@ -125,6 +108,7 @@ const DialogTableCreateBahan = () => {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="color"
@@ -156,12 +140,12 @@ const DialogTableCreateBahan = () => {
                   Batal
                 </Button>
               </DialogClose>
-              {/* <ButtonPending
-                // isPending={isPending}
+              <ButtonPending
+                isPending={isPending}
                 variant={"teal"}
                 size={"modalTable"}
                 title="Simpan"
-              /> */}
+              />
             </DialogFooter>
           </form>
         </Form>
@@ -170,4 +154,4 @@ const DialogTableCreateBahan = () => {
   );
 };
 
-export default DialogTableCreateBahan;
+export default DialogTableCreateFabric;

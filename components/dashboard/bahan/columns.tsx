@@ -6,11 +6,12 @@ import IconEdit from "@/public/icons/table/edit.svg";
 import IconDelete from "@/public/icons/table/delete.svg";
 
 import { Button } from "@/components/ui/button";
-import { BahanDataColumns } from "@/types/bahan/bahan-data-response";
+import { FabricDataColumns } from "@/types/bahan/bahan-data-response";
 import { cn } from "@/lib/utils";
 
 const HEADER_TITLES = {
-  name: "NAMA ",
+  name: "NAMA",
+  color: "WARNA",
   weight: "BERAT (KG)",
   used: "TERPAKAI",
   stock: "STOCK AKHIR",
@@ -26,9 +27,9 @@ const ColumnHeader = ({ title }: { title: string }) => {
 };
 
 export const getColumnsBahan = (
-  openEditDialog: (data: BahanDataColumns) => void,
-  openDeleteDialog: (data: BahanDataColumns) => void,
-): ColumnDef<BahanDataColumns>[] => {
+  openEditDialog: (data: FabricDataColumns) => void,
+  openDeleteDialog: (data: FabricDataColumns) => void,
+): ColumnDef<FabricDataColumns>[] => {
   return [
     {
       id: "initial",
@@ -54,7 +55,11 @@ export const getColumnsBahan = (
       header: () => <ColumnHeader title={HEADER_TITLES.name} />,
     },
     {
-      accessorKey: "weight",
+      accessorKey: "color",
+      header: () => <ColumnHeader title={HEADER_TITLES.color} />,
+    },
+    {
+      accessorKey: "stock",
       header: () => <ColumnHeader title={HEADER_TITLES.weight} />,
     },
     {
@@ -62,7 +67,7 @@ export const getColumnsBahan = (
       header: () => <ColumnHeader title={HEADER_TITLES.used} />,
     },
     {
-      accessorKey: "stock",
+      accessorKey: "remaining",
       header: () => <ColumnHeader title={HEADER_TITLES.stock} />,
     },
 
