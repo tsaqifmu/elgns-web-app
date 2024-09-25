@@ -119,7 +119,7 @@ const UserInfo: FC<any> = ({ role }: any) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={() => logOut()}>
+            <AlertDialogAction disabled={isPending} onClick={() => logOut()}>
               Gasss!
             </AlertDialogAction>
           </AlertDialogFooter>
