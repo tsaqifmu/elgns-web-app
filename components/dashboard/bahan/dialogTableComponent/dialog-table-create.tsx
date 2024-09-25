@@ -7,6 +7,12 @@ import { useAddFabricData } from "@/hooks/bahan/useBahan";
 
 import { fabricSchema } from "@/schemas/bahanSchema";
 
+import {
+  DialogFabricAction,
+  DialogFabricState,
+  useDialogBahanStore,
+} from "@/stores/dialog-bahan-store";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import ButtonPending from "@/components/button-pending";
@@ -27,11 +33,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  DialogFabricAction,
-  DialogFabricState,
-  useDialogBahanStore,
-} from "@/stores/dialog-bahan-store";
 
 const DialogTableCreateFabric = () => {
   const [createFabricData, closeCreateFabricDialog] = useDialogBahanStore(

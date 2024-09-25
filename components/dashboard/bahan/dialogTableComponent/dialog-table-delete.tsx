@@ -44,8 +44,8 @@ const DialogTableDeleteBahan = () => {
 
           <div className="h-80 px-5 pb-5">
             <p className="text-base font-normal">
-              Data Customer <span className="font-bold">{fabric?.name}</span>{" "}
-              akan dihapus, Anda Yakin?
+              Data Bahan <span className="font-bold">{fabric?.name}</span> akan
+              dihapus, Anda Yakin?
             </p>
           </div>
 
