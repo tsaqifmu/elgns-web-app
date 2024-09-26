@@ -113,7 +113,7 @@ const DialogTableEdit = () => {
                       <FormLabel>NAMA BRAND</FormLabel>
                       <FormControl>
                         <Input
-                          className="uppercase focus-visible:ring-yellow-500"
+                          className="focus-visible:ring-yellow-500"
                           placeholder="Masukkan nama brand"
                           {...field}
                         />

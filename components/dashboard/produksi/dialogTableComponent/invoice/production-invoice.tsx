@@ -50,47 +50,17 @@ export const ProductionInvoice = () => {
     ]),
   );
 
-  const fetchQuery = useFetchProductionInvoice(production?.id);
-  const { data: invoice, isLoading, isError, error } = fetchQuery;
+  const {
+    data: invoiceResponse,
+    isLoading,
+    isError,
+    error,
+  } = useFetchProductionInvoice(production?.id);
 
   const { mutate: updateInvoice, isPending } = useUpdateProductionInvoice(
     production?.id,
     () => {},
   );
-
-  // SET INVOICE AND TOTAL STATE AFTER FETCHING
-  useEffect(() => {
-    if (!invoice) return;
-
-    setTableInvoice(invoice.invoices);
-    setTableTotal(invoice.total);
-  }, [invoice]);
-
-  // CALCULATE TOTAL PRICE AFTER ANY CHANGES IN INVOICE
-  useEffect(() => {
-    let totalPrice = 0;
-    tableInvoice.forEach((item) => (totalPrice += item.total));
-    setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
-  }, [tableInvoice]);
-
-  // CALCULATE FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
-  useEffect(() => {
-    setTableTotal({
-      ...tableTotal,
-      totalFinal:
-        tableTotal.totalPrice -
-        tableTotal.discount -
-        tableTotal.paid -
-        tableTotal.downPayment -
-        tableTotal.initialDeposit,
-    });
-  }, [
-    tableTotal.discount,
-    tableTotal.paid,
-    tableTotal.downPayment,
-    tableTotal.initialDeposit,
-    tableTotal.totalPrice,
-  ]);
 
   const handleInvoiceChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -104,11 +74,11 @@ export const ProductionInvoice = () => {
     if (name === "quantity") {
       valueInNumber = parseInt(value);
       if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * prevData!.price;
+      totalPrice = valueInNumber * (prevData!.price ?? 0);
     } else {
       valueInNumber = formatRupiahToNumber(value);
       if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * prevData!.quantity;
+      totalPrice = valueInNumber * (prevData!.quantity ?? 0);
     }
 
     setTableInvoice((prevInvoices: InvoiceTableItem[]) =>
@@ -150,6 +120,40 @@ export const ProductionInvoice = () => {
     });
   };
 
+  // SET INVOICE AND TOTAL STATE AFTER FETCHING
+  useEffect(() => {
+    if (!invoiceResponse) return;
+
+    setTableInvoice(invoiceResponse.invoices);
+    setTableTotal(invoiceResponse.total);
+  }, [invoiceResponse]);
+
+  // CALCULATE TOTAL PRICE AFTER ANY CHANGES IN INVOICE
+  useEffect(() => {
+    let totalPrice = 0;
+    tableInvoice.forEach((item) => (totalPrice += item.total ?? 0));
+    setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
+  }, [tableInvoice]);
+
+  // CALCULATE FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
+  useEffect(() => {
+    setTableTotal({
+      ...tableTotal,
+      totalFinal:
+        tableTotal.totalPrice -
+        tableTotal.discount -
+        tableTotal.paid -
+        tableTotal.downPayment -
+        tableTotal.initialDeposit,
+    });
+  }, [
+    tableTotal.discount,
+    tableTotal.paid,
+    tableTotal.downPayment,
+    tableTotal.initialDeposit,
+    tableTotal.totalPrice,
+  ]);
+
   const renderContent = () => {
     if (isLoading)
       return (
@@ -158,7 +162,7 @@ export const ProductionInvoice = () => {
         </div>
       );
     if (isError) return <ErrorLoadData error={error} />;
-    if (invoice) {
+    if (invoiceResponse) {
       return (
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4 px-5 pb-5">
@@ -168,27 +172,27 @@ export const ProductionInvoice = () => {
                 <h1>
                   <span className="font-medium text-gray-500">CUSTOMER:</span>
                   <span className="ms-2 font-light uppercase text-gray-500">
-                    {invoice.name}
+                    {invoiceResponse.name}
                   </span>
                 </h1>
                 <h1>
                   <span className="font-medium text-gray-500">NOMOR WA:</span>
                   <span className="ms-2 font-light text-gray-500">
-                    {invoice.phoneNumber}
+                    {invoiceResponse.phoneNumber}
                   </span>
                 </h1>
                 <h1>
                   <span className="font-medium text-gray-500">JENIS:</span>
                   <span className="ms-2 font-light uppercase text-gray-500">
-                    {invoice.type}
+                    {invoiceResponse.type}
                   </span>
                 </h1>
               </div>
               <div className="flex basis-1/2 flex-col gap-2">
                 <h1>
                   <span className="font-medium text-gray-500">NO INVOICE:</span>
-                  <span className="ms-2 font-light uppercase text-gray-500">
-                    {invoice.invoiceNumber}
+                  <span className="ms-2 font-light text-gray-500">
+                    {invoiceResponse.invoiceNumber}
                   </span>
                 </h1>
                 <h1>
@@ -196,7 +200,7 @@ export const ProductionInvoice = () => {
                     TANGGAL MASUK:
                   </span>
                   <span className="ms-2 font-light uppercase text-gray-500">
-                    {formatToIndonesianDate(invoice.dateOfEntry)}
+                    {formatToIndonesianDate(invoiceResponse.dateOfEntry)}
                   </span>
                 </h1>
                 <h1>
@@ -204,7 +208,7 @@ export const ProductionInvoice = () => {
                     TANGGAL KELUAR:
                   </span>
                   <span className="ms-2 font-light uppercase text-gray-500">
-                    {formatToIndonesianDate(invoice.dateOfExit)}
+                    {formatToIndonesianDate(invoiceResponse.dateOfExit)}
                   </span>
                 </h1>
               </div>
@@ -232,9 +236,11 @@ export const ProductionInvoice = () => {
                     <TableRow key={item.id}>
                       <TableCell className="text-sm">{index + 1}</TableCell>
                       <TableCell className="text-sm uppercase">
-                        {item.type}
+                        {item.type ?? "-"}
                       </TableCell>
-                      <TableCell className="text-sm">{item.quantity}</TableCell>
+                      <TableCell className="text-sm">
+                        {item.quantity ?? 0}
+                      </TableCell>
                       <TableCell className="text-sm">
                         {isEditing && (
                           <Input
