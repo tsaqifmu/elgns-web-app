@@ -32,7 +32,7 @@ export const ProductionDetail = () => {
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [dataUploadExcel, setDataUploadExcel] = useState<any>([]);
+  const [dataUploadExcel, setDataUploadExcel] = useState<BackName[]>([]);
   const [dataFileExcelName, setFileExcelName] = useState<any>("");
 
   // zustand store
