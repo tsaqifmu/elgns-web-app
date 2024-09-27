@@ -18,12 +18,14 @@ import { cn } from "@/lib/utils";
 interface DetailBackNameProps {
   backNames: BackName[];
   setBackNames: Dispatch<SetStateAction<BackName[]>>;
+  dataUploadExcel: [];
   isReadOnly?: boolean;
 }
 
 export const DetailBackName = ({
   backNames,
   setBackNames,
+  dataUploadExcel,
   isReadOnly = false,
 }: DetailBackNameProps) => {
   const handleChange = (
@@ -41,6 +43,10 @@ export const DetailBackName = ({
       return [...updatedData];
     });
   };
+
+  // Memilih data yang akan di-mapping
+  // Jika upload file excel, maka yang di mapping di table adalah data hasil dari upload excel
+  const dataToMap = dataUploadExcel.length > 0 ? dataUploadExcel : backNames;
 
   return (
     <div>
@@ -60,7 +66,7 @@ export const DetailBackName = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {backNames.map((item, index) => (
+              {dataToMap.map((item, index) => (
                 <TableRow key={item.id}>
                   <TableCell className="text-sm uppercase">
                     {index + 1}

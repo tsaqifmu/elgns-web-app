@@ -1,37 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DetailBackName } from "./detail-back-name";
+import { FileUp, Loader2 } from "lucide-react";
+import { useShallow } from "zustand/react/shallow";
+import React, { useEffect, useRef, useState } from "react";
+
+import { DetailPant } from "./detail-pant";
 import { DetailShirt } from "./detail-shirt";
+import { DetailBackName } from "./detail-back-name";
+
 import { useFetchProductionDetail } from "@/hooks/production/useFetchProductionDetail";
-import SkeletonTable from "@/components/dashboard/skeleton-table";
-import ErrorLoadData from "@/components/dashboard/error-load-data";
 import { useUpdateProductionDetail } from "@/hooks/production/useUpdateProductionDetail";
+import { useFetchMaterialsAndColors } from "@/hooks/production/useFetchMaterialsAndColors";
+
 import {
   DialogProductionAction,
   DialogProductionState,
   useDialogProductionStore,
 } from "@/stores/dialog-production-store";
-import { useShallow } from "zustand/react/shallow";
-import { Loader2 } from "lucide-react";
-import { Shirt } from "@/types/production/detail/shirt";
+
+import { proccesExcelFileUpload } from "@/lib/handleUploadFileExcel";
+
+import { Button } from "@/components/ui/button";
 import { Pant } from "@/types/production/detail/pant";
-import { BackName } from "@/types/production/detail/back-name";
-import { DetailPant } from "./detail-pant";
+import { DialogFooter } from "@/components/ui/dialog";
+import { Shirt } from "@/types/production/detail/shirt";
 import { IDetail } from "@/types/production/detail/detail";
-import { useFetchMaterialsAndColors } from "@/hooks/production/useFetchMaterialsAndColors";
+import { BackName } from "@/types/production/detail/back-name";
+import SkeletonTable from "@/components/dashboard/skeleton-table";
+import ErrorLoadData from "@/components/dashboard/error-load-data";
 
 export const ProductionDetail = () => {
   const [shirts, setShirts] = useState<Shirt[]>([]);
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);
+  const [dataUploadExcel, setDataUploadExcel] = useState<any>([]);
+  const [dataFileExcelName, setFileExcelName] = useState<any>("");
+
+  // zustand store
   const [editProductionData, _] = useDialogProductionStore(
     useShallow((state: DialogProductionState & DialogProductionAction) => [
       state.editProductionData,
       state.closeEditProductionDialog,
     ]),
   );
+
+  // useFetchProductionDetail
   const {
     data: productionDetailApiResponse,
     isLoading,
@@ -73,6 +85,28 @@ export const ProductionDetail = () => {
     );
   };
 
+  const hiddenFileInput = useRef<HTMLInputElement>(null);
+
+  const handleFileClick = () => {
+    hiddenFileInput.current?.click();
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      const { fileName, dataObjects } = await proccesExcelFileUpload(file);
+      setDataUploadExcel(dataObjects);
+      setFileExcelName(fileName);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   const renderContent = () => {
     if (isLoading || isFetchingMaterialsAndColors)
       return (
@@ -102,10 +136,36 @@ export const ProductionDetail = () => {
               setTotalItems={setTotalItemsValue}
               materialsAndColors={materialsAndColors}
             />
-            <DetailBackName backNames={backNames} setBackNames={setBackNames} />
+            <DetailBackName
+              backNames={backNames}
+              setBackNames={setBackNames}
+              dataUploadExcel={dataUploadExcel}
+            />
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex gap-1">
+            <div>
+              <input
+                type="file"
+                accept=".xlsx, .xls"
+                className="hidden"
+                onChange={handleFileChange}
+                ref={hiddenFileInput}
+              />
+              <Button
+                // disabled={true}
+                onClick={handleFileClick}
+                size={"modalTable"}
+                variant={"outline"}
+                className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium hover:bg-gray-300"
+              >
+                <FileUp />{" "}
+                <span>
+                  {dataFileExcelName ? dataFileExcelName : "UPLOAD PDF"}
+                </span>
+              </Button>
+            </div>
+
             <Button
               size={"modalTable"}
               variant={"default"}
