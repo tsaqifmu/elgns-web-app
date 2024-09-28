@@ -32,7 +32,6 @@ export const ProductionDetail = () => {
   const [pants, setPants] = useState<Pant[]>([]);
   const [backNames, setBackNames] = useState<BackName[]>([]);
   const [totalItems, setTotalItems] = useState<number>(0);
-  const [dataUploadExcel, setDataUploadExcel] = useState<BackName[]>([]);
   const [dataFileExcelName, setFileExcelName] = useState<any>("");
 
   // zustand store
@@ -100,7 +99,7 @@ export const ProductionDetail = () => {
 
     try {
       const { fileName, dataObjects } = await proccesExcelFileUpload(file);
-      setDataUploadExcel(dataObjects);
+      setBackNames(dataObjects);
       setFileExcelName(fileName);
     } catch (error) {
       console.error("Error:", error);
@@ -136,11 +135,7 @@ export const ProductionDetail = () => {
               setTotalItems={setTotalItemsValue}
               materialsAndColors={materialsAndColors}
             />
-            <DetailBackName
-              backNames={backNames}
-              setBackNames={setBackNames}
-              dataUploadExcel={dataUploadExcel}
-            />
+            <DetailBackName backNames={backNames} setBackNames={setBackNames} />
           </div>
 
           <DialogFooter className="flex gap-1">
