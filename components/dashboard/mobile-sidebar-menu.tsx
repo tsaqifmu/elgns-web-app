@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { FC, useState } from "react";
+import { LogOut } from "lucide-react";
+import { FC } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 
@@ -60,8 +61,14 @@ const LogoutButton = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">
-          <h4 className="text-destructive">Logout</h4>
+        <Button
+          variant="ghost"
+          className="flex w-full justify-start rounded-lg border-gray-900 p-3"
+        >
+          <div className="flex items-center space-x-5">
+            <LogOut size={17} />
+            <h4 className="text-destructive">Keluar</h4>
+          </div>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -109,15 +116,28 @@ const SidebarMenu: FC<any> = ({ isAdmin = true }: { isAdmin: boolean }) => {
       <Logo />
       <div className="flex h-full flex-col justify-center p-4">
         <div className="space-y-3">
-          {isAdmin &&
-            navLinks.map((navlink) => (
+          {isAdmin && (
+            <>
+              {navLinks.map((navlink) => (
+                <ListMenu
+                  key={navlink.id}
+                  href={navlink.id}
+                  icons={navlink.icons}
+                  label={navlink.title}
+                />
+              ))}
               <ListMenu
-                key={navlink.id}
-                href={navlink.id}
-                icons={navlink.icons}
-                label={navlink.title}
+                key="admin"
+                href="admin"
+                icons={{
+                  fill: Icons.AdminFill,
+                  outline: Icons.AdminOutline,
+                }}
+                label="ADMIN"
               />
-            ))}{" "}
+            </>
+          )}
+
           {!isAdmin &&
             navLinksUser.map((navlink) => (
               <ListMenu

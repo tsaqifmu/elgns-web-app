@@ -37,7 +37,7 @@ export default async function middleware(req: NextRequest) {
     headers: { Cookie: cookies },
   });
   const body = await response.json();
-  const role = body.data.role?.toLowerCase() ?? null;
+  const role = body.data?.role?.toLowerCase() ?? null;
   const isAdmin = role === "admin";
   const isUser = role !== "admin";
 
