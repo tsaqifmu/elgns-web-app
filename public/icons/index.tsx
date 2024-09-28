@@ -12,6 +12,8 @@ import timelineFill from "@/public/icons/navbarIcons/timeline-fill.svg";
 import timelineOutline from "@/public/icons/navbarIcons/timeline-outline.svg";
 import tshirtOutline from "@/public/icons/navbarIcons/tshirt-outline.svg";
 import tshirtFill from "@/public/icons/navbarIcons/tshirt-fill.svg";
+import adminFill from "@/public/icons/navbarIcons/admin-fill.svg";
+import adminOutline from "@/public/icons/navbarIcons/admin-outline.svg";
 
 export const Icons = {
   Logo: logo,
@@ -28,4 +30,6 @@ export const Icons = {
   TimelineOutline: timelineOutline,
   TshirtFill: tshirtFill,
   TshirtOutline: tshirtOutline,
+  AdminFill: adminFill,
+  AdminOutline: adminOutline,
 };
