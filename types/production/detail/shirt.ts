@@ -1,5 +1,3 @@
-import { ShirtResponse } from "./shirt-response";
-
 export interface Shirt {
   id: string;
   printingShirt: string;

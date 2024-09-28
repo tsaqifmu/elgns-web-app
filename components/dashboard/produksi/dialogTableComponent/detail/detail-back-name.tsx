@@ -1,4 +1,14 @@
 import React, { ChangeEvent, Dispatch, SetStateAction } from "react";
+
+import { cn } from "@/lib/utils";
+import IconAddFill from "@/public/icons/table/add-fill.svg";
+
+import {
+  BackName,
+  getEmptyBackNameData,
+} from "@/types/production/detail/back-name";
+
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -7,13 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import IconAddFill from "@/public/icons/table/add-fill.svg";
-import { Input } from "@/components/ui/input";
-import {
-  BackName,
-  getEmptyBackNameData,
-} from "@/types/production/detail/back-name";
-import { cn } from "@/lib/utils";
 
 interface DetailBackNameProps {
   backNames: BackName[];

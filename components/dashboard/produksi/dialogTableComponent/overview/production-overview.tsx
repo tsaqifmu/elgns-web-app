@@ -168,7 +168,7 @@ export const ProductionOverview = () => {
                     <FormControl>
                       <Input
                         readOnly
-                        className="border border-gray-300 uppercase"
+                        className="border border-gray-300"
                         placeholder="Masukkan invoice"
                         {...field}
                       />
@@ -187,7 +187,7 @@ export const ProductionOverview = () => {
                     <FormControl>
                       <Input
                         readOnly
-                        className="border border-gray-300 uppercase"
+                        className="border border-gray-300"
                         placeholder="-"
                         {...field}
                       />

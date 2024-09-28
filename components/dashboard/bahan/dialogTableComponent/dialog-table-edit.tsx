@@ -2,14 +2,16 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { useShallow } from "zustand/react/shallow";
 
+import { fabricUpdateStockSchema } from "@/schemas/bahanSchema";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUpdateCustomerData } from "@/hooks/customer/useCustomers";
+import { useUpdateFabricData } from "@/hooks/bahan/useBahan";
 
 import {
-  DialogAdminAction,
-  DialogAdminState,
-  useDialogAdminStore,
-} from "@/stores/dialog-admin-store";
+  DialogFabricAction,
+  DialogFabricState,
+  useDialogBahanStore,
+} from "@/stores/dialog-bahan-store";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,22 +32,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { adminSchema } from "@/schemas/adminSchema";
-import { useUpdateUserData } from "@/hooks/admin/useAdmin";
-import {
-  DialogFabricAction,
-  DialogFabricState,
-  useDialogBahanStore,
-} from "@/stores/dialog-bahan-store";
-import { fabricUpdateStockSchema } from "@/schemas/bahanSchema";
-import { useUpdateFabricData } from "@/hooks/bahan/useBahan";
 
 const DialogTableEditBahan = () => {
   const [editFabricData, closeEditFabricDialog] = useDialogBahanStore(
@@ -59,11 +45,6 @@ const DialogTableEditBahan = () => {
 
   const form = useForm<z.infer<typeof fabricUpdateStockSchema>>({
     resolver: zodResolver(fabricUpdateStockSchema),
-    values: {
-      // fabricName: user?.name || "",
-      // color: user?.color || "",
-      stock: fabric?.stock || 0,
-    },
   });
 
   const { mutate: updateFabricData, isPending } = useUpdateFabricData(
@@ -88,23 +69,6 @@ const DialogTableEditBahan = () => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex w-full gap-5 px-5 pb-5">
               <div className="flex basis-full flex-col gap-5">
-                {/* <FormField
-                  control={form.control}
-                  name="fabricName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>NAMA KAIN</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="focus-visible:ring-yellow-500"
-                          placeholder="Masukkan nama kain"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                 <FormField
                   control={form.control}
                   name="stock"
@@ -123,23 +87,6 @@ const DialogTableEditBahan = () => {
                     </FormItem>
                   )}
                 />
-                {/* <FormField
-                  control={form.control}
-                  name="color"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>WARNA</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="focus-visible:ring-yellow-500"
-                          placeholder="Masukkan warna"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
               </div>
             </div>
 

@@ -114,7 +114,7 @@ const DialogTableCreate = () => {
                       <FormLabel>NAMA BRAND</FormLabel>
                       <FormControl>
                         <Input
-                          className="uppercase focus-visible:ring-teal"
+                          className="focus-visible:ring-teal"
                           placeholder="Masukkan nama brand"
                           {...field}
                         />

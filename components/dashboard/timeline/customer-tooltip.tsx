@@ -60,8 +60,11 @@ export const DateColumn = ({ dateData }: { dateData: TransformedData }) => {
     "bg-emerald-500",
   ];
 
-  // warna text pada jumlah akan merah jika overload
-  const overloadColor = dateData.total > 35 && "text-destructive";
+  //! JIKA INGIN MENGGANTI LIMIT PRODUKSI PER HARI
+  const LIMIT_PRODUCTION = 75;
+
+  //? warna text pada jumlah akan merah jika overload
+  const overloadColor = dateData.total > LIMIT_PRODUCTION && "text-destructive";
 
   return (
     <div className="relative flex h-[120px] w-full bg-gray-600">

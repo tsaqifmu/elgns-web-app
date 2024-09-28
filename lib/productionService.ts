@@ -180,3 +180,27 @@ export const updateProductionInvoice = async (
 
   return response;
 };
+
+// ------------ BAHAN ------------
+export const getMaterialNames = async (): Promise<string[]> => {
+  const response = await apiRequest({
+    path: "/bahan/list/name",
+    method: HttpMethod.GET,
+  });
+
+  return response.data.message.data;
+};
+
+export const getMaterialNameColors = async (
+  materialName: string,
+): Promise<string[]> => {
+  const response = await apiRequest({
+    path: "/bahan/list/color",
+    method: HttpMethod.GET,
+    params: {
+      fabricname: materialName,
+    },
+  });
+
+  return response.data.message.data;
+};

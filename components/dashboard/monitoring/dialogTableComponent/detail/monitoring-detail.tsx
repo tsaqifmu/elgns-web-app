@@ -82,6 +82,7 @@ export const MonitoringDetail = () => {
             <DetailBackName
               backNames={backNames}
               setBackNames={setBackNames}
+              // dataUploadExcel={[]}
               isReadOnly
             />
           </div>
