@@ -156,7 +156,7 @@ export const ProductionDetail = () => {
               >
                 <FileUp />{" "}
                 <span>
-                  {dataFileExcelName ? dataFileExcelName : "UPLOAD PDF"}
+                  {dataFileExcelName ? dataFileExcelName : "UPLOAD EXCEL"}
                 </span>
               </Button>
             </div>
