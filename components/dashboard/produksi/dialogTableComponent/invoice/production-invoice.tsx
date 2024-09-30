@@ -130,6 +130,8 @@ export const ProductionInvoice = () => {
 
   // CALCULATE TOTAL PRICE AFTER ANY CHANGES IN INVOICE
   useEffect(() => {
+    if (!isEditing) return;
+
     let totalPrice = 0;
     tableInvoice.forEach((item) => (totalPrice += item.total ?? 0));
     setTableTotal({ ...tableTotal, totalPrice } as InvoiceTableTotal);
@@ -137,6 +139,8 @@ export const ProductionInvoice = () => {
 
   // CALCULATE FINAL PRICE AFTER ANY CHANGES IN TABLE TOTAL
   useEffect(() => {
+    if (!isEditing) return;
+
     setTableTotal({
       ...tableTotal,
       totalFinal:
