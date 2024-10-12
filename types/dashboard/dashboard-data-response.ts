@@ -1,11 +1,12 @@
 export interface WorkOrderData {
-  workOrder: string;
-  tanggalMasuk: string;
-  deadline: string;
-  atasan: number;
-  bawahan: number;
+  _id: string;
+  noInvoice: string;
+  tglMasuk: string; // Tanggal masuk dalam format ISO string. Gunakan `Date` jika diperlukan.
+  tglKeluar: string; // Tanggal keluar dalam format ISO string. Gunakan `Date` jika diperlukan.
+  totalBaju: number;
+  totalCelana: number;
   terbayar: string;
   tagihan: string;
-  totalPembayaran: string;
-  keterangan: string;
+  totalBayar: string;
+  status: string;
 }

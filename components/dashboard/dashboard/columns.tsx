@@ -11,19 +11,19 @@ import { WorkOrderData } from "@/types/dashboard/dashboard-data-response";
 import { cn } from "@/lib/utils";
 
 const HEADER_TITLES = {
-  workOrder: "WORK ORDER",
+  noInvoice: "WORK ORDER",
   tanggalMasuk: "TANGGAL MASUK",
-  deadline: "DEADLINE",
-  atasan: "ATASAN",
-  bawahan: "BAWAHAN",
+  tanggalKeluar: "TANGGAL KELUAR",
+  baju: "BAJU",
+  celana: "CELANA",
   terbayar: "TERBAYAR",
   tagihan: "TAGIHAN",
   totalPembayaran: "TOTAL PEMBAYARAN",
-  keterangan: "KETERANGAN",
+  status: "STATUS",
 };
 
-const getKeteranganStyles = (keterangan: string) => {
-  switch (keterangan) {
+const getKeteranganStyles = (status: string) => {
+  switch (status) {
     case "PRODUKSI":
       return "bg-gray-300 text-gray-900";
     case "SELESAI":
@@ -46,24 +46,24 @@ const ColumnHeader = ({ title }: { title: string }) => {
 export const getColumnsDashboard = (): ColumnDef<WorkOrderData>[] => {
   return [
     {
-      accessorKey: "workOrder",
-      header: () => <ColumnHeader title={HEADER_TITLES.workOrder} />,
+      accessorKey: "noInvoice",
+      header: () => <ColumnHeader title={HEADER_TITLES.noInvoice} />,
     },
     {
-      accessorKey: "tanggalMasuk",
+      accessorKey: "tglMasuk",
       header: () => <ColumnHeader title={HEADER_TITLES.tanggalMasuk} />,
     },
     {
-      accessorKey: "deadline",
-      header: () => <ColumnHeader title={HEADER_TITLES.deadline} />,
+      accessorKey: "tglKeluar",
+      header: () => <ColumnHeader title={HEADER_TITLES.tanggalKeluar} />,
     },
     {
-      accessorKey: "atasan",
-      header: () => <ColumnHeader title={HEADER_TITLES.atasan} />,
+      accessorKey: "totalBaju",
+      header: () => <ColumnHeader title={HEADER_TITLES.baju} />,
     },
     {
-      accessorKey: "bawahan",
-      header: () => <ColumnHeader title={HEADER_TITLES.bawahan} />,
+      accessorKey: "totalCelana",
+      header: () => <ColumnHeader title={HEADER_TITLES.celana} />,
     },
     {
       accessorKey: "terbayar",
@@ -74,20 +74,20 @@ export const getColumnsDashboard = (): ColumnDef<WorkOrderData>[] => {
       header: () => <ColumnHeader title={HEADER_TITLES.tagihan} />,
     },
     {
-      accessorKey: "totalPembayaran",
+      accessorKey: "totalBayar",
       header: () => <ColumnHeader title={HEADER_TITLES.totalPembayaran} />,
     },
     {
-      accessorKey: "keterangan",
-      header: () => <ColumnHeader title={HEADER_TITLES.keterangan} />,
+      accessorKey: "status",
+      header: () => <ColumnHeader title={HEADER_TITLES.status} />,
       cell: ({ row }) => {
-        const keterangan: string = row.getValue("keterangan");
+        const keterangan: string = row.getValue("status");
 
         return (
           <div
             className={cn(
-              "rounded-full text-center uppercase", // common classes
-              getKeteranganStyles(keterangan), // dynamic styles from helper function
+              "rounded-full p-2 text-center uppercase",
+              getKeteranganStyles(keterangan),
             )}
           >
             {keterangan}
