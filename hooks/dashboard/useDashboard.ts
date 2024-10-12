@@ -3,6 +3,7 @@ import { formatNumberToRupiah } from "@/lib/currencyUtils";
 import { dateIdFormat } from "@/lib/dateUtils";
 import { WorkOrderData } from "@/types/dashboard/dashboard-data-response";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 interface ApiResponse<ItemType> {
   data: {
@@ -32,18 +33,6 @@ interface DashboardData {
   status: string;
 }
 
-interface CustomerQueryData {
-  docs: DashboardData[];
-  dataInfo: {
-    totalDocs: number;
-    limit: number;
-    totalPages: number;
-    page: number;
-    hasPrevPage: boolean;
-    hasNextPage: boolean;
-  };
-}
-
 const mapDashboardData = (data: DashboardData[]): WorkOrderData[] =>
   data.map((data) => ({
     _id: data._id,
@@ -59,26 +48,26 @@ const mapDashboardData = (data: DashboardData[]): WorkOrderData[] =>
   }));
 
 export const useFetchDashboardData = () => {
-  // const searchParams = useSearchParams();
-  // const page = searchParams.get("page")?.toString() || "1";
-  // const limit = searchParams.get("pageSize")?.toString() || "5";
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page")?.toString() || "1";
+  const limit = searchParams.get("pageSize")?.toString() || "5";
 
   return useQuery({
-    queryKey: ["dashboard"],
+    queryKey: ["dashboard", page, limit],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/admin/dashboard",
         method: HttpMethod.GET,
-        // params: {
-        //   alphabet: "",
-        //   year: "2024",
-        //   month: "",
-        //   week: "",
-        //   name: "",
-        //   status: "",
-        //   page: page,
-        //   limit: limit,
-        // },
+        params: {
+          alphabet: "",
+          year: "",
+          month: "",
+          week: "",
+          name: "",
+          status: "",
+          page: page,
+          limit: limit,
+        },
       });
       return response;
     },

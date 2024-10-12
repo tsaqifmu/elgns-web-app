@@ -86,7 +86,7 @@ export const getColumnsDashboard = (): ColumnDef<WorkOrderData>[] => {
         return (
           <div
             className={cn(
-              "rounded-full text-center uppercase",
+              "rounded-full p-2 text-center uppercase",
               getKeteranganStyles(keterangan),
             )}
           >
