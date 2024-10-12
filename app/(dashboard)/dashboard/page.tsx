@@ -123,26 +123,35 @@ const dataSource = [
   },
 ];
 
+const data = [
+  {
+    _id: "66f2be1e7c321fb2aa8633f1",
+    noInvoice: "WO.12.24.Sep-TES BARUA ELGNS",
+    totalBaju: 14,
+    totalCelana: 5,
+    terbayar: 750000,
+    tagihan: 0,
+    totalBayar: 750000,
+    status: "SELESAI",
+  },
+  {
+    _id: "66ed230b389edad05091508d",
+    noInvoice: "WO.01.20 FEB-kocheng",
+    tglMasuk: "2024-09-05T15:51:28.845Z",
+    tglKeluar: "2024-09-16T15:51:28.845Z",
+    totalBaju: 22,
+    totalCelana: 13,
+    terbayar: 2000000,
+    tagihan: 3940000,
+    totalBayar: 5940000,
+    status: "DIKIRIM",
+  },
+];
+
 const DashboardPage = () => {
-  const router = useRouter();
-  const { data, isLoading, isError, error } = useAuth();
-  const role = data?.role.toLowerCase() ?? undefined;
-  const isAdmin = role === "admin";
-
-  if (isLoading)
-    return (
-      <ContainerPage>
-        <SkeletonTable />
-      </ContainerPage>
-    );
-
-  if (isError) <ErrorLoadData error={error} />;
-
-  // if (isAdmin) return <AdminDashboard />;
-
   const renderContent = () => {
-    if (isLoading) return <SkeletonTable />;
-    if (isError) return <ErrorLoadData error={error} />;
+    // if (isLoading) return <SkeletonTable />;
+    // if (isError) return <ErrorLoadData error={error} />;
     if (dataSource)
       return (
         <>
