@@ -6,6 +6,14 @@ export interface InvoiceTableItem {
   total: number;
 }
 
+export const getEmptyInvoiceTableItem = () => ({
+  id: crypto.randomUUID(),
+  type: "",
+  quantity: 0,
+  price: 0,
+  total: 0,
+});
+
 export const mapInvoiceTableItemToSend = (
   invoiceTableItem: InvoiceTableItem[],
 ) => {

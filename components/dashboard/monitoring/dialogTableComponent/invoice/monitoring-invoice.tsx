@@ -20,7 +20,10 @@ import {
   formatRupiahToNumber,
 } from "@/lib/currencyUtils";
 import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-total";
-import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
+import {
+  getEmptyInvoiceTableItem,
+  InvoiceTableItem,
+} from "@/types/production/invoice/invoice-table-item";
 import { useShallow } from "zustand/react/shallow";
 import { formatToIndonesianDate } from "@/lib/dateUtils";
 import {
@@ -29,6 +32,9 @@ import {
 } from "@/stores/dialog-monitoring-store";
 import ButtonPending from "@/components/button-pending";
 import { Button } from "@/components/ui/button";
+import IconAddFill from "@/public/icons/table/add-fill.svg";
+import Link from "next/link";
+import { ProductionDetail } from "@/components/dashboard/produksi/dialogTableComponent/detail/production-detail";
 
 export const MonitoringInvoice = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -151,6 +157,13 @@ export const MonitoringInvoice = () => {
     });
   };
 
+  const handleAddInvoiceItem = () => {
+    setTableInvoice((prevData: InvoiceTableItem[]) => [
+      ...prevData,
+      getEmptyInvoiceTableItem(),
+    ]);
+  };
+
   const renderContent = () => {
     if (isLoading)
       return (
@@ -158,7 +171,9 @@ export const MonitoringInvoice = () => {
           <SkeletonTable />
         </div>
       );
+
     if (isError) return <ErrorLoadData error={error} />;
+
     if (invoice) {
       return (
         <form onSubmit={handleSubmit}>
@@ -211,71 +226,92 @@ export const MonitoringInvoice = () => {
               </div>
             </div>
             {/* TABLE INVOICE */}
-            <div className="max-h-52 overflow-x-hidden rounded-md border border-gray-900">
-              <Table>
-                <TableHeader className="bg-gray-900">
-                  <TableRow>
-                    <TableHead className="text-sm text-white">NO</TableHead>
-                    <TableHead className="text-sm text-white">JENIS</TableHead>
-                    <TableHead className="w-32 text-sm text-white">
-                      JUMLAH
-                    </TableHead>
-                    <TableHead className="w-40 text-sm text-white">
-                      HARGA
-                    </TableHead>
-                    <TableHead className="w-40 text-sm text-white">
-                      TOTAL
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {tableInvoice.map((item, index) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="text-sm">{index + 1}</TableCell>
-                      <TableCell className="text-sm uppercase">
-                        {isEditing && (
-                          <Input
-                            className="rounded-none bg-transparent p-1"
-                            type="text"
-                            name="type"
-                            value={item.type ?? ""}
-                            onChange={(e) => handleInvoiceChange(e, item)}
-                          />
-                        )}
-                        {!isEditing && (item.type ?? "-")}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {isEditing && (
-                          <Input
-                            className="rounded-none bg-transparent p-1"
-                            type="text"
-                            name="quantity"
-                            value={item.quantity ?? "0"}
-                            onChange={(e) => handleInvoiceChange(e, item)}
-                          />
-                        )}
-                        {!isEditing && (item.quantity ?? "0")}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {isEditing && (
-                          <Input
-                            className="rounded-none bg-transparent p-1"
-                            type="text"
-                            name="price"
-                            value={formatNumberToRupiah(item.price)}
-                            onChange={(e) => handleInvoiceChange(e, item)}
-                          />
-                        )}
-                        {!isEditing && formatNumberToRupiah(item.price)}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {formatNumberToRupiah(item.total)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+            <div className="flex gap-2">
+              <div className="flex-grow">
+                <div className="max-h-52 overflow-x-hidden rounded-md border border-gray-900">
+                  <Table>
+                    <TableHeader className="bg-gray-900">
+                      <TableRow>
+                        <TableHead className="text-sm text-white">NO</TableHead>
+                        <TableHead className="text-sm text-white">
+                          JENIS
+                        </TableHead>
+                        <TableHead className="w-32 text-sm text-white">
+                          JUMLAH
+                        </TableHead>
+                        <TableHead className="w-40 text-sm text-white">
+                          HARGA
+                        </TableHead>
+                        <TableHead className="w-40 text-sm text-white">
+                          TOTAL
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {tableInvoice.map((item, index) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="text-sm">{index + 1}</TableCell>
+                          <TableCell className="text-sm uppercase">
+                            {isEditing && (
+                              <Input
+                                className="rounded-none bg-transparent p-1"
+                                type="text"
+                                name="type"
+                                value={item.type ?? ""}
+                                onChange={(e) => handleInvoiceChange(e, item)}
+                              />
+                            )}
+                            {!isEditing && (item.type ?? "-")}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {isEditing && (
+                              <Input
+                                className="rounded-none bg-transparent p-1"
+                                type="text"
+                                name="quantity"
+                                value={item.quantity ?? "0"}
+                                onChange={(e) => handleInvoiceChange(e, item)}
+                              />
+                            )}
+                            {!isEditing && (item.quantity ?? "0")}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {isEditing && (
+                              <Input
+                                className="rounded-none bg-transparent p-1"
+                                type="text"
+                                name="price"
+                                value={formatNumberToRupiah(item.price)}
+                                onChange={(e) => handleInvoiceChange(e, item)}
+                              />
+                            )}
+                            {!isEditing && formatNumberToRupiah(item.price)}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {formatNumberToRupiah(item.total)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+              {isEditing && (
+                <div className="flex items-end">
+                  <button
+                    type="button"
+                    className="flex items-center justify-center rounded-sm bg-gray-900 px-1 py-4 text-white hover:bg-gray-700"
+                    onClick={handleAddInvoiceItem}
+                  >
+                    <IconAddFill
+                      className="inline h-4 w-4"
+                      viewBox="0 0 11 13"
+                    />
+                  </button>
+                </div>
+              )}
             </div>
+
             {/* TABLE TOTAL */}
             <div className="flex justify-end">
               <div className="overflow-hidden rounded-md border border-gray-900">
@@ -372,16 +408,24 @@ export const MonitoringInvoice = () => {
               </div>
             </div>
           </div>
+
           {/* FOOTER */}
           <DialogFooter className="flex gap-1">
-            <Button
-              disabled={true}
-              size={"modalTable"}
-              variant={"outline"}
-              className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium"
+            <Link
+              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/pdf/${
+                production?._id
+              }`}
+              target="_blank"
             >
-              <IconDownloadPdf /> DOWNLOAD PDF
-            </Button>
+              <Button
+                type="button"
+                size={"modalTable"}
+                variant={"outline"}
+                className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium"
+              >
+                <IconDownloadPdf /> DOWNLOAD PDF
+              </Button>
+            </Link>
             {!isEditing && (
               <Button
                 size={"modalTable"}
