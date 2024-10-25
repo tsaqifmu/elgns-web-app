@@ -77,8 +77,15 @@ export const getColumn = (
               <IconCdr className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
             </Link>
           </Button>
-          <Button className="group" variant={"ghost"} size={"icon"} disabled>
-            <IconDownload className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+          <Button className="group" variant={"ghost"} size={"icon"}>
+            <Link
+              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/pdf/${
+                production?.id
+              }`}
+              target="_blank"
+            >
+              <IconDownload className="h-[24px] w-[24px] text-[#6DB6CC] transition-all group-hover:text-[#488597]" />
+            </Link>
           </Button>
         </div>
       );

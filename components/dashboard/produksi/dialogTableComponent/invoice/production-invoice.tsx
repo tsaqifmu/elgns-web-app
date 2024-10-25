@@ -30,6 +30,7 @@ import { InvoiceTableTotal } from "@/types/production/invoice/invoice-table-tota
 import { InvoiceTableItem } from "@/types/production/invoice/invoice-table-item";
 import { useShallow } from "zustand/react/shallow";
 import { formatToIndonesianDate } from "@/lib/dateUtils";
+import Link from "next/link";
 
 export const ProductionInvoice = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -364,14 +365,19 @@ export const ProductionInvoice = () => {
 
           {/* FOOTER */}
           <DialogFooter className="flex gap-1">
-            <Button
-              disabled={true}
-              size={"modalTable"}
-              variant={"outline"}
-              className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium"
+            <Link
+              href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/pdf/${
+                production?.id
+              }`}
             >
-              <IconDownloadPdf /> DOWNLOAD PDF
-            </Button>
+              <Button
+                size={"modalTable"}
+                variant={"outline"}
+                className="flex items-center gap-2 border-gray-900 px-2 py-1 text-base font-medium"
+              >
+                <IconDownloadPdf /> DOWNLOAD PDF
+              </Button>
+            </Link>
             {!isEditing && (
               <Button
                 size={"modalTable"}
