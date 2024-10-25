@@ -94,30 +94,31 @@ export const MonitoringInvoice = () => {
 
   const handleInvoiceChange = (
     e: ChangeEvent<HTMLInputElement>,
-    invoice: InvoiceTableItem,
+    invoiceRow: InvoiceTableItem,
   ) => {
     const { name, value } = e.target;
-    let valueInNumber = 0;
-    let totalPrice = 0;
-    let prevData = tableInvoice.find((inv) => inv.id === invoice.id);
+    let prevRow = tableInvoice.find((row) => row.id === invoiceRow.id);
+    let { type, quantity, price, total } = prevRow!;
 
     if (name === "quantity") {
-      valueInNumber = parseInt(value);
-      if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * (prevData!.price ?? 0);
-    } else {
-      valueInNumber = formatRupiahToNumber(value);
-      if (Number.isNaN(valueInNumber)) valueInNumber = 0;
-      totalPrice = valueInNumber * (prevData!.quantity ?? 0);
+      quantity = parseInt(value) || 0;
+      total = quantity * (prevRow?.price ?? 0);
+    } else if (name === "price") {
+      price = formatRupiahToNumber(value) || 0;
+      total = price * (prevRow?.quantity ?? 0);
+    } else if (name === "type") {
+      type = value;
     }
 
     setTableInvoice((prevInvoices: InvoiceTableItem[]) =>
       prevInvoices.map((prevInvoice: InvoiceTableItem) =>
-        prevInvoice.id === invoice.id
+        prevInvoice.id === invoiceRow.id
           ? {
               ...prevInvoice,
-              [name]: valueInNumber,
-              total: totalPrice,
+              price,
+              quantity,
+              type,
+              total,
             }
           : { ...prevInvoice },
       ),
@@ -232,10 +233,28 @@ export const MonitoringInvoice = () => {
                     <TableRow key={item.id}>
                       <TableCell className="text-sm">{index + 1}</TableCell>
                       <TableCell className="text-sm uppercase">
-                        {item.type ?? "-"}
+                        {isEditing && (
+                          <Input
+                            className="rounded-none bg-transparent p-1"
+                            type="text"
+                            name="type"
+                            value={item.type ?? ""}
+                            onChange={(e) => handleInvoiceChange(e, item)}
+                          />
+                        )}
+                        {!isEditing && (item.type ?? "-")}
                       </TableCell>
                       <TableCell className="text-sm">
-                        {item.quantity ?? 0}
+                        {isEditing && (
+                          <Input
+                            className="rounded-none bg-transparent p-1"
+                            type="text"
+                            name="quantity"
+                            value={item.quantity ?? "0"}
+                            onChange={(e) => handleInvoiceChange(e, item)}
+                          />
+                        )}
+                        {!isEditing && (item.quantity ?? "0")}
                       </TableCell>
                       <TableCell className="text-sm">
                         {isEditing && (
