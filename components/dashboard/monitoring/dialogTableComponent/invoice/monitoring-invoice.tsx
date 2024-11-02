@@ -35,8 +35,10 @@ import { Button } from "@/components/ui/button";
 import IconAddFill from "@/public/icons/table/add-fill.svg";
 import Link from "next/link";
 import { ProductionDetail } from "@/components/dashboard/produksi/dialogTableComponent/detail/production-detail";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 
 export const MonitoringInvoice = () => {
+  const [isCustomer, setIsCustomer] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [tableInvoice, setTableInvoice] = useState<InvoiceTableItem[]>([]);
   const [tableTotal, setTableTotal] = useState<InvoiceTableTotal>({
@@ -59,6 +61,24 @@ export const MonitoringInvoice = () => {
     production?._id,
     () => setIsEditing(false),
   );
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await apiRequest({
+          path: "/auth/me",
+          method: HttpMethod.GET,
+        });
+
+        const { role } = response.data.data;
+        if (!(role.toLowerCase() === "customer")) setIsCustomer(false);
+      } catch (e) {
+        console.error("gagal fetch user");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // SET INVOICE AND TOTAL STATE AFTER FETCHING
   useEffect(() => {
@@ -426,7 +446,7 @@ export const MonitoringInvoice = () => {
                 <IconDownloadPdf /> DOWNLOAD PDF
               </Button>
             </Link>
-            {!isEditing && (
+            {!isCustomer && !isEditing && (
               <Button
                 size={"modalTable"}
                 variant={"default"}
@@ -438,7 +458,7 @@ export const MonitoringInvoice = () => {
               </Button>
             )}
 
-            {isEditing && (
+            {!isCustomer && isEditing && (
               <ButtonPending
                 size={"modalTable"}
                 variant={"default"}

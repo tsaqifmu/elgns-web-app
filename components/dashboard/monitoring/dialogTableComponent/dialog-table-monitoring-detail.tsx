@@ -18,6 +18,7 @@ import {
   useDialogMonitoringStore,
 } from "@/stores/dialog-monitoring-store";
 import { MonitoringInvoice } from "./invoice/monitoring-invoice";
+import { X } from "lucide-react";
 
 const DialogTableMonitoringDetail = () => {
   const menus = ["OVERVIEW", "DETAIL", "TIMELINE", "INVOICE"];
@@ -61,6 +62,10 @@ const DialogTableMonitoringDetail = () => {
           getContentWidth(),
         )}
       >
+        <button className="absolute right-4 top-4 h-4 w-4 rounded-sm ring-offset-background focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent">
+          <X className="h-4 w-4 text-black hover:text-gray-700" />
+          <span className="sr-only">Close</span>
+        </button>
         <DialogHeader className="box-border border border-gray-300 bg-gray-100 px-3 pb-0 pt-1">
           <DialogTitle className="flex h-full w-full gap-4">
             {menus.map((menu) => (
