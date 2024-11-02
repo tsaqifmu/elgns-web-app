@@ -140,7 +140,7 @@ export const MonitoringOverview = () => {
       if (production.dateOut) {
         setValue("dateOut", new Date(production.dateOut));
       } else {
-        setValue("dateOut", null);
+        setValue("dateOut", undefined);
       }
     }
   }, [production, setValue]);
