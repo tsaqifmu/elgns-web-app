@@ -126,7 +126,7 @@ export const updateMonitoringOverview = async (
   const { imageFile, cdrFile, pdfFile, proofFile } = overview;
 
   const overviewToSend = {
-    tglMasuk: overview.dateIn.toISOString(),
+    tglMasuk: overview.dateIn!.toISOString(),
     tglKeluar: overview.dateOut!.toISOString(),
   };
 
