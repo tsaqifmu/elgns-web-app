@@ -40,9 +40,11 @@ import { Calendar } from "@/components/ui/calendar";
 import AddFill from "@/public/icons/table/add-fill.svg";
 import { useUpdateMonitoringOverview } from "@/hooks/monitoring/useUpdateMonitoringOverview";
 import Link from "next/link";
+import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 
 export const MonitoringOverview = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isCustomer, setIsCustomer] = useState(true);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [previewImageProofingUrl, setPreviewImageProofingUrl] = useState<
@@ -63,6 +65,24 @@ export const MonitoringOverview = () => {
     isError,
     error,
   } = useFetchMonitoringOverview(productionId);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await apiRequest({
+          path: "/auth/me",
+          method: HttpMethod.GET,
+        });
+
+        const { role } = response.data.data;
+        if (!(role.toLowerCase() === "customer")) setIsCustomer(false);
+      } catch (e) {
+        console.error("gagal fetch user");
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const { mutate: updateOverview, isPending } = useUpdateMonitoringOverview(
     production?.id,
@@ -457,72 +477,70 @@ export const MonitoringOverview = () => {
                   </div>
                 </div>
                 {/* LAMPIRAN PDF */}
-                {column?.name.toUpperCase() === "MAL" && (
-                  <FormField
-                    control={form.control}
-                    name="pdfFile"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="mt-4 flex max-w-[21rem] items-center justify-between gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-[10px]">
-                            <div className="pdf-file-name w-1/2 overflow-hidden text-ellipsis text-sm">
-                              {pdfFileName
-                                ? pdfFileName
-                                : production?.pdfUrl
-                                  ? "PDF TERSEDIA ✅"
-                                  : "PDF KOSONG"}
-                            </div>
-                            <div className="pdf-buttons flex w-1/2 justify-end gap-2 text-xs">
-                              {production?.pdfUrl && (
-                                <div className="pdf-download font-semibold">
-                                  <a
-                                    className="hover:underline"
-                                    target="_blank"
-                                    href={
-                                      production?.pdfUrl
-                                        ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
-                                            production?.pdfUrl
-                                          }`
-                                        : "#"
-                                    }
-                                    download={true}
-                                  >
-                                    DOWNLOAD
-                                  </a>
-                                </div>
-                              )}
-                              {isEditing && (
-                                <div className="pdf-upload group relative overflow-hidden font-semibold">
-                                  <Input
-                                    type="file"
-                                    className="absolute inset-0 cursor-pointer opacity-0"
-                                    accept=".pdf"
-                                    onChange={(e) => {
-                                      if (!e.target.files) return;
-                                      const file = e.target.files[0];
-                                      field.onChange(file);
-                                      setPdfFileName(
-                                        e.target.files?.[0]?.name ||
-                                          "No file selected",
-                                      );
-                                    }}
-                                  />
-                                  <button
-                                    type="button"
-                                    className="group-hover:underline"
-                                  >
-                                    UPLOAD
-                                  </button>
-                                </div>
-                              )}
-                            </div>
+                <FormField
+                  control={form.control}
+                  name="pdfFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <div className="mt-4 flex max-w-[21rem] items-center justify-between gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-[10px]">
+                          <div className="pdf-file-name w-1/2 overflow-hidden text-ellipsis text-sm">
+                            {pdfFileName
+                              ? pdfFileName
+                              : production?.pdfUrl
+                                ? "PDF TERSEDIA ✅"
+                                : "PDF KOSONG"}
                           </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+                          <div className="pdf-buttons flex w-1/2 justify-end gap-2 text-xs">
+                            {production?.pdfUrl && (
+                              <div className="pdf-download font-semibold">
+                                <a
+                                  className="hover:underline"
+                                  target="_blank"
+                                  href={
+                                    production?.pdfUrl
+                                      ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/data/${
+                                          production?.pdfUrl
+                                        }`
+                                      : "#"
+                                  }
+                                  download={true}
+                                >
+                                  DOWNLOAD
+                                </a>
+                              </div>
+                            )}
+                            {isEditing && (
+                              <div className="pdf-upload group relative overflow-hidden font-semibold">
+                                <Input
+                                  type="file"
+                                  className="absolute inset-0 cursor-pointer opacity-0"
+                                  accept=".pdf"
+                                  onChange={(e) => {
+                                    if (!e.target.files) return;
+                                    const file = e.target.files[0];
+                                    field.onChange(file);
+                                    setPdfFileName(
+                                      e.target.files?.[0]?.name ||
+                                        "No file selected",
+                                    );
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  className="group-hover:underline"
+                                >
+                                  UPLOAD
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
               <div>
                 <FormField
@@ -573,29 +591,31 @@ export const MonitoringOverview = () => {
             </div>
           </div>
 
-          <DialogFooter>
-            {isEditing ? (
-              <ButtonPending
-                isPending={isPending}
-                variant={"yellow"}
-                size={"modalTable"}
-                title="SIMPAN"
-              />
-            ) : (
-              <Button
-                type="button"
-                size={"modalTable"}
-                variant={"default"}
-                className="bg-gray-900 uppercase"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsEditing(true);
-                }}
-              >
-                Edit
-              </Button>
-            )}
-          </DialogFooter>
+          {!isCustomer && (
+            <DialogFooter>
+              {isEditing ? (
+                <ButtonPending
+                  isPending={isPending}
+                  variant={"yellow"}
+                  size={"modalTable"}
+                  title="SIMPAN"
+                />
+              ) : (
+                <Button
+                  type="button"
+                  size={"modalTable"}
+                  variant={"default"}
+                  className="bg-gray-900 uppercase"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsEditing(true);
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
+            </DialogFooter>
+          )}
         </form>
       </Form>
     );
