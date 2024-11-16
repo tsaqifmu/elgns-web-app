@@ -53,7 +53,7 @@ export function DataTablePagination({ dataInfo }: { dataInfo: any }) {
               updateUrlParams(pageIndex, newSize);
             }}
           >
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="h-8 w-[70px] bg-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent side="top">

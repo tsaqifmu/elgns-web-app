@@ -1,9 +1,10 @@
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+
+import { dateIdFormat } from "@/lib/dateUtils";
 import { apiRequest, HttpMethod } from "@/lib/apiRequest";
 import { formatNumberToRupiah } from "@/lib/currencyUtils";
-import { dateIdFormat } from "@/lib/dateUtils";
 import { WorkOrderData } from "@/types/dashboard/dashboard-data-response";
-import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
 
 interface ApiResponse<ItemType> {
   data: {
@@ -23,8 +24,8 @@ interface ApiResponse<ItemType> {
 interface DashboardData {
   _id: string;
   noInvoice: string;
-  tglMasuk: string; // Tanggal masuk dalam format ISO string. Gunakan `Date` jika diperlukan.
-  tglKeluar: string; // Tanggal keluar dalam format ISO string. Gunakan `Date` jika diperlukan.
+  tglMasuk: string;
+  tglKeluar: string;
   totalBaju: number;
   totalCelana: number;
   terbayar: number;
@@ -51,20 +52,18 @@ export const useFetchDashboardData = () => {
   const searchParams = useSearchParams();
   const page = searchParams.get("page")?.toString() || "1";
   const limit = searchParams.get("pageSize")?.toString() || "5";
+  const filter = searchParams.get("filter")?.toString() || "";
+  const status = searchParams.get("status")?.toString() || "";
 
   return useQuery({
-    queryKey: ["dashboard", page, limit],
+    queryKey: ["dashboard", page, limit, filter, status],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/admin/dashboard",
         method: HttpMethod.GET,
         params: {
-          alphabet: "",
-          year: "",
-          month: "",
-          week: "",
-          name: "",
-          status: "",
+          status: status,
+          search: filter ? `"${filter}"` : null,
           page: page,
           limit: limit,
         },
