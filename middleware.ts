@@ -33,11 +33,21 @@ export default async function middleware(req: NextRequest) {
   const cookies = `accessToken=${token.value}`;
 
   // 4. Get user role
-  const response = await fetch("https://elgns-api.vercel.app/auth/me", {
-    headers: { Cookie: cookies },
-  });
-  const body = await response.json();
-  const role = body.data?.role?.toLowerCase() ?? null;
+  let role;
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`,
+      {
+        headers: { Cookie: cookies },
+      },
+    );
+    const body = await response.json();
+    role = body.data?.role?.toLowerCase() ?? null;
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
+  }
+
   const isAdmin = role === "admin";
   const isUser = role !== "admin";
 
