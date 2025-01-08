@@ -62,9 +62,10 @@ export const useFetchCustomerData = () => {
   const searchParams = useSearchParams();
   const page = searchParams.get("page")?.toString() || "1";
   const limit = searchParams.get("pageSize")?.toString() || "5";
+  const filter = searchParams.get("filter")?.toString() || "";
 
   return useQuery({
-    queryKey: ["customers", page, limit],
+    queryKey: ["customers", page, limit, filter],
     queryFn: async () => {
       const response = await apiRequest({
         path: "/customer/list",
@@ -78,6 +79,7 @@ export const useFetchCustomerData = () => {
           status: "",
           page: page,
           limit: limit,
+          search: filter ? `"${filter}"` : null,
         },
       });
       return response;
