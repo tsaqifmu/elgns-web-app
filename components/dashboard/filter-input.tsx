@@ -1,5 +1,8 @@
-import { FC, useState } from "react";
+"use client";
+
+import { FC, useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useDebounce } from "use-debounce";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +28,7 @@ const FilterInput: FC<OptionProps> = ({ option }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // Initialize state from URL params
   const [filterValue, setFilterValue] = useState<string>(
     searchParams.get("filter") || "",
   );
@@ -32,18 +36,30 @@ const FilterInput: FC<OptionProps> = ({ option }) => {
     searchParams.get("status") || "",
   );
 
-  const updateUrlParams = (newFilter: string, paramsName: string) => {
+  // Create debounced values
+  const [debouncedFilter] = useDebounce(filterValue, 500);
+  const [debouncedStatus] = useDebounce(statusValue, 500);
+
+  // Update URL when debounced values change
+  useEffect(() => {
     const params = new URLSearchParams(searchParams);
 
-    // Jika filter kosong, hapus parameter
-    if (!newFilter.trim()) {
-      params.delete(paramsName);
+    // Handle filter param
+    if (!debouncedFilter.trim()) {
+      params.delete("filter");
     } else {
-      params.set(paramsName, newFilter.toString());
+      params.set("filter", debouncedFilter);
+    }
+
+    // Handle status param
+    if (!debouncedStatus.trim()) {
+      params.delete("status");
+    } else {
+      params.set("status", debouncedStatus);
     }
 
     router.push(`${pathname}?${params.toString()}`);
-  };
+  }, [debouncedFilter, debouncedStatus, pathname, router, searchParams]);
 
   return (
     <div className="flex space-x-3">
@@ -53,10 +69,7 @@ const FilterInput: FC<OptionProps> = ({ option }) => {
         type="text"
         className="w-60 bg-white"
         onChange={(event) => {
-          const value = event.target.value;
-
-          setFilterValue(value);
-          updateUrlParams(value, "filter");
+          setFilterValue(event.target.value);
         }}
       />
 
@@ -65,7 +78,6 @@ const FilterInput: FC<OptionProps> = ({ option }) => {
           value={statusValue}
           onValueChange={(value) => {
             setStatusValue(value);
-            updateUrlParams(value, "status");
           }}
         >
           <SelectTrigger className="w-[180px] bg-white">

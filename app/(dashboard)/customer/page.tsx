@@ -1,11 +1,11 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import { CirclePlus } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
+import { useDebounce } from "use-debounce";
 
 import { useFetchCustomerData } from "@/hooks/customer/useCustomers";
-
 import {
   DialogAction,
   DialogState,
@@ -22,8 +22,21 @@ import DialogTableEdit from "@/components/dashboard/customer/dialogTableComponen
 import DialogTableCreate from "@/components/dashboard/customer/dialogTableComponent/dialog-table-create";
 import DialogTableDetail from "@/components/dashboard/customer/dialogTableComponent/dialog-table-detail";
 import DialogTableDelete from "@/components/dashboard/customer/dialogTableComponent/dialog-table-delete";
+import { Input } from "@/components/ui/input";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const CustomerPage: FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [filterValue, setFilterValue] = useState<string>(
+    searchParams.get("filter") || "",
+  );
+
+  // Add debounced value with 500ms delay
+  const [debouncedFilter] = useDebounce(filterValue, 500);
+
   const { data, isError, isLoading, error } = useFetchCustomerData();
 
   const dataSource = data?.docs;
@@ -42,25 +55,37 @@ const CustomerPage: FC = () => {
       state.openDeleteCustomerDialog,
     ]),
   );
+
   const columns = getColumns(
     openDetailCustomerDialog,
     openEditCustomerDialog,
     openDeleteCustomerDialog,
   );
 
+  // Use effect to update URL when debounced value changes
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (!debouncedFilter.trim()) {
+      params.delete("filter");
+    } else {
+      params.set("filter", debouncedFilter);
+    }
+    router.push(`${pathname}?${params.toString()}`);
+  }, [debouncedFilter, pathname, router, searchParams]);
+
   const renderContent = () => {
     if (isLoading) return <SkeletonTable />;
     if (isError) return <ErrorLoadData error={error} />;
     if (dataSource)
       return (
-        <>
+        <div>
           <DataTable columns={columns} data={dataSource as any} />
           <DataTablePagination dataInfo={dataInfo} />
           <DialogTableCreate />
           <DialogTableDetail />
           <DialogTableEdit />
           <DialogTableDelete />
-        </>
+        </div>
       );
     return null;
   };
@@ -78,8 +103,16 @@ const CustomerPage: FC = () => {
           <CirclePlus className="w-4 lg:w-6" />
         </Button>
       </header>
-
-      <main className="mt-9">{renderContent()}</main>
+      <Input
+        value={filterValue}
+        placeholder="Cari berdasar no invoice, custname, dan alamat"
+        type="text"
+        className="mt-3 w-60 bg-white"
+        onChange={(event) => {
+          setFilterValue(event.target.value);
+        }}
+      />
+      <main className="mt-3">{renderContent()}</main>
     </>
   );
 };
